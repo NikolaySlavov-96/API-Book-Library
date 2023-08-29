@@ -4,7 +4,9 @@ CREATE TABLE
     book (
         ID SERIAL PRIMARY KEY,
         author VARCHAR(60),
-        booktitle VARCHAR(40) UNIQUE
+        booktitle VARCHAR(40) UNIQUE,
+        image VARCHAR(145), -- Not include
+        genre VARCHAR(45) -- Not Include
     );
 
 INSERT INTO
@@ -127,5 +129,35 @@ INSERT INTO
     book (author, booktitle)
 VALUES ('', 'Да се научим да умираме') RETURNING id;
 
-WITH book AS (INSERT INTO book (author, booktitle) VALUES ('','Аз съм добре и ти си добре') RETURNING id AS id) INSERT INTO user_book_forpurchase (user_id, book_id) VALUES (1, (SELECT id FROM book));
-WITH book AS (INSERT INTO book (author, booktitle) VALUES ('','') RETURNING id AS id) INSERT INTO user_book_forpurchase (user_id, book_id) VALUES (1, (SELECT id FROM book));
+WITH book AS (
+        INSERT INTO
+            book (author, booktitle)
+        VALUES (
+                '',
+                'Аз съм добре и ти си добре'
+            ) RETURNING id AS id
+    )
+INSERT INTO
+    user_book_forpurchase (user_id, book_id)
+VALUES (
+        1, (
+            SELECT id
+            FROM book
+        )
+    );
+
+WITH book AS (
+        INSERT INTO
+            book (author, booktitle)
+        VALUES ('', '') RETURNING id AS id
+    )
+INSERT INTO
+    user_book_forpurchase (user_id, book_id)
+VALUES (
+        1, (
+            SELECT id
+            FROM book
+        )
+    );
+
+ALTER TABLE book ADD image VARCHAR(145);
