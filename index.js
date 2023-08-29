@@ -1,6 +1,6 @@
 const express = require('express');
 
-const db = require('./services/bookService');
+const bookController = require('./controller/bookController');
 
 start();
 
@@ -9,11 +9,11 @@ async function start() {
 
     app.use(express.json());
 
-    app.get('/books',db.getDate);
-    app.get('/books/:id', db.getDateById);
-    app.post('/books', db.createBook);
-    app.put('/books/:id', db.updateBook);
-    app.delete('/books/:id', db.deleteBook);
+    app.get('/books', bookController.getAllDate);
+    app.get('/books/:id', bookController.getDateById);
+    app.post('/books', bookController.createBook);
+    app.put('/books/:id', bookController.updateBook);
+    app.delete('/books/:id', bookController.deleteBook);
 
     app.listen(3000, () => console.log('Application works'))
 }
