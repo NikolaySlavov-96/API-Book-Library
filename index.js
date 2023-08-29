@@ -1,19 +1,15 @@
 const express = require('express');
 
-const bookController = require('./controller/bookController');
+const useExpress = require('./config/useExpress');
+const router = require('./config/router');
 
 start();
 
 async function start() {
     const app = express();
 
-    app.use(express.json());
-
-    app.get('/books', bookController.getAllDate);
-    app.get('/books/:id', bookController.getDateById);
-    app.post('/books', bookController.createBook);
-    app.put('/books/:id', bookController.updateBook);
-    app.delete('/books/:id', bookController.deleteBook);
+    useExpress(app, express);
+    router(app);
 
     app.listen(3000, () => console.log('Application works'))
 }
