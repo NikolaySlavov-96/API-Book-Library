@@ -11,5 +11,5 @@ async function start() {
     useExpress(app, express);
     router(app);
 
-    app.listen(3000, () => console.log('Application works'))
+    app.listen(3030, () => console.log('Application works'))
 }

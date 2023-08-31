@@ -2,7 +2,6 @@ const { dbConnect } = require("../config/database");
 
 const getAllDate = async (query) => {
     const result = await dbConnect.query(query);
-
     return result;
 }
 
