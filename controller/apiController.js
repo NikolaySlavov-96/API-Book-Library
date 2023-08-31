@@ -2,12 +2,12 @@ const apiService = require('../services/apiService');
 
 
 const getAllDate = async (req, res) => {
-    const query = 'SELECT * FROM book ORDER BY id ASC';
-    console.log(req.params.type)
+    const query = 'SELECT (SELECT COUNT(*) FROM book) as count, (SELECT json_agg(t.*) FROM(SELECT * FROM book OFFSET 10 LIMIT 10) AS t) AS rows';
+
     try {
         const result = await apiService.getAllDate(query, res.body);
-        res.status(200).json({ rows: result.rows, count: result.rowCount });
-        // res.status(200).json(result.rows);
+        const rows = result.rows[0]
+        res.status(200).json({ rows: rows.rows, count: rows.count });
     } catch (err) {
 
     }
@@ -15,7 +15,6 @@ const getAllDate = async (req, res) => {
 
 const getDateById = async (req, res) => {
     const id = parseInt(req.params.id);
-    console.log(req.params);
     const query = 'SELECT * FROM book WHERE id = $1';
 
     try {

@@ -68,3 +68,7 @@ VALUES (
             FROM book
         )
     );
+
+SELECT * FROM book LIMIT 10 OFFSET 20;
+
+SELECT (SELECT COUNT(*) FROM book) as count, (SELECT json_agg(t.*) FROM(SELECT * FROM book OFFSET 10 LIMIT 10) AS t) AS rows;
