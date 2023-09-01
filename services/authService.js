@@ -23,10 +23,10 @@ async function login(query, param, body) {
 
     const existingEmail = await dbConnect.query(query, param);
     
-    if (existingEmail.rows[0].isDelete) {
+    if (existingEmail.isDelete) {
         throw new Error('Profile is delete, contact with administrate');
     }
-    
+
     if (!existingEmail.rows.length) {
         throw new Error('Email or Password is not valit');
     }
