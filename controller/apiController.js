@@ -1,8 +1,11 @@
 const apiService = require('../services/apiService');
 
 const querys = {
-    'bookSelect': ({ offset, limit }) => `SELECT (SELECT COUNT(*) FROM book) as count, (SELECT json_agg(t.*) FROM(SELECT * FROM book OFFSET ${offset} LIMIT ${limit}) AS t) AS rows`,
-    'universalbookSelect': ({ userId, limit, offset, type }) => `SELECT (SELECT COUNT(*) FROM user_book_${type}) as count, (SELECT json_agg(t.*) FROM(SELECT u.email, b.author, b.booktitle FROM account AS u JOIN user_book_${type} AS ubp ON ubp.user_id = u.id JOIN book AS b ON ubp.book_id = b.id WHERE u.id = ${userId} OFFSET ${offset} LIMIT ${limit}) AS t) AS rows`,
+    'Select': {
+        'book': ({ offset, limit }) => `SELECT (SELECT COUNT(*) FROM book) as count, (SELECT json_agg(t.*) FROM(SELECT * FROM book OFFSET ${offset} LIMIT ${limit}) AS t) AS rows`,
+        'universalbook': ({ userId, limit, offset, type }) => `SELECT (SELECT COUNT(*) FROM user_book_${type}) as count, (SELECT json_agg(t.*) FROM(SELECT u.email, b.author, b.booktitle FROM account AS u JOIN user_book_${type} AS ubp ON ubp.user_id = u.id JOIN book AS b ON ubp.book_id = b.id WHERE u.id = ${userId} OFFSET ${offset} LIMIT ${limit}) AS t) AS rows`,
+        'search': ({ offset, limit, search }) => `SELECT (SELECT COUNT(*) FROM book WHERE booktitle LIKE '%${search}%' OR author LIKE '%${search}%' OR genre LIKE '%${search}%') as count, (SELECT json_agg(t.*) FROM(SELECT * FROM book WHERE booktitle LIKE '%${search}%' OR author LIKE '%${search}%' OR genre LIKE '%${search}%' OFFSET ${offset} LIMIT ${limit}) AS t) AS rows`
+    }
 }
 
 
@@ -12,8 +15,9 @@ const getAllDate = async (req, res) => {
     const skipSource = (page - 1) * limit;
     const type = req.params.type;
     let typesQuery = type;
+    const search = req?.query?.search;
 
-    if (type === 'purchase' || type === 'forpurchase' || type === 'read') {
+    if (type === 'purchase' || type === 'forpurchase' || type === 'reading') {
         typesQuery = 'universalbook'
     }
 
@@ -22,10 +26,11 @@ const getAllDate = async (req, res) => {
         limit,
         type,
         userId: req.user.id,
+        search,
     };
 
     try {
-        const result = await apiService.getAllDate(querys[typesQuery + 'Select'](values), res.body);
+        const result = await apiService.getAllDate(querys['Select'][typesQuery](values), res.body);
         const rows = result.rows[0];
 
         res.status(200).json({ rows: rows.rows, count: rows.count });
