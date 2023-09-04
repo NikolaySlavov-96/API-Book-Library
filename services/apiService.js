@@ -5,22 +5,19 @@ const getAllDate = async (query) => {
     return result;
 }
 
-const getDateById = async (query, id) => {
-    const result = await dbConnect.query(query, [id]);
+const getDateById = async (query) => {
+    // const result = await dbConnect.query(query, [id]);
+    const result = await dbConnect.query(query);
     return result;
 }
 
-const create = async (query, body) => {
-    const { author, booktitle } = body;
-
-    const result = await dbConnect.query(query, [author, booktitle]);
+const create = async (query, array) => {
+    const result = await dbConnect.query(query, array);
     return result;
 }
 
-const update = async (query, id, body) => {
-    const { author, booktitle } = body;
-
-    const result = await dbConnect.query(query, [author, booktitle, id]);
+const update = async (query) => {
+    const result = await dbConnect.query(query);
     return result
 }
 
