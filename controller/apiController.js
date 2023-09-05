@@ -6,15 +6,15 @@ const querys = {
         'universalbook': ({ userId, limit, offset, type }) => `SELECT (SELECT COUNT(*) FROM user_book_${type}) as count, (SELECT json_agg(t.*) FROM(SELECT u.email, b.author, b.booktitle FROM account AS u JOIN user_book_${type} AS ubp ON ubp.user_id = u.id JOIN book AS b ON ubp.book_id = b.id WHERE u.id = ${userId} AND ubp.isdelete = false OFFSET ${offset} LIMIT ${limit}) AS t) AS rows`,
         'search': ({ offset, limit, search }) => `SELECT (SELECT COUNT(*) FROM book WHERE booktitle LIKE '%${search}%' OR author LIKE '%${search}%' OR genre LIKE '%${search}%') as count, (SELECT json_agg(t.*) FROM(SELECT * FROM book WHERE booktitle LIKE '%${search}%' OR author LIKE '%${search}%' OR genre LIKE '%${search}%' OFFSET ${offset} LIMIT ${limit}) AS t) AS rows`,
         'bookid': ({ id }) => `SELECT * FROM book WHERE id = ${id}`,
-        'forpurchase': ({ user_id, book_id }) => `SELECT * FROM user_book_forpurchase WHERE user_id = ${user_id} AND book_id = ${book_id}`,
+        'un_purchase_read': ({ user_id, book_id, type }) => `SELECT * FROM user_book_${type} WHERE user_id = ${user_id} AND book_id = ${book_id}`,
     },
     'Insert': {
         'book': () => `INSERT INTO book (author, booktitle) VALUES ($1, $2) RETURNING *`,
-        'forpurchase': () => `INSERT INTO user_book_forpurchase (user_id, book_id) VALUES ($1, $2) RETURNING *`
+        'un_purchase_read': ({ type }) => `INSERT INTO user_book_${type} (user_id, book_id) VALUES ($1, $2) RETURNING *`
     },
     'Update': {
         'book': ({ author, booktitle, id }) => `UPDATE book SET author = ${author}, booktitle = ${booktitle} WHERE id = ${id} RETURNING *`,
-        'forpurchase': ({ user_id, book_id, condition }) => `UPDATE user_book_forpurchase SET isdelete = ${!condition} WHERE user_id = ${user_id} AND book_id = ${book_id} RETURNING *`,
+        'un_purchase_read': ({ user_id, book_id, condition, type }) => `UPDATE user_book_${type} SET isdelete = ${!condition} WHERE user_id = ${user_id} AND book_id = ${book_id} RETURNING *`,
     }
 }
 
@@ -68,17 +68,23 @@ const createBook = async (req, res) => {
 
     const array = {
         'book': [author, booktitle],
+        'un_purchase_read': [user_id, book_id],
     }
 
     try {
-        const verify = type !== 'book' && await apiService.getDateById(querys['Select'][type]({ user_id, book_id }));
+        let typesQuery = type;
+        if (type === 'purchase' || type === 'forpurchase' || type === 'reading') {
+            typesQuery = 'un_purchase_read'
+        }
+        const verify = type !== 'book' && await apiService.getDateById(querys['Select'][typesQuery]({ user_id, book_id, type }));
         if (verify?.rows?.length) {
             const condition = verify.rows[0].isdelete;
-            const resulst = await apiService.update(querys['Update'][type]({ user_id, book_id, condition }));
+            const resulst = await apiService.update(querys['Update'][typesQuery]({ user_id, book_id, condition, type }));
             res.status(201).json(resulst.rows[0]);
+            return
         }
 
-        const result = await apiService.create(querys['Insert'][type](), array[type]);
+        const result = await apiService.create(querys['Insert'][typesQuery]({ type }), array[typesQuery]);
         res.status(201).json(result.rows[0]);
     } catch (err) {
         console.log(err);
