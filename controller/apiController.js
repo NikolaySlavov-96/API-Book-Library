@@ -2,7 +2,7 @@ const apiService = require('../services/apiService');
 
 const querys = {
     'Select': {
-        'book': ({ offset, limit }) => `SELECT (SELECT COUNT(*) FROM book) as count, (SELECT json_agg(t.*) FROM(SELECT * FROM book OFFSET ${offset} LIMIT ${limit}) AS t) AS rows`,
+        'book': ({ offset, limit }) => `SELECT (SELECT COUNT(*) FROM book) as count, (SELECT json_agg(t.*) FROM(SELECT * FROM book ORDER BY id OFFSET ${offset} LIMIT ${limit}) AS t) AS rows`,
         'universalbook': ({ userId, limit, offset, type }) => `SELECT (SELECT COUNT(*) FROM user_book_${type}) as count, (SELECT json_agg(t.*) FROM(SELECT u.email, b.author, b.booktitle FROM account AS u JOIN user_book_${type} AS ubp ON ubp.user_id = u.id JOIN book AS b ON ubp.book_id = b.id WHERE u.id = ${userId} AND ubp.isdelete = false OFFSET ${offset} LIMIT ${limit}) AS t) AS rows`,
         'search': ({ offset, limit, search }) => `SELECT (SELECT COUNT(*) FROM book WHERE booktitle LIKE '%${search}%' OR author LIKE '%${search}%' OR genre LIKE '%${search}%') as count, (SELECT json_agg(t.*) FROM(SELECT * FROM book WHERE booktitle LIKE '%${search}%' OR author LIKE '%${search}%' OR genre LIKE '%${search}%' OFFSET ${offset} LIMIT ${limit}) AS t) AS rows`,
         'bookid': ({ id }) => `SELECT * FROM book WHERE id = ${id}`,
