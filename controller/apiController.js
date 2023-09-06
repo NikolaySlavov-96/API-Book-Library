@@ -35,7 +35,7 @@ const getAllDate = async (req, res) => {
         offset: skipSource,
         limit,
         type,
-        userId: req.user.id,
+        userId: req?.user?.id,
         search,
     };
 
