@@ -4,27 +4,27 @@ const apiController = require('../controller/apiController');
 const { hasUser } = require('../middleware/guards');
 
 
-book.get('/:type/',
+withUser.get('/:type/',
     hasUser(),
     apiController.getAllDate
 );
 
-book.get('/:type/:id',
+withUser.get('/:type/:id',
     hasUser(),
     apiController.getDateById
 );
 
-book.post('/:type',
+withUser.post('/:type',
     hasUser(),
     apiController.createBook
 );
 
-book.put('/:type/:id',
+withUser.put('/:type/:id',
     hasUser(),
     apiController.updateBook
 );
 
-book.delete('/:type/:id',
+withUser.delete('/:type/:id',
     hasUser(),
     apiController.deleteBook
 );
