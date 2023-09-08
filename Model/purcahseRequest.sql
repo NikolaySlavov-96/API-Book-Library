@@ -1,16 +1,12 @@
-CREATE DATABASE booklibrary;
-
 CREATE TABLE
     user_book_purchase (
         user_id INT NOT NULL,
         book_id INT NOT NULL,
         isDelete BOOLEAN DEFAULT false,
         CONSTRAINT pk_user_book PRIMARY KEY (user_id, book_id),
-        CONSTRAINT fk_user_book FOREIGN KEY (user_id) REFERENCES account (id),
-        CONSTRAINT fk_user_book_book FOREIGN KEY (book_id) REFERENCES book (id)
+        CONSTRAINT fk_user_book_purchase_user FOREIGN KEY (user_id) REFERENCES account (id),
+        CONSTRAINT fk_user_book_purchase_book FOREIGN KEY (book_id) REFERENCES book (id)
     );
-
-INSERT INTO user_book_purchase (user_id, book_id) VALUES (1, 10);
 
 SELECT
     u.email,

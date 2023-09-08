@@ -1,5 +1,3 @@
-CREATE DATABASE booklibrary;
-
 CREATE TABLE
     'account' (
         ID SERIAL PRIMARY KEY,
