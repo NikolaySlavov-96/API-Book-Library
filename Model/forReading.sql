@@ -2,6 +2,7 @@ CREATE TABLE
     user_book_forreading (
         user_id INT NOT NULL,
         book_id INT NOT NULL,
+        isDelete BOOLEAN DEFAULT false,
         CONSTRAINT pk_user PRIMARY KEY (user_id),
         CONSTRAINT fk_user_book_forreading_user FOREIGN KEY (user_id) REFERENCES account (id),
         CONSTRAINT fk_user_book_book_forreading_book FOREIGN KEY (book_id) REFERENCES book (id)
