@@ -1,4 +1,5 @@
 const apiService = require('../services/apiService');
+const { errorParser } = require('../util/parser');
 
 const querys = {
     'Select': {
@@ -45,7 +46,9 @@ const getAllDate = async (req, res) => {
 
         res.status(200).json({ rows: rows.rows, count: rows.count });
     } catch (err) {
-
+        console.log(err);
+        const message = errorParser(err);
+        res.status(401).json({ message })
     }
 }
 
@@ -57,7 +60,9 @@ const getDateById = async (req, res) => {
         const result = await apiService.getDateById(querys['Select']['bookid']({ id }));
         res.status(200).json(result.rows);
     } catch (err) {
-
+        console.log(err);
+        const message = errorParser(err);
+        res.status(401).json({ message })
     }
 }
 
@@ -73,7 +78,7 @@ const createBook = async (req, res) => {
 
     try {
         let typesQuery = type;
-        if (type === 'purchase' || type === 'forpurchase' || type === 'reading') {
+        if (type === 'purchase' || type === 'forpurchase' || type === 'reading', type === 'forreading') {
             typesQuery = 'un_purchase_read'
         }
         const verify = type !== 'book' && await apiService.getDateById(querys['Select'][typesQuery]({ user_id, book_id, type }));
@@ -88,6 +93,8 @@ const createBook = async (req, res) => {
         res.status(201).json(result.rows[0]);
     } catch (err) {
         console.log(err);
+        const message = errorParser(err);
+        res.status(401).json({ message })
     }
 }
 
@@ -100,10 +107,11 @@ const updateBook = async (req, res) => {
         const result = await apiService.update(querys['Update'][type]({ author, booktitle, id }));
         res.status(200).send(result.rows[0]);
     } catch (err) {
-
+        console.log(err);
+        const message = errorParser(err);
+        res.status(401).json({ message })
     }
 }
-
 
 const deleteBook = async (req, res) => {
     const id = parseInt(req.params.id);
@@ -113,7 +121,9 @@ const deleteBook = async (req, res) => {
         const result = await apiService.remove(query, id);
         res.status(200).send(`Book delete with ID: ${id}`);
     } catch (err) {
-
+        console.log(err);
+        const message = errorParser(err);
+        res.status(401).json({ message })
     }
 }
 
