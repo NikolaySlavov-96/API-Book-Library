@@ -28,7 +28,7 @@ const getAllDate = async (req, res) => {
     let typesQuery = type;
     const search = req?.query?.search;
 
-    if (type === 'purchase' || type === 'forpurchase' || type === 'reading', type === 'forreading') {
+    if (type === 'purchase' || type === 'forpurchase' || type === 'reading' || type === 'forreading') {
         typesQuery = 'universalbook'
     }
 
