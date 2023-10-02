@@ -2,8 +2,10 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { dbConnect } = require('../config/database');
 
-// const JWT_Secret = process.env.JWT_SECRES;
-const JWT_Secret = '2222334';
+require('dotenv').config();
+
+const JWT_Secret = process.env.JWT_SECRES;
+// const JWT_Secret = '2222334';
 
 // change password
 // BlackListTokenModel

@@ -1,11 +1,13 @@
+require('dotenv').config();
 const db = require('pg').Pool;
 
+
 const dbConnect = new db({
-    user: 'postgres',
-    host: '192.168.88.51',
-    database: 'booklibrary',
-    password: '5566',
-    port: '5433'
+    user: process.env.DB_USER,
+    host: process.env.DB_ADDRESS,
+    database: process.env.DB_NAME,
+    password: process.env.DB_PASSWORD,
+    port: process.env.DB_PORT
 });
 
 module.exports = { dbConnect };
