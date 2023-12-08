@@ -1,7 +1,7 @@
 INSERT INTO book (author, booktitle, image, genre) VALUES ('Ашли Ванс','Илън Мъск','','');
 INSERT INTO book (author, booktitle, image, genre) VALUES ('Лабиринт','Мей Мъск','','');
 INSERT INTO book (author, booktitle, image, genre) VALUES ('Брайън Джоунс','Джордж Лукас','','');
-INSERT INTO book (author, booktitle, image, genre) VALUES ('Шонън Лий','Бъди Вода, Проятелю','','');
+INSERT INTO book (author, booktitle, image, genre) VALUES ('Шонън Лий','Бъди Вода, Приятелю','','');
 INSERT INTO book (author, booktitle, image, genre) VALUES ('Петер Молин & Петер Нистрьом','Списъкър','','');
 INSERT INTO book (author, booktitle, image, genre) VALUES ('Фил Кинг','Изкуството на Победата','','');
 INSERT INTO book (author, booktitle, image, genre) VALUES ('Питър Тийл','От Нула До Едно','','');
@@ -137,3 +137,12 @@ INSERT INTO book (author, booktitle, image, genre) VALUES ('','The Courage to Su
 INSERT INTO book (author, booktitle, image, genre) VALUES ('','Човек на почит','','');
 INSERT INTO book (author, booktitle, image, genre) VALUES ('','Специалист от Сицилия','','');
 INSERT INTO book (author, booktitle, image, genre) VALUES ('null','Как да манипулираме хората','','');
+INSERT INTO book (author, booktitle, image, genre) VALUES ('','Произходът','','');
+INSERT INTO book (author, booktitle, image, genre) VALUES ('','Кажи на живота "ДА"','','');
+INSERT INTO book (author, booktitle, image, genre) VALUES ('Арън Т. Бек, Артър Фрийман','Когнитивна терапия на личностните разстройства','','');
+INSERT INTO book (author, booktitle, image, genre) VALUES ('','Чужденецът','','');
+INSERT INTO book (author, booktitle, image, genre) VALUES ('','Изгнанието и царството','','');
+INSERT INTO book (author, booktitle, image, genre) VALUES ('','Пропадане','','');
+INSERT INTO book (author, booktitle, image, genre) VALUES ('','Чумата','','');
+INSERT INTO book (author, booktitle, image, genre) VALUES ('','Митър за Сизиф','','');
+INSERT INTO book (author, booktitle, image, genre) VALUES ('','','','');
