@@ -1,9 +1,10 @@
-const { DataTypes } = require('sequelize');
+const { DataTypes, Op } = require('sequelize');
 const { sequelize } = require('../config/database');
 
 const Book = sequelize.define("book", {
     author: {
-        type: DataTypes.STRING(60),
+        type: DataTypes.STRING(60), // TO DO moved in new table
+        unique: true,
     },
     booktitle: {
         type: DataTypes.STRING(40),
@@ -25,5 +26,6 @@ sequelize.sync().then(() => {
 
 module.exports = {
     sequelize,
+    Op,
     Book,
 }
