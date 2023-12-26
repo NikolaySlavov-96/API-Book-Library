@@ -9,7 +9,6 @@ const getAllDate = async (query, type, search) => {
     type && (query.where = {
         [Op.or]: [{ booktitle: { [typeOf[type]]: search } }, { author: { [typeOf[type]]: search } }, { genre: { [typeOf[type]]: search } }]
     })
-    // return Book.findAll({});
     return Book.findAndCountAll(query);
 }
 
@@ -18,13 +17,11 @@ const getDateById = async (id) => {
 }
 
 const create = async (query) => {
-    /*
-    const isBook = await Book.findOne({ where: { email: email } });
+    const isBook = await Book.findOne({ where: { booktitle: query.booktitle } });
 
     if (isBook) {
-        throw new Error('Book is created befor');
+        throw new Error('Book is created before');
     }
-    */
     const createEmail = await Book.create(query);
 
     return createEmail;
