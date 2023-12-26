@@ -22,9 +22,9 @@ const create = async (query) => {
     if (isBook) {
         throw new Error('Book is created before');
     }
-    const createEmail = await Book.create(query);
+    const createBook = await Book.create(query);
 
-    return createEmail;
+    return createBook;
 }
 
 const update = async ({ author, booktitle, id }) => {
