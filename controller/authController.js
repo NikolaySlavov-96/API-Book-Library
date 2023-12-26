@@ -14,17 +14,7 @@ const createUser = async (req, res) => {
         if (body.password !== body.rePassword) {
             throw new Error('Password not\t match');
         }
-        const { email, password, year } = body;
-
-        const param = {
-            check: [email],
-            register: [email, password, year]
-        };
-        const query = {
-            check: 'SELECT email FROM account WHERE email = $1',
-            register: `INSERT INTO account (email, password, year) VALUES ($1, $2, $3) RETURNING *;`
-        }
-        const token = await register(query, param);
+        const token = await register(body);
         res.json(token);
     } catch (err) {
         const message = errorParser(err);
@@ -38,10 +28,7 @@ const getUser = async (req, res) => {
         if (errors.length > 0) {
             throw errors
         }
-        const { email } = req.body;
-        const param = [email];
-        const query = 'SELECT email, password, id, year FROM account WHERE email = $1';
-        const token = await login(query, param, req.body);
+        const token = await login(req.body);
         res.json(token);
     } catch (err) {
         const message = errorParser(err);
@@ -61,11 +48,9 @@ const exitUset = async (req, res) => {
 
 const checkFields = async (req, res) => {
     const { email } = req.query;
-    const value = Object.keys(req.query)[0]
-    const query = `SELECT COUNT(email) FROM account WHERE ${value} = $1`;
     try {
-        const result = await checkFieldInDB(query, [email]);
-        res.json(result.rows[0].count);
+        const result = await checkFieldInDB(email);
+        res.json(result);
     } catch (err) {
         const message = errorParser(err);
         res.status(400).json({ message });

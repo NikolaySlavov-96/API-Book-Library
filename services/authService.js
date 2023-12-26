@@ -1,45 +1,51 @@
+require('dotenv').config();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { dbConnect } = require('../config/database');
+const { User } = require('../Model/UserModel');
 
-require('dotenv').config();
 
 const JWT_Secret = process.env.JWT_SECRES;
-// const JWT_Secret = '2222334';
 
 // change password
 // BlackListTokenModel
 
-async function register(query, param) {
-    const existingEmail = await dbConnect.query(query.check, param.check)
-    if (existingEmail.rows.length) {
+async function register(query) {
+    const existingEmail = await User.findOne({ where: { email: query.email } });
+
+    if (existingEmail) {
         throw new Error('Email is taken');
     }
-    const hashedPassword = await hashPassword(param.register[1])
-    param.register[1] = hashedPassword;
-    const result = await dbConnect.query(query.register, param.register);
-    return createTokent(result.rows[0]);
+    const hashedPassword = await hashPassword(query.password);
+
+    const result = await User.create({
+        email: query.email,
+        password: hashedPassword,
+        year: query.year,
+    });
+    return createTokent(JSON.stringify(result, null, 4));
 }
 
-async function login(query, param, body) {
+async function login(body) {
 
-    const existingEmail = await dbConnect.query(query, param);
+    // const existingEmail = await dbConnect.query(query, param);
+    const existingEmail = await User.findOne({ where: { email: body.email } })
     
-    if (existingEmail.isDelete) {
+    if (!existingEmail) {
+        throw new Error('Email or Password is not valit');
+    }
+    const string = existingEmail
+    if (string.isDelete) {
         throw new Error('Profile is delete, contact with administrate');
     }
 
-    if (!existingEmail.rows.length) {
-        throw new Error('Email or Password is not valit');
-    }
-    
     const { stayLogin, password } = body;
-    const matchPassword = await bcrypt.compare(password, existingEmail.rows[0].password);
+    const matchPassword = await bcrypt.compare(password, string.password);
 
     if (!matchPassword) {
         throw new Error('Email or Password is not valit')
     }
-    return createTokent(existingEmail.rows[0], stayLogin);
+
+    return createTokent(string, stayLogin);
 }
 
 async function logout(token) {
@@ -74,9 +80,9 @@ async function verificationToken(token) {
     return jwt.verify(token, JWT_Secret);
 }
 
-async function checkFieldInDB(query, param) {
-    const isUsing = await dbConnect.query(query, param);
-    return isUsing;
+async function checkFieldInDB(email) {
+    const existingEmail = await User.findAndCountAll({ where: { email } });
+    return existingEmail.rows.length ? true : false;
 }
 
 const hashPassword = async (password) => await bcrypt.hash(password, 10);
