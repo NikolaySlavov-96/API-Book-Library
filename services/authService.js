@@ -10,6 +10,7 @@ const JWT_Secret = process.env.JWT_SECRES;
 // BlackListTokenModel
 
 async function register(query) {
+    query.email = query.email.toLowerCase();
     const existingEmail = await User.findOne({ where: { email: query.email } });
 
     if (existingEmail) {
