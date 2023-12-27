@@ -20,16 +20,15 @@ const getDateById = async (id) => {
 const create = async (query) => {
 
     const type = query.type;
-    let typeInput = query.type;
-    // if (type === 'purchase' || type === 'forpurchase' || type === 'reading', type === 'forreading') {
-    if (type === 'purchase') {
+    let typeInput;
+    if (type === 'purchase' || type === 'forpurchase' || type === 'reading' || type === 'forreading') {
         typeInput = 'bookState'
     }
 
     const typeOfColletion = {
         'verify': {
             'book': ({ booktitle }) => Book.findOne({ where: { booktitle } }),
-            'bookState': ({ user_id, book_id }) => BookState.findOne({ where: { book_id } }), // To Do adding and book_id
+            'bookState': ({ user_id, book_id }) => BookState.findOne({ where: { book_id, user_id, isDelete: false } }), // To Do adding and book_id
         },
         'create': {
             'book': ({ booktitle, author }) => Book.create({ booktitle, author }),
@@ -38,12 +37,16 @@ const create = async (query) => {
     }
 
     const isBook = await typeOfColletion['verify'][typeInput](query)
-
-    if (isBook) {
+    if (isBook && type === 'book') {
         throw new Error('Book is added before');
     }
-    const create = await typeOfColletion['create'][typeInput](query);
 
+    if (isBook && typeInput === 'bookState' && type !== 'book') {
+        isBook.book_state = type;
+        return await isBook.save();
+    }
+
+    const create = await typeOfColletion['create'][typeInput](query);
     return create;
 }
 
