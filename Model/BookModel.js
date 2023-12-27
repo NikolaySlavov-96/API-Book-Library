@@ -8,7 +8,13 @@ const Book = sequelize.define("book", {
         autoIncrement: true,
     },
     author: {
-        type: DataTypes.STRING(60), // TO DO moved in new table
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: "books",
+            key: "id",
+        },
+        onDelete: "CASCADE"
     },
     booktitle: {
         type: DataTypes.STRING(40),
