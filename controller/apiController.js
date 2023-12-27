@@ -68,25 +68,8 @@ const createBook = async (req, res) => {
     const user_id = req.user.id;
     const { author, booktitle, book_id } = req.body;
 
-    // const array = {
-    //     'book': [author, booktitle],
-    //     // 'un_purchase_read': [user_id, book_id],
-    // }
-
     try {
-        let typesQuery = type;
-        // if (type === 'purchase' || type === 'forpurchase' || type === 'reading', type === 'forreading') {
-        //     typesQuery = 'un_purchase_read'
-        // }
-        // const verify = type !== 'book' && await apiService.getDateById(querys['Select'][typesQuery]({ user_id, book_id, type }));
-        // if (verify?.rows?.length) {
-        //     const condition = verify.rows[0].isdelete;
-        //     const resulst = await apiService.update(querys['Update'][typesQuery]({ user_id, book_id, condition, type }));
-        //     res.status(201).json(resulst.rows[0]);
-        //     return
-        // }
-
-        const result = await apiService.create({ author, booktitle });
+        const result = await apiService.create({ author, booktitle, user_id, book_id, type });
         res.status(201).json(JSON.stringify(result, null, 4));
     } catch (err) {
         console.log(err);

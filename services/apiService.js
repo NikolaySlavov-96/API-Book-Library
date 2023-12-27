@@ -1,4 +1,5 @@
 const { Book, Op } = require('../Model/BookModel');
+const { BookState } = require('../Model/BookStateModel');
 
 const getAllDate = async (query, type, search) => {
 
@@ -17,14 +18,33 @@ const getDateById = async (id) => {
 }
 
 const create = async (query) => {
-    const isBook = await Book.findOne({ where: { booktitle: query.booktitle } });
+
+    const type = query.type;
+    let typeInput = query.type;
+    // if (type === 'purchase' || type === 'forpurchase' || type === 'reading', type === 'forreading') {
+    if (type === 'purchase') {
+        typeInput = 'bookState'
+    }
+
+    const typeOfColletion = {
+        'verify': {
+            'book': ({ booktitle }) => Book.findOne({ where: { booktitle } }),
+            'bookState': ({ user_id, book_id }) => BookState.findOne({ where: { book_id } }), // To Do adding and book_id
+        },
+        'create': {
+            'book': ({ booktitle, author }) => Book.create({ booktitle, author }),
+            'bookState': ({ user_id, book_id, type }) => BookState.create({ user_id, book_id, book_state: type }),
+        }
+    }
+
+    const isBook = await typeOfColletion['verify'][typeInput](query)
 
     if (isBook) {
-        throw new Error('Book is created before');
+        throw new Error('Book is added before');
     }
-    const createBook = await Book.create(query);
+    const create = await typeOfColletion['create'][typeInput](query);
 
-    return createBook;
+    return create;
 }
 
 const update = async ({ author, booktitle, id }) => {
