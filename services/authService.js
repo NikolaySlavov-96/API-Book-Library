@@ -27,8 +27,6 @@ async function register(query) {
 }
 
 async function login(body) {
-
-    // const existingEmail = await dbConnect.query(query, param);
     const existingEmail = await User.findOne({ where: { email: body.email } })
     
     if (!existingEmail) {
