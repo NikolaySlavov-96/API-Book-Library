@@ -1,19 +1,6 @@
 const apiService = require('../services/apiService');
 const { errorParser } = require('../util/parser');
 
-const querys = {
-    'Select': {
-        'universalbook': ({ userId, limit, offset, type }) => `SELECT (SELECT COUNT(*) FROM user_book_${type} WHERE user_id=${userId}) as count, (SELECT json_agg(t.*) FROM(SELECT u.email, b.author, b.booktitle, b.id FROM account AS u JOIN user_book_${type} AS ubp ON ubp.user_id = u.id JOIN book AS b ON ubp.book_id = b.id WHERE u.id = ${userId} AND ubp.isdelete = false OFFSET ${offset} LIMIT ${limit}) AS t) AS rows`,
-        'un_purchase_read': ({ user_id, book_id, type }) => `SELECT * FROM user_book_${type} WHERE user_id = ${user_id} AND book_id = ${book_id}`,
-    },
-    'Insert': {
-        'un_purchase_read': ({ type }) => `INSERT INTO user_book_${type} (user_id, book_id) VALUES ($1, $2) RETURNING *`
-    },
-    'Update': {
-        'un_purchase_read': ({ user_id, book_id, condition, type }) => `UPDATE user_book_${type} SET isdelete = ${!condition} WHERE user_id = ${user_id} AND book_id = ${book_id} RETURNING *`,
-    }
-}
-
 
 const getAllDate = async (req, res) => {
     const page = parseInt(req?.query?.page) || 1;
@@ -21,31 +8,23 @@ const getAllDate = async (req, res) => {
     const skipSource = (page - 1) * limit;
     const type = req.params.type;
     let typesQuery = type;
-    const search = `%${req?.query?.search}%`;
+    const search = req.query.search && `%${req?.query?.search}%`;
+    const user_id = req?.user?.id;
 
     if (type === 'purchase' || type === 'forpurchase' || type === 'reading' || type === 'forreading') {
-        typesQuery = 'universalbook'
+        typesQuery = 'bookState'
     }
-    /*
-        const values = {
-            offset: skipSource,
-            limit,
-            type,
-            userId: req?.user?.id,
-            search,
-        };
-    */
 
     const data = {
-        'book': { offset: skipSource, limit },
-        'search': { offset: skipSource, limit },
+        'book': { offset: skipSource, limit, typesQuery },
+        'search': { offset: skipSource, limit, typesQuery },
+        'bookState': { offset: skipSource, limit, typesQuery, type, user_id }
     }
+
     try {
-        // console.log(querys['Select'][typesQuery](values))
-        const result = await apiService.getAllDate(data[typesQuery], 'Op.like', search);
+        const result = await apiService.getAllDate(data[typesQuery], search && 'Op.like', search);
         res.status(200).json(result);
     } catch (err) {
-        console.log(err);
         const message = errorParser(err);
         res.status(401).json({ message })
     }
@@ -72,7 +51,6 @@ const createBook = async (req, res) => {
         const result = await apiService.create({ author, booktitle, user_id, book_id, type });
         res.status(201).json(JSON.stringify(result, null, 4));
     } catch (err) {
-        console.log(err);
         const message = errorParser(err);
         res.status(401).json({ message })
     }
@@ -87,7 +65,6 @@ const updateBook = async (req, res) => {
         const result = await apiService.update({ author, booktitle, id });
         res.status(200).send(result);
     } catch (err) {
-        console.log(err);
         const message = errorParser(err);
         res.status(401).json({ message })
     }

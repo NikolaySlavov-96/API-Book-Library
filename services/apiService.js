@@ -2,15 +2,20 @@ const { Book, Op } = require('../Model/BookModel');
 const { BookState } = require('../Model/BookStateModel');
 
 const getAllDate = async (query, type, search) => {
-
+    const typeOfColletion = {
+        'book': ({ offset, limit }) => Book.findAndCountAll({ offset, limit }),
+        'search': ({ offset, limit }) => Book.findAndCountAll({ offset, limit }),
+        'bookState': ({ offset, limit, type, user_id }) => BookState.findAndCountAll({ offset, limit, where: { book_state: type, user_id } }),
+    }
     const typeOf = {
         'Op.like': Op.like,
     }
 
     type && (query.where = {
-        [Op.or]: [{ booktitle: { [typeOf[type]]: search } }, { author: { [typeOf[type]]: search } }, { genre: { [typeOf[type]]: search } }]
+        [Op.or]: [{ booktitle: { [typeOf[type]]: search } }, { author: { [typeOf[type]]: search } }, { genre: { [typeOf[type]]: search } }],
+
     })
-    return Book.findAndCountAll(query);
+    return typeOfColletion[query.typesQuery](query);
 }
 
 const getDateById = async (id) => {
@@ -20,7 +25,7 @@ const getDateById = async (id) => {
 const create = async (query) => {
 
     const type = query.type;
-    let typeInput;
+    let typeInput = query.type;
     if (type === 'purchase' || type === 'forpurchase' || type === 'reading' || type === 'forreading') {
         typeInput = 'bookState'
     }
