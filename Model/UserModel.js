@@ -2,6 +2,11 @@ const { DataTypes, Op } = require('sequelize');
 const { sequelize } = require('../config/database');
 
 const User = sequelize.define("user", {
+    id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+    },
     email: {
         type: DataTypes.STRING(80),
         unique: true,

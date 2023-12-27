@@ -2,6 +2,11 @@ const { DataTypes, Op } = require('sequelize');
 const { sequelize } = require('../config/database');
 
 const Book = sequelize.define("book", {
+    id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+    },
     author: {
         type: DataTypes.STRING(60), // TO DO moved in new table
     },
