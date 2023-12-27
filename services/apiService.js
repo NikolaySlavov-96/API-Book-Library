@@ -1,3 +1,4 @@
+const { Author } = require('../Model/AuthorMode');
 const { Book, Op } = require('../Model/BookModel');
 const { BookState } = require('../Model/BookStateModel');
 
@@ -46,11 +47,20 @@ const create = async (query) => {
         throw new Error('Book is added before');
     }
 
+    if (!isBook && type === 'book') {
+        const isAuthor = await Author.findOne({ where: { name: query.author } })
+
+        if (!isAuthor) {
+            const createAuthor = await Author.create({ name: query.author });
+            query.author = createAuthor.dataValues.id;
+        }
+        isAuthor && (query.author = isAuthor.dataValues.id);
+    }
+
     if (isBook && typeInput === 'bookState' && type !== 'book') {
         isBook.book_state = type;
         return await isBook.save();
     }
-
     const create = await typeOfColletion['create'][typeInput](query);
     return create;
 }
