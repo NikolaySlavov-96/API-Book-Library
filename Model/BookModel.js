@@ -1,5 +1,6 @@
 const { DataTypes, Op } = require('sequelize');
 const { sequelize } = require('../config/database');
+const { Author } = require('./AuthorMode');
 
 const Book = sequelize.define("book", {
     id: {
@@ -7,14 +8,9 @@ const Book = sequelize.define("book", {
         primaryKey: true,
         autoIncrement: true,
     },
-    author: {
+    author_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        references: {
-            model: "books",
-            key: "id",
-        },
-        onDelete: "CASCADE"
     },
     booktitle: {
         type: DataTypes.STRING(40),
@@ -39,6 +35,8 @@ const Book = sequelize.define("book", {
     ],
 }
 );
+
+Book.belongsTo(Author, { foreignKey: 'author_id' });
 
 sequelize.sync().then(() => {
     console.log('Book table created successfully!');
