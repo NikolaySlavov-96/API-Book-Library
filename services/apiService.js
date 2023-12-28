@@ -1,10 +1,18 @@
-const { Author } = require('../Model/AuthorMode');
 const { Book, Op } = require('../Model/BookModel');
 const { BookState } = require('../Model/BookStateModel');
+const { Author } = require('../Model/AuthorMode');
 
 const getAllDate = async (query, type, search) => {
     const typeOfColletion = {
-        'book': ({ offset, limit }) => Book.findAndCountAll({ offset, limit }),
+        'book': ({ offset, limit }) => Book.findAndCountAll({
+            include: [{
+                model: Author,
+                required: false,
+                attributes: ['name', 'image', 'genre', 'isVerify']
+            }],
+            attributes: ['id', 'booktitle', 'image', 'genre', 'isVerify'],
+            offset, limit
+        }),
         'search': ({ offset, limit }) => Book.findAndCountAll({ offset, limit }),
         'bookState': ({ offset, limit, type, user_id }) => BookState.findAndCountAll({ offset, limit, where: { book_state: type, user_id } }),
     }
@@ -13,14 +21,19 @@ const getAllDate = async (query, type, search) => {
     }
 
     type && (query.where = {
-        [Op.or]: [{ booktitle: { [typeOf[type]]: search } }, { author: { [typeOf[type]]: search } }, { genre: { [typeOf[type]]: search } }],
+        //{ authorName: { [typeOf[type]]: search } } To Do creating JOIN
+        [Op.or]: [{ booktitle: { [typeOf[type]]: search } }, { genre: { [typeOf[type]]: search } }],
 
     })
     return typeOfColletion[query.typesQuery](query);
 }
 
 const getDateById = async (id) => {
-    return Book.findByPk(id)
+    return Book.findByPk(id, {
+        include: [
+            { model: Author, attributes: ['name', 'image', 'genre', 'isVerify'], required: false }
+        ],
+    })
 }
 
 const create = async (query) => {
@@ -37,7 +50,7 @@ const create = async (query) => {
             'bookState': ({ user_id, book_id }) => BookState.findOne({ where: { book_id, user_id, isDelete: false } }), // To Do adding and book_id
         },
         'create': {
-            'book': ({ booktitle, author }) => Book.create({ booktitle, author }),
+            'book': ({ booktitle, author }) => Book.create({ booktitle, author_id: author }),
             'bookState': ({ user_id, book_id, type }) => BookState.create({ user_id, book_id, book_state: type }),
         }
     }
@@ -52,9 +65,9 @@ const create = async (query) => {
 
         if (!isAuthor) {
             const createAuthor = await Author.create({ name: query.author });
-            query.author = createAuthor.dataValues.id;
+            query.author = createAuthor.dataValues.author_id;
         }
-        isAuthor && (query.author = isAuthor.dataValues.id);
+        isAuthor && (query.author = isAuthor.dataValues.author_id);
     }
 
     if (isBook && typeInput === 'bookState' && type !== 'book') {
@@ -68,7 +81,7 @@ const create = async (query) => {
 const update = async ({ author, booktitle, id }) => {
     const data = await Book.findByPk(id)
 
-    data.author = author;
+    // data.authorName = author;
     data.booktitle = booktitle;
     const result = await data.save();
     return result
