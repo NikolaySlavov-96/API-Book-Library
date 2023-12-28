@@ -2,7 +2,7 @@ const { DataTypes, Op } = require('sequelize');
 const { sequelize } = require('../config/database');
 
 const Author = sequelize.define("author", {
-    id: {
+    author_id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
@@ -22,23 +22,6 @@ const Author = sequelize.define("author", {
         defaultValue: false,
     }
 });
-
-
-/*
-sequelize.define('foo', {
-    name: DataTypes.STRING,
-    barId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: "bars",
-        key: "id"
-      },
-      onDelete: "CASCADE"
-    },
-  });
-*/
-
 
 sequelize.sync().then(() => {
     console.log('Author table created successfully!');
