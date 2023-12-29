@@ -1,5 +1,7 @@
 const { DataTypes, Op } = require('sequelize');
 const { sequelize } = require('../config/database');
+const { Book } = require('./BookModel');
+const { User } = require('./UserModel');
 
 const BookState = sequelize.define("bookstate", {
     user_id: {
@@ -29,6 +31,9 @@ const BookState = sequelize.define("bookstate", {
         defaultValue: false,
     }
 });
+
+BookState.belongsTo(Book, { foreignKey: 'id' });
+BookState.belongsTo(User, { foreignKey: 'id' });
 
 sequelize.sync().then(() => {
     console.log('BookState table created successfully!');
