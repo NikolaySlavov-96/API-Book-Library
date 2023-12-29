@@ -1,6 +1,7 @@
 const { Book, Op } = require('../Model/BookModel');
 const { BookState } = require('../Model/BookStateModel');
 const { Author } = require('../Model/AuthorMode');
+const { User } = require('../Model/UserModel');
 
 const getAllDate = async (query, type, search) => {
     const typeOfColletion = {
@@ -10,11 +11,30 @@ const getAllDate = async (query, type, search) => {
                 required: false,
                 attributes: ['name', 'image', 'genre', 'isVerify']
             }],
+            order: [['id', 'ASC']],
             attributes: ['id', 'booktitle', 'image', 'genre', 'isVerify'],
             offset, limit
         }),
         'search': ({ offset, limit }) => Book.findAndCountAll({ offset, limit }),
-        'bookState': ({ offset, limit, type, user_id }) => BookState.findAndCountAll({ offset, limit, where: { book_state: type, user_id } }),
+        'bookState': ({ offset, limit, type, user_id }) => BookState.findAndCountAll({
+            include: [{
+                model: Book,
+                required: true,
+                attributes: ['id', 'booktitle', 'image', 'genre', 'isVerify'],
+                include: {
+                    model: Author,
+                    attributes: ['name', 'image', 'isVerify', 'genre'],
+                }
+            },
+            {
+                model: User,
+                required: true,
+                attributes: ['email', 'id'],
+            }],
+            attributes: ['id', 'book_state', 'isDelete',],
+            order: [['id', 'ASC']],
+            offset, limit, where: { book_state: type, user_id }
+        }),
     }
     const typeOf = {
         'Op.like': Op.like,
@@ -47,7 +67,7 @@ const create = async (query) => {
     const typeOfColletion = {
         'verify': {
             'book': ({ booktitle }) => Book.findOne({ where: { booktitle } }),
-            'bookState': ({ user_id, book_id }) => BookState.findOne({ where: { book_id, user_id, isDelete: false } }), // To Do adding and book_id
+            'bookState': ({ user_id, book_id }) => BookState.findOne({ where: { book_id, user_id, isDelete: false } }),
         },
         'create': {
             'book': ({ booktitle, author }) => Book.create({ booktitle, author_id: author }),
