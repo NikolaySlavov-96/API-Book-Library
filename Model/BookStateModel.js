@@ -32,8 +32,8 @@ const BookState = sequelize.define("bookstate", {
     }
 });
 
-BookState.belongsTo(Book, { foreignKey: 'id' });
-BookState.belongsTo(User, { foreignKey: 'id' });
+BookState.belongsTo(Book, { foreignKey: 'book_id' });
+BookState.belongsTo(User, { foreignKey: 'user_id' });
 
 sequelize.sync().then(() => {
     console.log('BookState table created successfully!');
