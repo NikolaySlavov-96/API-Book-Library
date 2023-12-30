@@ -31,9 +31,10 @@ const getAllDate = async (query, type, search) => {
                 required: true,
                 attributes: ['email', 'id'],
             }],
+            where: { book_state: type, user_id },
             attributes: ['id', 'book_state', 'isDelete',],
             order: [['id', 'ASC']],
-            offset, limit, where: { book_state: type, user_id }
+            offset, limit
         }),
     }
     const typeOf = {
