@@ -101,7 +101,7 @@ const create = async (query) => {
 const update = async ({ author, booktitle, id }) => {
     const data = await Book.findByPk(id)
 
-    // data.authorName = author;
+    // data.authorName = author; // To Do Adding editing author name
     data.booktitle = booktitle;
     const result = await data.save();
     return result
@@ -110,7 +110,7 @@ const update = async ({ author, booktitle, id }) => {
 
 const remove = async (id) => {
     const data = await Book.findByPk(id);
-    return data.destroy();
+    return data.destroy(); // To Do adding isDelete of True
 }
 
 

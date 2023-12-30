@@ -1,3 +1,5 @@
+const { validationResult } = require('express-validator');
+
 const apiService = require('../services/apiService');
 const { errorParser } = require('../util/parser');
 
@@ -43,11 +45,16 @@ const getDateById = async (req, res) => {
 }
 
 const createBook = async (req, res) => {
-    const type = req.params.type;
-    const user_id = req.user.id;
-    const { author, booktitle, book_id } = req.body;
-
+    const { errors } = validationResult(req);
     try {
+        if (errors.length > 0) {
+            throw errors
+        }
+
+        const type = req.params.type;
+        const user_id = req.user.id;
+        const { author, booktitle, book_id } = req.body;
+
         const result = await apiService.create({ author, booktitle, user_id, book_id, type });
         res.status(201).json(JSON.stringify(result, null, 4));
     } catch (err) {

@@ -42,7 +42,8 @@ const exitUset = async (req, res) => {
         const data = await logout(token);
         res.status(204).end();
     } catch (err) {
-        console.log(err);
+        const message = errorParser(err);
+        res.status(400).json({ message })
     }
 }
 
