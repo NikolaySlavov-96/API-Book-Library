@@ -46,7 +46,7 @@ const getDateById = async (req, res) => {
         const result = await apiService.getDateById(id);
         if (user_id) {
             const resFromBookState = await apiService.getInfoFromBookState(id, user_id);
-            result.dataValues.bookState = resFromBookState.book_state
+            result.dataValues.bookState = resFromBookState ? resFromBookState.book_state : false
         }
         res.status(200).json(result);
     } catch (err) {

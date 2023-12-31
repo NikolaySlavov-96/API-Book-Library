@@ -14,5 +14,6 @@ async function start() {
     useExpress(app, express);
     router(app);
 
+    // app.listen()
     app.listen(PORT, () => console.log('Application works'))
 }
