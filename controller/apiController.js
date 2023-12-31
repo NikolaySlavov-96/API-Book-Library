@@ -26,6 +26,7 @@ const getAllDate = async (req, res) => {
     try {
         const result = await apiService.getAllDate(data[typesQuery], search && 'Op.like', search);
         typesQuery === 'bookState' && (result.rows.map(e => {
+            e.dataValues.id = e.book.id
             e.dataValues.author = e.book.author;
             e.dataValues.booktitle = e.book.booktitle;
             e.dataValues.genre = e.book.genre;
