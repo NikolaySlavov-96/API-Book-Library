@@ -25,6 +25,11 @@ const getAllDate = async (req, res) => {
 
     try {
         const result = await apiService.getAllDate(data[typesQuery], search && 'Op.like', search);
+        typesQuery === 'bookState' && (result.rows.map(e => {
+            e.dataValues.author = e.book.author;
+            e.dataValues.booktitle = e.book.booktitle;
+            e.dataValues.genre = e.book.genre;
+        }))
         res.status(200).json(result);
     } catch (err) {
         const message = errorParser(err);
@@ -36,7 +41,12 @@ const getDateById = async (req, res) => {
 
     try {
         const id = parseInt(req.params.id);
+        const user_id = req?.user?.id;
         const result = await apiService.getDateById(id);
+        if (user_id) {
+            const resFromBookState = await apiService.getInfoFromBookState(id, user_id);
+            result.dataValues.bookState = resFromBookState.book_state
+        }
         res.status(200).json(result);
     } catch (err) {
         const message = errorParser(err);

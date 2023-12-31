@@ -57,6 +57,10 @@ const getDateById = async (id) => {
     })
 }
 
+const getInfoFromBookState = async (book_id, user_id) => {
+    return BookState.findOne({ where: { book_id, user_id, isDelete: false }, attributes: ['book_state'] })
+}
+
 const create = async (query) => {
 
     const type = query.type;
@@ -118,6 +122,7 @@ const remove = async (id) => {
 module.exports = {
     getAllDate,
     getDateById,
+    getInfoFromBookState,
     create,
     update,
     remove,
