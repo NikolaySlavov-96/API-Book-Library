@@ -21,14 +21,14 @@ withUser.post('/:type',
     apiController.createBook
 );
 
-withUser.put('/:type/:id',
-    hasUser(),
-    apiController.updateBook
-);
+// withUser.put('/:type/:id',
+//     hasUser(),
+//     apiController.updateBook
+// );
 
-withUser.delete('/:type/:id',
-    hasUser(),
-    apiController.deleteBook
-);
+// withUser.delete('/:type/:id',
+//     hasUser(),
+//     apiController.deleteBook
+// );
 
 module.exports = withUser;

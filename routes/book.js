@@ -14,15 +14,15 @@ book.post('/:type',
     apiController.createBook
 );
 
-book.put('/:type/:id',
-    hasUser(),
-    apiController.updateBook
-);
+// book.put('/:type/:id',
+//     hasUser(),
+//     apiController.updateBook
+// );
 
-book.delete('/:type/:id',
-    hasUser(),
-    apiController.deleteBook
-);
+// book.delete('/:type/:id',
+//     hasUser(),
+//     apiController.deleteBook
+// );
 
 
 
