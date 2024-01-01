@@ -13,7 +13,7 @@ const Book = sequelize.define("book", {
         allowNull: false,
     },
     booktitle: {
-        type: DataTypes.STRING(40),
+        type: DataTypes.STRING(140),
     },
     image: {
         type: DataTypes.STRING(145),
