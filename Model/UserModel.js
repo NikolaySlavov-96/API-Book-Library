@@ -19,6 +19,10 @@ const User = sequelize.define("user", {
         type: DataTypes.INTEGER,
         allowNull: false,
     },
+    isVerify: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+    },
     isDelete: {
         type: DataTypes.BOOLEAN,
         defaultValue: false,

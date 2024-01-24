@@ -2,6 +2,7 @@ const { validationResult } = require('express-validator');
 
 const apiService = require('../services/apiService');
 const { errorParser } = require('../util/parser');
+const { verify } = require('../services/verifyDataService');
 
 
 const getAllDate = async (req, res) => {
@@ -61,9 +62,12 @@ const createBook = async (req, res) => {
         if (errors.length > 0) {
             throw errors
         }
-
         const type = req.params.type;
         const user_id = req.user.id;
+        const checkAccount = await verify('user', { id: user_id, isVerify: true, });
+        if(checkAccount === null) {
+            throw new Error('Your account is not Verify');
+        }
         const { author, booktitle, book_id } = req.body;
 
         const result = await apiService.create({ author, booktitle, user_id, book_id, type });
