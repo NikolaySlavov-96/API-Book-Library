@@ -2,6 +2,7 @@ require('dotenv').config();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { User } = require('../Model/UserModel');
+const { verifyAccount } = require('./mailService');
 
 
 const JWT_Secret = process.env.JWT_SECRES;
@@ -23,12 +24,13 @@ async function register(query) {
         password: hashedPassword,
         year: query.year,
     });
-    return createTokent(JSON.stringify(result, null, 4));
+    verifyAccount({ email: query.email });
+    return { message: 'Successfull Register' }
 }
 
 async function login(body) {
     const existingEmail = await User.findOne({ where: { email: body.email } })
-    
+
     if (!existingEmail) {
         throw new Error('Email or Password is not valit');
     }

@@ -14,8 +14,8 @@ const createUser = async (req, res) => {
         if (body.password !== body.rePassword) {
             throw new Error('Password not\t match');
         }
-        const token = await register(body);
-        res.json(token);
+        const msg = await register(body);
+        res.status(201).json(msg);
     } catch (err) {
         const message = errorParser(err);
         res.status(400).json({ message });
