@@ -24,7 +24,7 @@ const BookState = sequelize.define("bookstate", {
     },
     book_state: {
         type: DataTypes.ENUM,
-        values: ['reading', 'forreading', 'purchase', 'forpurchase'],
+        values: ['reading', 'forreading', 'purchase', 'forpurchase', 'listened'],
     },
     isDelete: {
         type: DataTypes.BOOLEAN,

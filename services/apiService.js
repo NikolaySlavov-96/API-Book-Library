@@ -65,7 +65,7 @@ const create = async (query) => {
 
     const type = query.type;
     let typeInput = query.type;
-    if (type === 'purchase' || type === 'forpurchase' || type === 'reading' || type === 'forreading') {
+    if (type === 'purchase' || type === 'forpurchase' || type === 'reading' || type === 'forreading' || type === 'listened') {
         typeInput = 'bookState'
     }
 

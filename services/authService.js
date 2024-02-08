@@ -7,6 +7,7 @@ const { verifyAccount } = require('./mailService');
 
 const JWT_Secret = process.env.JWT_SECRES;
 
+// Address for verify Email
 // change password
 // BlackListTokenModel
 

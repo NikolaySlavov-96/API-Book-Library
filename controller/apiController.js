@@ -5,7 +5,7 @@ const { errorParser } = require('../util/parser');
 const { verify } = require('../services/verifyDataService');
 
 
-const getAllDate = async (req, res) => {
+const getAllDate = async (req, res, next) => {
     const page = parseInt(req?.query?.page) || 1;
     const limit = parseInt(req?.query?.limit) || 10;
     const skipSource = (page - 1) * limit;
@@ -14,7 +14,7 @@ const getAllDate = async (req, res) => {
     const search = req.query.search && `%${req?.query?.search}%`;
     const user_id = req?.user?.id;
 
-    if (type === 'purchase' || type === 'forpurchase' || type === 'reading' || type === 'forreading') {
+    if (type === 'purchase' || type === 'forpurchase' || type === 'reading' || type === 'forreading' || type === 'listened') {
         typesQuery = 'bookState'
     }
 
@@ -34,12 +34,13 @@ const getAllDate = async (req, res) => {
         }))
         res.status(200).json(result);
     } catch (err) {
-        const message = errorParser(err);
-        res.status(401).json({ message })
+        next(err)
+        // const message = errorParser(err);
+        // res.status(401).json({ message })
     }
 }
 
-const getDateById = async (req, res) => {
+const getDateById = async (req, res, next) => {
 
     try {
         const id = parseInt(req.params.id);
@@ -51,21 +52,23 @@ const getDateById = async (req, res) => {
         }
         res.status(200).json(result);
     } catch (err) {
-        const message = errorParser(err);
-        res.status(401).json({ message })
+        next(err)
+        // const message = errorParser(err);
+        // res.status(401).json({ message })
     }
 }
 
-const createBook = async (req, res) => {
+const createBook = async (req, res, next) => {
     const { errors } = validationResult(req);
     try {
         if (errors.length > 0) {
+            errors.status = 400;
             throw errors
         }
         const type = req.params.type;
         const user_id = req.user.id;
         const checkAccount = await verify('user', { id: user_id, isVerify: true, });
-        if(checkAccount === null) {
+        if (checkAccount === null) {
             throw new Error('Your account is not Verify');
         }
         const { author, booktitle, book_id } = req.body;
@@ -73,12 +76,13 @@ const createBook = async (req, res) => {
         const result = await apiService.create({ author, booktitle, user_id, book_id, type });
         res.status(201).json(JSON.stringify(result, null, 4));
     } catch (err) {
-        const message = errorParser(err);
-        res.status(401).json({ message })
+        next(err);
+        // const message = errorParser(err);
+        // res.status(401).json({ message })
     }
 }
 
-const updateBook = async (req, res) => {
+const updateBook = async (req, res, next) => {
     // const query = 'UPDATE book SET author = $1, booktitle = $2 WHERE id = $3';
     const id = parseInt(req.params.id);
     const type = req.params.type;
@@ -87,20 +91,22 @@ const updateBook = async (req, res) => {
         const result = await apiService.update({ author, booktitle, id });
         res.status(200).send(result);
     } catch (err) {
-        const message = errorParser(err);
-        res.status(401).json({ message })
+        next(err);
+        // const message = errorParser(err);
+        // res.status(401).json({ message })
     }
 }
 
-const deleteBook = async (req, res) => {
+const deleteBook = async (req, res, next) => {
     const id = parseInt(req.params.id);
 
     try {
         await apiService.remove(id);
         res.status(204).end();
     } catch (err) {
-        const message = errorParser(err);
-        res.status(401).json({ message })
+        next()
+        // const message = errorParser(err);
+        // res.status(401).json({ message })
     }
 }
 
