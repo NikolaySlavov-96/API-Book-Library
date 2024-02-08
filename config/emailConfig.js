@@ -1,23 +1,10 @@
-const nodemailer = require('nodemailer');
 require('dotenv').config();
+const mailjet = require('node-mailjet')
 
 
-const generateTransport = async () => {
-    try {
-        const transporter = nodemailer.createTransport({
-            host: process.env.EML_HOST,
-            port: process.env.EML_PORT,
-            auth: {
-                user: process.env.EML_NAME,
-                pass: process.env.EML_PASS,
-            }
-        });
-        return transporter;
-    } catch (err) {
-        console.log(err);
-    }
-}
-
-module.exports = {
-    generateTransport,
+exports.mailJetFunc = () => {
+  return mailjet.apiConnect(
+    process.env.MJ_APIKEY_PUBLIC,
+    process.env.MJ_APIKEY_PRIVATE
+  )
 }
