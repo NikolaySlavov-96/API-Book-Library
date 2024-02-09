@@ -31,9 +31,6 @@ const sendEmail = async (email, condition, subject, data,) => {
     ]
   }
 
-  console.log(mailOptions)
-
-
   try {
     const transport = await mailJetFunc();
     const result = await transport
