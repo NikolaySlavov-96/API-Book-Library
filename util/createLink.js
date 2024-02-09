@@ -13,12 +13,12 @@ exports.createLink = (user, condition) => {
 };
 
 const createToken = (user, condition) => {
-    const secretNew = process.env.JWT_SECRETS + user.email + condition;
+    // const secretNew = process.env.JWT_SECRETS + user.email + condition;
     const payload = {
         email: user.email,
     };
     if (condition === "verify") {
-        accessToken = jwt.sign(payload, secretNew);
+        accessToken = jwt.sign(payload, process.env.JWT_SECRETS);
         return accessToken
     }
 

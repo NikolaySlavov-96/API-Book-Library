@@ -24,7 +24,7 @@ async function register(query) {
         password: hashedPassword,
         year: query.year,
     });
-    
+
     return { message: 'Successfull Register' }
 }
 
@@ -86,10 +86,18 @@ async function checkFieldInDB(email) {
     return existingEmail.rows.length ? true : false;
 }
 
-async function verifyTokenFormUser() {
+async function verifyTokenFormUser(isVerify) {
 
-    // To Do Adding other logic for verify token 
-    return 
+    const existingEmail = await User.findOne({ where: { email: isVerify.email } })
+    if (!existingEmail) {
+        return { message: "Email is not valid" }
+    }
+    if (existingEmail.isVerify) {
+        return { message: "Account is Verifie" }
+    }
+    existingEmail.isVerify = true;
+    const result = await existingEmail.save();
+    return result.isVerify;
 }
 
 const hashPassword = async (password) => await bcrypt.hash(password, 10);

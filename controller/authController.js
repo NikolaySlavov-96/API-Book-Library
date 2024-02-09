@@ -1,6 +1,6 @@
 const { validationResult } = require('express-validator');
 
-const { register, login, logout, checkFieldInDB, verifyTokenFormUser } = require('../services/authService');
+const { register, login, logout, checkFieldInDB, verifyTokenFormUser, verificationToken } = require('../services/authService');
 const { verifyAccount } = require('../services/mailService');
 const { errorParser } = require('../util/parser');
 
@@ -67,9 +67,14 @@ const verifyUser = async (req, res) => {
             throw errors
         }
         const { verifyToken } = req.body;
-        const verifyState = await verifyTokenFormUser(verifyToken)
+        const isVerify = await verificationToken(verifyToken);
+        const verifyState = await verifyTokenFormUser(isVerify);
 
-        res.status(200).json({ message: "Successfull Verify" })
+        if (verifyState.message) {
+            return res.status(402).json({ message: verifyState.message })
+        }
+
+        res.status(200).json({ message: "Successfull Verify", isVerify: verifyState })
     } catch (err) {
         res.status(400).json({ message: 'UnSuccessfull Verify' })
     }
