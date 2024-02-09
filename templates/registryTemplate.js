@@ -29,9 +29,10 @@ exports.confirmRegister = ({ link }) => {
                         </td>
                       </tr>
                       <tr>
-                        <td style="font-size: 16px; color: #666; font-family: Helvetica; line-height: 1.5; text-align: left;">
-                          Your: ${link}
-                        </td>
+                      <td style="text-align: center; padding-top: 10px;">
+                        <a href="${link}" style="display: inline-block; background-color: #188433; color: white; text-decoration: none; padding: 10px 20px; border-radius: 16px; font-family: Helvetica; transition: background-color 0.3s;
+                        opacity: 0.7;">Go to Books Library</a>
+                      </td>
                       </tr>
                       <tr>
                     </table>

@@ -2,10 +2,9 @@ require('dotenv').config();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { User } = require('../Model/UserModel');
-const { verifyAccount } = require('./mailService');
 
 
-const JWT_Secret = process.env.JWT_SECRES;
+const JWT_Secret = process.env.JWT_SECRETS;
 
 // Address for verify Email
 // change password
@@ -25,7 +24,7 @@ async function register(query) {
         password: hashedPassword,
         year: query.year,
     });
-    verifyAccount({ email: query.email });
+    
     return { message: 'Successfull Register' }
 }
 
@@ -87,6 +86,12 @@ async function checkFieldInDB(email) {
     return existingEmail.rows.length ? true : false;
 }
 
+async function verifyTokenFormUser() {
+
+    // To Do Adding other logic for verify token 
+    return 
+}
+
 const hashPassword = async (password) => await bcrypt.hash(password, 10);
 
 module.exports = {
@@ -95,4 +100,5 @@ module.exports = {
     logout,
     verificationToken,
     checkFieldInDB,
+    verifyTokenFormUser,
 }

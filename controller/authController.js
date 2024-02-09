@@ -1,6 +1,7 @@
 const { validationResult } = require('express-validator');
 
-const { register, login, logout, checkFieldInDB } = require('../services/authService');
+const { register, login, logout, checkFieldInDB, verifyTokenFormUser } = require('../services/authService');
+const { verifyAccount } = require('../services/mailService');
 const { errorParser } = require('../util/parser');
 
 
@@ -15,6 +16,7 @@ const createUser = async (req, res) => {
             throw new Error('Password not\t match');
         }
         const msg = await register(body);
+        verifyAccount({ email: req.body.email });
         res.status(201).json(msg);
     } catch (err) {
         const message = errorParser(err);
@@ -58,9 +60,26 @@ const checkFields = async (req, res) => {
     }
 }
 
+const verifyUser = async (req, res) => {
+    const { errors } = validationResult(req);
+    try {
+        if (errors.length > 0) {
+            throw errors
+        }
+        const { verifyToken } = req.body;
+        const verifyState = await verifyTokenFormUser(verifyToken)
+
+        res.status(200).json({ message: "Successfull Verify" })
+    } catch (err) {
+        res.status(400).json({ message: 'UnSuccessfull Verify' })
+    }
+}
+
+
 module.exports = {
     createUser,
     getUser,
     exitUset,
     checkFields,
+    verifyUser,
 }

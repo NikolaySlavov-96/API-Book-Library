@@ -22,4 +22,9 @@ auth.post('/register',
 auth.post('/logout', authController.exitUset);
 auth.get('/check', authController.checkFields);
 
+auth.post('/verify',
+    body('verifyToken').isEmpty().withMessage('Verify Token is required'),
+    authController.verifyUser
+);
+
 module.exports = auth;
