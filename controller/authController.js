@@ -1,6 +1,7 @@
 const { validationResult } = require('express-validator');
 
-const { register, login, logout, checkFieldInDB } = require('../services/authService');
+const { register, login, logout, checkFieldInDB, verifyTokenFormUser, verificationToken } = require('../services/authService');
+const { verifyAccount } = require('../services/mailService');
 const { errorParser } = require('../util/parser');
 
 
@@ -14,18 +15,9 @@ const createUser = async (req, res) => {
         if (body.password !== body.rePassword) {
             throw new Error('Password not\t match');
         }
-        const { email, password, year } = body;
-
-        const param = {
-            check: [email],
-            register: [email, password, year]
-        };
-        const query = {
-            check: 'SELECT email FROM account WHERE email = $1',
-            register: `INSERT INTO account (email, password, year) VALUES ($1, $2, $3) RETURNING *;`
-        }
-        const token = await register(query, param);
-        res.json(token);
+        const msg = await register(body);
+        verifyAccount({ email: req.body.email });
+        res.status(201).json(msg);
     } catch (err) {
         const message = errorParser(err);
         res.status(400).json({ message });
@@ -38,10 +30,7 @@ const getUser = async (req, res) => {
         if (errors.length > 0) {
             throw errors
         }
-        const { email } = req.body;
-        const param = [email];
-        const query = 'SELECT email, password, id, year FROM account WHERE email = $1';
-        const token = await login(query, param, req.body);
+        const token = await login(req.body);
         res.json(token);
     } catch (err) {
         const message = errorParser(err);
@@ -55,26 +44,47 @@ const exitUset = async (req, res) => {
         const data = await logout(token);
         res.status(204).end();
     } catch (err) {
-        console.log(err);
+        const message = errorParser(err);
+        res.status(400).json({ message })
     }
 }
 
 const checkFields = async (req, res) => {
     const { email } = req.query;
-    const value = Object.keys(req.query)[0]
-    const query = `SELECT COUNT(email) FROM account WHERE ${value} = $1`;
     try {
-        const result = await checkFieldInDB(query, [email]);
-        res.json(result.rows[0].count);
+        const result = await checkFieldInDB(email);
+        res.json(result);
     } catch (err) {
         const message = errorParser(err);
         res.status(400).json({ message });
     }
 }
 
+const verifyUser = async (req, res) => {
+    const { errors } = validationResult(req);
+    try {
+        if (errors.length > 0) {
+            throw errors
+        }
+        const { verifyToken } = req.body;
+        const isVerify = await verificationToken(verifyToken);
+        const verifyState = await verifyTokenFormUser(isVerify);
+
+        if (verifyState.message) {
+            return res.status(402).json({ message: verifyState.message })
+        }
+
+        res.status(200).json({ message: "Successfull Verify", isVerify: verifyState })
+    } catch (err) {
+        res.status(400).json({ message: 'UnSuccessfull Verify' })
+    }
+}
+
+
 module.exports = {
     createUser,
     getUser,
     exitUset,
     checkFields,
+    verifyUser,
 }
