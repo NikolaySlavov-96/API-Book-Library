@@ -1,4 +1,4 @@
-import { cors, session, trimBody } from '../middleware';
+import { cors, session, trimBody, } from '../middleware';
 
 const whitelist = ['http://localhost:3030'];
 

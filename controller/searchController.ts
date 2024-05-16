@@ -7,7 +7,7 @@ export const viewUserBooksFromEmail = async (req, res, next) => {
         const limit = parseInt(req?.query?.limit) || 10;
         const skipSource = (page - 1) * limit;
 
-        const books = {} //await getBookByEmail();
+        const books = {}; //await getBookByEmail();
         res.json(books);
     } catch (err) {
         next(err);
@@ -17,7 +17,7 @@ export const viewUserBooksFromEmail = async (req, res, next) => {
 
 export const getUser = async (req, res, next) => {
     try {
-        const token = {} //await login(req.body);
+        const token = {}; //await login(req.body);
         res.json(token);
     } catch (err) {
         next(err);

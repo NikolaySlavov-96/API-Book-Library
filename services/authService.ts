@@ -1,7 +1,7 @@
 import 'dotenv/config';
 
 import { cryptCompare, cryptHash, createToken, db, } from '../util';
-import { TABLE_NAME } from '../constants';
+import { TABLE_NAME, } from '../constants';
 
 // Address for verify Email
 // change password
@@ -10,7 +10,7 @@ import { TABLE_NAME } from '../constants';
 export async function register(query) {
     query.email = query.email.toLowerCase();
 
-    const existingEmail = await db(TABLE_NAME.USER).findOne({ where: { email: query.email, } });
+    const existingEmail = await db(TABLE_NAME.USER).findOne({ where: { email: query.email, }, });
 
     if (existingEmail) {
         throw new Error('Email is taken');

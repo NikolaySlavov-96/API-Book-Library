@@ -6,7 +6,7 @@ import {
 import { jwtVerify, } from '../util';
 import verifyAccount from '../services/mailService';
 
-import { EMAIL } from '../constants';
+import { EMAIL, } from '../constants';
 
 
 export const createUser = async (req, res, next) => {
@@ -17,11 +17,11 @@ export const createUser = async (req, res, next) => {
         }
         const msg = await register(body);
 
-        const emailData = [{ type: EMAIL.REGISTER_CONFIRM }];
+        const emailData = [{ type: EMAIL.REGISTER_CONFIRM, }];
         verifyAccount({ email: req.body.email, }, emailData);
         res.status(201).json(msg);
     } catch (err) {
-        next(err)
+        next(err);
     }
 };
 
@@ -30,7 +30,7 @@ export const getUser = async (req, res, next) => {
         const token = await login(req.body);
         res.json(token);
     } catch (err) {
-        next(err)
+        next(err);
     }
 };
 
@@ -40,7 +40,7 @@ export const exitUset = async (req, res, next) => {
         const data = await logout(token);
         res.status(204).end();
     } catch (err) {
-        next(err)
+        next(err);
     }
 };
 
@@ -50,7 +50,7 @@ export const checkFields = async (req, res, next) => {
         const result = await checkFieldInDB(email);
         res.json(result);
     } catch (err) {
-        next(err)
+        next(err);
     }
 };
 
@@ -66,6 +66,6 @@ export const verifyUser = async (req, res, next) => {
 
         res.status(200).json({ message: 'Successfull Verify', isVerify: verifyState, });
     } catch (err) {
-        next(err)
+        next(err);
     }
 };

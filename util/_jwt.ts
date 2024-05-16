@@ -17,12 +17,12 @@ export const _jwtVerify = (token: string): any => {
 
     } catch (error) {
         if (error.message.includes('xpired')) {
-            return updateMessage({ message: '22', messageCode: '250' }, 404);
+            return updateMessage({ message: '22', messageCode: '250', }, 404);
             // return updateMessage(EXPIRED_TOKEN, GLOBAL_ERROR_CODE);
         }
 
         if (error.message.includes('nvalid')) {
-            return updateMessage({ message: '22', messageCode: '250' }, 404);
+            return updateMessage({ message: '22', messageCode: '250', }, 404);
             // return updateMessage(INVALID_TOKEN, GLOBAL_ERROR_CODE);
         }
         throw (error);

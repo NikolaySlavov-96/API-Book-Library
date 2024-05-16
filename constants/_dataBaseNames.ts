@@ -3,4 +3,4 @@ export const _tableName = {
     AUTHOR: 'Author',
     BOOK: 'Book',
     BOOK_STATE: 'BookState',
-}
+};

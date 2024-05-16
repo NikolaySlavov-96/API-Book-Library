@@ -1,5 +1,5 @@
 import { database, } from '../config';
-import { TABLE_NAME } from '../constants';
+import { TABLE_NAME, } from '../constants';
 
 
 // interface IReturnFunction {
@@ -17,7 +17,6 @@ import { TABLE_NAME } from '../constants';
 //     findByCriteriaAndDelete: (data: object) => any;
 //     findOneAndDelete: (id: object) => any;
 // }
-
 
 
 export default (model: string) => {
