@@ -2,11 +2,11 @@ import 'dotenv/config';
 
 import { emailConfig, } from '../config';
 import { registryTemplate, } from '../templates';
-import { email, } from '../constants';
+import { EMAIL, } from '../constants';
 
 
 const templates = {
-    [email.REGISTER_CONFIRM]: (data) => registryTemplate(data),
+    [EMAIL.REGISTER_CONFIRM]: (data) => registryTemplate(data),
 };
 
 

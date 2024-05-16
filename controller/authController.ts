@@ -6,6 +6,8 @@ import {
 import { jwtVerify, } from '../util';
 import verifyAccount from '../services/mailService';
 
+import { EMAIL } from '../constants';
+
 
 export const createUser = async (req, res, next) => {
     try {
@@ -14,7 +16,9 @@ export const createUser = async (req, res, next) => {
             throw new Error('Password not\t match');
         }
         const msg = await register(body);
-        verifyAccount({ email: req.body.email, });
+
+        const emailData = [{ type: EMAIL.REGISTER_CONFIRM }];
+        verifyAccount({ email: req.body.email, }, emailData);
         res.status(201).json(msg);
     } catch (err) {
         next(err)

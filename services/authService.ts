@@ -1,10 +1,7 @@
-// @ts-nocheck
 import 'dotenv/config';
 
-import { database, } from '../config';
-import { cryptCompare, cryptHash, createToken, } from '../util';
-
-const User = database?.userModel;
+import { cryptCompare, cryptHash, createToken, db, } from '../util';
+import { TABLE_NAME } from '../constants';
 
 // Address for verify Email
 // change password
@@ -13,14 +10,14 @@ const User = database?.userModel;
 export async function register(query) {
     query.email = query.email.toLowerCase();
 
-    const existingEmail = await User.findOne({ where: { email: query.email, }, });
+    const existingEmail = await db(TABLE_NAME.USER).findOne({ where: { email: query.email, } });
 
     if (existingEmail) {
         throw new Error('Email is taken');
     }
     const hashedPassword = await cryptHash(query.password);
 
-    const result = await User.create({
+    await db(TABLE_NAME.USER).create({
         email: query.email,
         password: hashedPassword,
         year: query.year,
@@ -30,7 +27,7 @@ export async function register(query) {
 }
 
 export async function login(body) {
-    const existingEmail = await User.findOne({ where: { email: body.email, }, });
+    const existingEmail = await db(TABLE_NAME.USER).findOne({ where: { email: body.email, }, });
 
     if (!existingEmail) {
         throw new Error('Email or Password is not valit');
@@ -47,6 +44,7 @@ export async function login(body) {
         throw new Error('Email or Password is not valit');
     }
 
+    return createToken(string);
     return createToken(string, stayLogin);
 }
 
@@ -59,13 +57,13 @@ export async function logout(token) {
 }
 
 export async function checkFieldInDB(email) {
-    const existingEmail = await User.findAndCountAll({ where: { email, }, });
+    const existingEmail = await db(TABLE_NAME.USER).findAndCountAll({ where: { email, }, });
     return existingEmail.rows.length ? true : false;
 }
 
 export async function verifyTokenFormUser(isVerify) {
 
-    const existingEmail = await User.findOne({ where: { email: isVerify.email, }, });
+    const existingEmail = await db(TABLE_NAME.USER).findOne({ where: { email: isVerify.email, }, });
     if (!existingEmail) {
         return { message: 'Email is not valid', };
     }
