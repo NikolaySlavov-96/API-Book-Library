@@ -1,0 +1,20 @@
+{
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnPaste": false,
+    "editor.formatOnSave": false,
+    "[json]": { "editor.formatOnSave": true },
+    "[javascript]": { "editor.formatOnSave": true },
+    "[typescript]": { "editor.formatOnSave": true }
+    // "eslint.validate": [
+    //   "javascript",
+    //   "typescript",
+    // ],
+    // "eslint.options": {
+    //   "overrideConfigFile": ".eslintrc",
+    // },
+    // "editor.codeActionsOnSave": {
+    //   "source.fixAll.eslint": "explicit"
+    // },
+    // "eslint.experimental.useFlatConfig": true,
+    // "eslint.alwaysShowStatus": true
+  }
