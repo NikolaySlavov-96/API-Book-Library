@@ -1,7 +1,6 @@
 const { validationResult } = require('express-validator');
 
 const apiService = require('../services/apiService');
-const { errorParser } = require('../util/parser');
 const { verify } = require('../services/verifyDataService');
 
 
@@ -35,8 +34,6 @@ const getAllDate = async (req, res, next) => {
         res.status(200).json(result);
     } catch (err) {
         next(err)
-        // const message = errorParser(err);
-        // res.status(401).json({ message })
     }
 }
 
@@ -53,8 +50,6 @@ const getDateById = async (req, res, next) => {
         res.status(200).json(result);
     } catch (err) {
         next(err)
-        // const message = errorParser(err);
-        // res.status(401).json({ message })
     }
 }
 
@@ -77,8 +72,6 @@ const createBook = async (req, res, next) => {
         res.status(201).json(JSON.stringify(result, null, 4));
     } catch (err) {
         next(err);
-        // const message = errorParser(err);
-        // res.status(401).json({ message })
     }
 }
 
@@ -92,8 +85,6 @@ const updateBook = async (req, res, next) => {
         res.status(200).send(result);
     } catch (err) {
         next(err);
-        // const message = errorParser(err);
-        // res.status(401).json({ message })
     }
 }
 
@@ -105,8 +96,6 @@ const deleteBook = async (req, res, next) => {
         res.status(204).end();
     } catch (err) {
         next()
-        // const message = errorParser(err);
-        // res.status(401).json({ message })
     }
 }
 
