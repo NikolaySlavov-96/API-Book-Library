@@ -30,6 +30,8 @@ const messages: IMessageType = {
     ALL_FIELDS_ARE_REQUIRED: { message: 'All fields are required!', messageCode: 'user-0006', },
     INVALID_USER: { message: 'Invalid user!', messageCode: 'user-0007', },
     DELETED_PROFILE: { message: 'Profile is delete, contact with administrator', messageCode: 'user-0008', },
+    ACCOUNT_IS_NOT_VERIFY: { message: 'Your account is not Verify', messageCode: 'user-0009' },
+    BOOK_ALREADY_EXIST: { message: 'The book has already been added', messageCode: '' },
 };
 
 export default messages;
