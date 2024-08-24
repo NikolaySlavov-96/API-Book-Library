@@ -1,4 +1,4 @@
-import { getBookByEmail, } from '../services/searchService';
+import { getBookByEmail, searchBook, } from '../services/searchService';
 
 
 export const viewUserBooksFromEmail = async (req, res, next) => {
@@ -14,11 +14,15 @@ export const viewUserBooksFromEmail = async (req, res, next) => {
     }
 };
 
-
-export const getUser = async (req, res, next) => {
+export const searchBooksByParams = async (req, res, next) => {
     try {
-        const token = {}; //await login(req.body);
-        res.json(token);
+        const page = parseInt(req?.query?.page) || 1;
+        const limit = parseInt(req?.query?.limit) || 10;
+        const skipSource = (page - 1) * limit;
+        const searchContent = req.query.search && `%${req?.query?.search}%`;
+
+        const result = await searchBook({ offset: skipSource, limit, typeSearch: 'Op.like', searchContent, });
+        res.status(200).json(result);
     } catch (err) {
         next(err);
     }
