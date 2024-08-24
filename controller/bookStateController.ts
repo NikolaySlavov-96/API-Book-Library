@@ -46,7 +46,7 @@ export const getBooksById = async (req, res, next) => {
 export const createBookState = async (req, res, next) => {
     try {
         const state = req.params.state;
-        const user_id = req.user.id;
+        const user_id = req.user._id;
 
         // Mode in middleware
         const checkAccount = await verify({ id: user_id, isVerify: true, });

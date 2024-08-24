@@ -32,7 +32,7 @@ export const getBookById = async (req, res, next) => {
 
 export const createBook = async (req, res, next) => {
     try {
-        const user_id = req.user.id;
+        const user_id = req.user._id;
 
         // Move in middleware
         const checkAccount = await verify({ id: user_id, isVerify: true, });

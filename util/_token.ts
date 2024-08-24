@@ -19,7 +19,7 @@ export const _verifyToken = (token: string): IVerifyToken => {
 
 export const _createToken = (data: any, expire?: string): ICreateToken => {
     const payload: IPayload = {
-        _id: data._id,
+        _id: data.id,
         email: data.email,
         year: data.year,
     };
