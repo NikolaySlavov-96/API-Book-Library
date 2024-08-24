@@ -1,7 +1,8 @@
 import 'dotenv/config';
 
-import { cryptCompare, cryptHash, createToken, db, } from '../util';
-import { TABLE_NAME, } from '../constants';
+import { cryptCompare, cryptHash, db, updateMessage, } from '../util';
+import { MESSAGES, TABLE_NAME, } from '../constants';
+import { addTokenResponse, } from '../Helpers';
 
 // Address for verify Email
 // change password
@@ -13,8 +14,9 @@ export async function register(query) {
     const existingEmail = await db(TABLE_NAME.USER).findOne({ where: { email: query.email, }, });
 
     if (existingEmail) {
-        throw new Error('Email is taken');
+        return updateMessage(MESSAGES.EMAIL_IS_ALREADY_TAKEN, 400);
     }
+
     const hashedPassword = await cryptHash(query.password);
 
     await db(TABLE_NAME.USER).create({
@@ -23,29 +25,27 @@ export async function register(query) {
         year: query.year,
     });
 
-    return { message: 'Successfull Register', };
+    return updateMessage(MESSAGES.SUCCESSFULLY_REGISTER);
 }
 
 export async function login(body) {
     const existingEmail = await db(TABLE_NAME.USER).findOne({ where: { email: body.email, }, });
 
     if (!existingEmail) {
-        throw new Error('Email or Password is not valit');
+        return updateMessage(MESSAGES.WRONG_EMAIL_OR_PASSWORD);
     }
-    const string = existingEmail;
-    if (string.isDelete) {
-        throw new Error('Profile is delete, contact with administrate');
+    if (existingEmail.isDelete) {
+        return updateMessage(MESSAGES.DELETED_PROFILE);
     }
 
     const { stayLogin, password, } = body;
-    const matchPassword = await cryptCompare(password, string.password);
+    const matchPassword = await cryptCompare(password, existingEmail.password);
 
     if (!matchPassword) {
-        throw new Error('Email or Password is not valit');
+        return updateMessage(MESSAGES.WRONG_EMAIL_OR_PASSWORD);
     }
 
-    return createToken(string);
-    return createToken(string, stayLogin);
+    return addTokenResponse(existingEmail, MESSAGES.S);
 }
 
 export async function logout(token) {
@@ -65,10 +65,10 @@ export async function verifyTokenFormUser(isVerify) {
 
     const existingEmail = await db(TABLE_NAME.USER).findOne({ where: { email: isVerify.email, }, });
     if (!existingEmail) {
-        return { message: 'Email is not valid', };
+        return updateMessage(MESSAGES.EMAIL_DOES_NOT_EXIST, 402);
     }
     if (existingEmail.isVerify) {
-        return { message: 'Account is Verifie', };
+        return updateMessage(MESSAGES.ACCOUNT_ALREADY_TAKEN, 401);
     }
     existingEmail.isVerify = true;
     const result = await existingEmail.save();

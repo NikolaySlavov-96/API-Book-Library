@@ -6,20 +6,23 @@ import {
 import { jwtVerify, } from '../util';
 import verifyAccount from '../services/mailService';
 
-import { EMAIL, } from '../constants';
+import { EMAIL, MESSAGES, } from '../constants';
 
 
 export const createUser = async (req, res, next) => {
     try {
         const body = req.body;
-        if (body.password !== body.rePassword) {
-            throw new Error('Password not\t match');
+
+        const result = await register(body);
+
+        if (result.statusCode) {
+            return res.status(result.statusCode).json(result.user);
         }
-        const msg = await register(body);
 
         const emailData = [{ type: EMAIL.REGISTER_CONFIRM, }];
         verifyAccount({ email: req.body.email, }, emailData);
-        res.status(201).json(msg);
+
+        res.status(201).json(result);
     } catch (err) {
         next(err);
     }
@@ -28,7 +31,7 @@ export const createUser = async (req, res, next) => {
 export const getUser = async (req, res, next) => {
     try {
         const token = await login(req.body);
-        res.json(token);
+        res.status(token?.statusCode || 200).json(token?.user || token);
     } catch (err) {
         next(err);
     }
@@ -37,7 +40,7 @@ export const getUser = async (req, res, next) => {
 export const exitUset = async (req, res, next) => {
     const token = req.token;
     try {
-        const data = await logout(token);
+        await logout(token);
         res.status(204).end();
     } catch (err) {
         next(err);
@@ -60,11 +63,7 @@ export const verifyUser = async (req, res, next) => {
         const isVerify = await jwtVerify(verifyToken);
         const verifyState = await verifyTokenFormUser(isVerify);
 
-        if (verifyState.message) {
-            return res.status(402).json({ message: verifyState.message, });
-        }
-
-        res.status(200).json({ message: 'Successfull Verify', isVerify: verifyState, });
+        res.status(verifyState?.statusCode).json(verifyState?.user || MESSAGES.SUCCESSFULLY_VERIFY_ACCOUNT);
     } catch (err) {
         next(err);
     }
