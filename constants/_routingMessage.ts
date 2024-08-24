@@ -17,6 +17,7 @@ const routing = {
     INCORRECT_INPUT_DATE: 'Incorrect input data',
     BOOK_TITLE_REQUIRED: 'Book title is required',
     AUTHOR_REQUIRED: 'Author is required',
+    BOOK_ID_IS_REQUIRED: 'Book ID is required',
 };
 
 export default routing;
