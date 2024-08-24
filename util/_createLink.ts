@@ -18,7 +18,7 @@ const createToken = (user, condition) => {
         email: user.email,
     };
     if (condition === 'verify') {
-        const accessToken = jwt.sign(payload, process.env.JWT_SECRETS);
+        const accessToken = jwt.sign(payload, process.env.JWT_SECRET);
         return accessToken;
     }
 

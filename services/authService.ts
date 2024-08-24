@@ -45,7 +45,7 @@ export async function login(body) {
         return updateMessage(MESSAGES.WRONG_EMAIL_OR_PASSWORD);
     }
 
-    return addTokenResponse(existingEmail, MESSAGES.S);
+    return addTokenResponse(existingEmail, MESSAGES.SUCCESSFULLY_LOGIN);
 }
 
 export async function logout(token) {

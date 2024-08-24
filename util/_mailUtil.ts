@@ -34,10 +34,10 @@ export default async (email, condition, subject, data) => {
 
     try {
         const transport = await emailConfig();
-        const result = await transport
+        await transport
             .post('send', { version: 'v3.1', })
             .request(mailOptions);
-        return result;
+
     } catch (error) {
         console.log(error);
     }

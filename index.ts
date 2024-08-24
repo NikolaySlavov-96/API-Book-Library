@@ -6,7 +6,6 @@ import { globalErrorHandling, } from './Helpers';
 
 const PORT = process.env.PORT;
 
-
 start();
 
 async function start() {
@@ -22,6 +21,5 @@ async function start() {
 
     app.use(globalErrorHandling());
 
-    // app.listen()
     app.listen(PORT, () => console.log('Application works'));
 }

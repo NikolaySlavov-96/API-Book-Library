@@ -1,6 +1,6 @@
 import { cors, session, trimBody, } from '../middleware';
 
-const whitelist = ['http://localhost:3030'];
+const whitelist = ['http://localhost:8080'];
 
 export default (app, express) => {
     app.use(express.static('public'));
