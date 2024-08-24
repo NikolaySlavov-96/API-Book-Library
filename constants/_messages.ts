@@ -12,7 +12,8 @@ const messages: IMessageType = {
     EXPIRED_TOKEN: { message: 'Expired token!', messageCode: 'global-0003', },
     VALID_TOKEN: { message: 'Valid Token!', messageCode: 'global-0004', },
     INVALID_AUTHORIZE_TOKEN: { message: 'Invalid authorization token!', messageCode: 'global-0005', },
-    LOGIN_EXPIRED: { message: 'Login Expired', messageCode: 'global-0006' },
+    LOGIN_EXPIRED: { message: 'Login Expired', messageCode: 'global-0006', },
+    PLEASE_LOGIN: { message: 'Please login', messageCode: 'global-0007', },
 
     // Successfully   
     ACCOUNT_IS_SUCCESSFULLY: { message: 'Account is successfully verified!', messageCode: 'global-0101', },
