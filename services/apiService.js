@@ -1,7 +1,11 @@
-const { Book, Op } = require('../Model/BookModel');
-const { BookState } = require('../Model/BookStateModel');
-const { Author } = require('../Model/AuthorMode');
-const { User } = require('../Model/UserModel');
+const { db } = require('../config/database');
+
+const User = db.userModel;
+const Book = db.bookModel;
+const BookState = db.bookStateModel;
+const Author = db.authorModel;
+const Op = db.Sequelize.Op;
+
 
 const getAllDate = async (query, type, search) => {
     const typeOfColletion = {
