@@ -1,7 +1,7 @@
 import { IPayload, } from '../Types/verification';
 // import { LOGIN_EXPIRE, } from '../constants/commonConstants';
 
-import { updateMessage, jwtSign, jwtVerify, } from '../util';
+import { jwtSign, jwtVerify, } from '../util';
 interface IVerifyToken {
     _id: string;
     email: string;
@@ -32,9 +32,3 @@ export const _createToken = (data: any, expire?: string): ICreateToken => {
         accessToken: accessToken,
     };
 };
-
-// export const addTokenResponse = (data: any, response) => {
-//     const accessToken = _createToken(data);
-
-//     return updateMessage(response, 0, accessToken).user;
-// };
