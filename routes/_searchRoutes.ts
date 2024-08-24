@@ -1,12 +1,12 @@
 import { Router, } from 'express';
 
-const seach = Router();
+const search = Router();
 
 import * as searchController from '../controller/searchController';
 
 
-seach.get('/view',
+search.get('/view',
     searchController.viewUserBooksFromEmail
 );
 
-export default seach;
+export default search;

@@ -14,6 +14,9 @@ const routing = {
     INCORRECT_TYPE_PASSWORD: 'Incorrect type of password',
     YEARS_IS_REQUIRED: 'Years is requited',
     TOKE_IS_REQUIRED: 'Verify token is required',
+    INCORRECT_INPUT_DATE: 'Incorrect input data',
+    BOOK_TITLE_REQUIRED: 'Book title is required',
+    AUTHOR_REQUIRED: 'Author is required',
 };
 
 export default routing;

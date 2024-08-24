@@ -3,24 +3,24 @@ import { body, } from 'express-validator';
 
 const book = Router();
 
-import { expressValidator, } from '../middleware';
+import { expressValidator, hasUser, } from '../middleware';
 
 import * as apiController from '../controller/apiController';
-// const { hasUser, } = require('../middleware/guards');
+import { ROUTING_MESSAGES, } from '../constants';
 
 
 book.get('/:type/', apiController.getAllDate);
 book.get('/:type/:id', apiController.getDateById);
 book.post('/:type',
-    body('booktitle').isLength({ min: 2, }).withMessage('Book Title is required'),
-    body('author').isLength({ min: 2, }).withMessage('Author is required'),
+    hasUser(),
+    body('booktitle').isLength({ min: 2, }).withMessage(ROUTING_MESSAGES.BOOK_TITLE_REQUIRED),
+    body('author').isLength({ min: 2, }).withMessage(ROUTING_MESSAGES.AUTHOR_REQUIRED),
     expressValidator,
-    // hasUser(),
     apiController.createBook
 );
 
 // book.put('/:type/:id',
-//     hasUser(),
+// hasUser(),
 //     apiController.updateBook
 // );
 

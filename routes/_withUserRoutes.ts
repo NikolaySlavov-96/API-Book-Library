@@ -6,33 +6,28 @@ const withUser = Router();
 import { expressValidator, } from '../middleware';
 
 import * as apiController from '../controller/apiController';
-// import { hasUser, } from '../middleware/guards';
+import { ROUTING_MESSAGES, } from '../constants';
 
 
 withUser.get('/:type/',
-    // hasUser(),
     apiController.getAllDate
 );
 
 withUser.get('/:type/:id',
-    // hasUser(),
     apiController.getDateById
 );
 
 withUser.post('/:type',
-    body('book_id').isNumeric().withMessage('Incorect input date'),
+    body('book_id').isNumeric().withMessage(ROUTING_MESSAGES.INCORRECT_INPUT_DATE),
     expressValidator,
-    // hasUser(),
     apiController.createBook
 );
 
 // withUser.put('/:type/:id',
-//     hasUser(),
 //     apiController.updateBook
 // );
 
 // withUser.delete('/:type/:id',
-//     hasUser(),
 //     apiController.deleteBook
 // );
 
