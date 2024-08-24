@@ -28,6 +28,7 @@ export default (model: string) => {
     const db = models[model];
 
     return {
+        findByPk: (id) => db.findByPk(id),
         find: (data) => db.find(data),
         findOne: (data) => db.findOne(data),
         findById: (id) => db.findById(id),

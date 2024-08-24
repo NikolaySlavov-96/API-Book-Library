@@ -49,7 +49,7 @@ export const createBookState = async (req, res, next) => {
         const user_id = req.user.id;
 
         // Mode in middleware
-        const checkAccount = await verify('user', { id: user_id, isVerify: true, });
+        const checkAccount = await verify({ id: user_id, isVerify: true, });
         if (checkAccount === null) {
             res.status(401).json(updateMessage(MESSAGES.ACCOUNT_IS_NOT_VERIFY).user);
         }

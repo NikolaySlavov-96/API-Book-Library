@@ -1,12 +1,10 @@
-// @ts-nocheck
-import { database, } from '../config';
+import { db, } from '../util';
 
-const User = database?.userModel;
+import { TABLE_NAME, } from '../constants';
 
-export const verify = async (db, data) => {
-    const obj = {
-        'user': ({ id, isVerify, }) => User.findOne({ where: { id, isVerify, }, attributes: ['isVerify'], }),
-    };
 
-    return await obj[db](data);
+export const verify = async ({ id, isVerify, }) => {
+    const result = await db(TABLE_NAME.USER).findOne({ where: { id, isVerify, }, attributes: ['isVerify'], });
+
+    return result;
 };
