@@ -1,6 +1,7 @@
 import { MESSAGES, } from '../constants';
 
 import * as bookService from '../services/bookService';
+import { getInfoFromBookState } from '../services/bookStateService';
 import { verify, } from '../services/verifyDataService';
 
 import { updateMessage, } from '../util';
@@ -22,8 +23,14 @@ export const getAllBooks = async (req, res, next) => {
 export const getBookById = async (req, res, next) => {
     try {
         const id = parseInt(req.params.id);
+        const user_id = req?.user?.id;
 
         const result = await bookService.getDataById(id);
+        if (user_id) {
+            const resFromBookState = await getInfoFromBookState(id, user_id);
+            result.dataValues.bookState = resFromBookState ? resFromBookState.book_state : false;
+        }
+
         res.status(200).json(result);
     } catch (err) {
         next(err);

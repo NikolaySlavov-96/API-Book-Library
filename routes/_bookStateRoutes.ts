@@ -11,7 +11,6 @@ import { ROUTING_MESSAGES, } from '../constants';
 
 
 bookState.get('/:state', bookStateController.getAllBooksByState);
-bookState.get('/:id', bookStateController.getBooksById);
 bookState.post('/',
     body('bookId').isLength({ min: 2, }).withMessage(ROUTING_MESSAGES.BOOK_ID_IS_REQUIRED),
     expressValidator,

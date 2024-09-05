@@ -28,21 +28,6 @@ export const getAllBooksByState = async (req, res, next) => {
     }
 };
 
-export const getBooksById = async (req, res, next) => {
-    try {
-        const id = parseInt(req.params.id);
-        const user_id = req?.user?.id;
-        const result = await bookStateService.getDateById(id);
-        if (user_id) {
-            const resFromBookState = await bookStateService.getInfoFromBookState(id, user_id);
-            result.dataValues.bookState = resFromBookState ? resFromBookState.book_state : false;
-        }
-        res.status(200).json(result);
-    } catch (err) {
-        next(err);
-    }
-};
-
 export const createBookState = async (req, res, next) => {
     try {
         const state = req.params.state;

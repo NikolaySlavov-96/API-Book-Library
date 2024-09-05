@@ -33,15 +33,6 @@ export const getAllDate = async ({ state, user_id, offset, limit, }) => {
     return response;
 };
 
-export const getDateById = async (id) => {
-    // TODO Verify
-    return db(TABLE_NAME.BOOK_STATE).findByPk(id, {
-        include: [
-            { model: Author, attributes: ['name', 'image', 'genre', 'isVerify'], required: false, }
-        ],
-    });
-};
-
 export const getInfoFromBookState = async (book_id, user_id) => {
     return db(TABLE_NAME.BOOK_STATE).findOne({
         where: { book_id, user_id, isDelete: false, }, attributes: ['book_state'],
