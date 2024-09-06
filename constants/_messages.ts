@@ -21,6 +21,7 @@ const messages: IMessageType = {
     SUCCESSFULLY_LOGIN: { message: 'Successful Login', messageCode: 'global-0103', },
     PLEASE_VISIT_YOU_EMAIL: { message: 'Please visit your Email address', messageCode: 'global-0104', },
     SUCCESSFULLY_REGISTER: { message: 'Successfully register', messageCode: 'global-0105', },
+    SUCCESSFULLY_ADDED_BOOK: { message: 'Successfully added book', messageCode: 'global-0106', },
 
     // User
     EMAIL_DOES_NOT_EXIST: { message: 'Email does not exist!', messageCode: 'user-0001', },

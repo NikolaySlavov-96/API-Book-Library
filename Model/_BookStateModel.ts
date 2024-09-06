@@ -1,24 +1,49 @@
-import { DataTypes } from "sequelize";
+import { DataTypes, Model, Optional, } from "sequelize";
 
-import { database as sequelize } from "../config";
+import { EBookState } from "../Types/BookEnum";
 
-const BookState = sequelize.define('bookstate', {
-    user_id: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-    },
-    book_id: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-    },
-    book_state: {
-        type: DataTypes.ENUM,
-        values: ['reading', 'forreading', 'purchase', 'forpurchase', 'listened'],
-    },
-    isDelete: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false,
-    },
-});
+interface IBookStateAttributes {
+    userId: number;
+    bookId: number;
+    bookState: string;
+    isDelete: boolean;
+}
 
-export default BookState;
+interface IBookStateCreationAttributes extends Optional<IBookStateAttributes, 'isDelete'> { }
+export class BookState extends Model<IBookStateAttributes, IBookStateCreationAttributes> implements IBookStateAttributes {
+    userId!: number;
+    bookId!: number;
+    bookState!: string;
+    isDelete!: boolean;
+
+    // timestamps!
+    public readonly createdAt!: Date;
+    public readonly updatedAt!: Date;
+}
+
+export const BookStateFactory = (sequelize): typeof BookState => {
+    BookState.init({
+        userId: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+        },
+        bookId: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+        },
+        bookState: {
+            type: DataTypes.TEXT,
+            allowNull: false,
+        },
+        isDelete: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false,
+        },
+    }, {
+        sequelize,
+        tableName: 'bookState',
+        timestamps: true,
+    });
+
+    return BookState;
+}

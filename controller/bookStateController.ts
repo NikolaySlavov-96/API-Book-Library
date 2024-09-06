@@ -11,15 +11,27 @@ export const getAllBooksByState = async (req, res, next) => {
     const page = parseInt(req?.query?.page) || 1;
     const limit = parseInt(req?.query?.limit) || 10;
     const skipSource = (page - 1) * limit;
-    const user_id = req?.user?.id;
+    const userId = req?.user?._id;
 
     try {
-        const result = await bookStateService.getAllDate({ state, user_id, offset: skipSource, limit, });
+        const result = await bookStateService.getAllDate({ state, userId, offset: skipSource, limit, });
+
         result.rows.map((e) => {
-            e.dataValues.id = e.book.id;
-            e.dataValues.author = e.book.author;
-            e.dataValues.booktitle = e.book.booktitle;
-            e.dataValues.genre = e.book.genre;
+            const bookDate = e.Book;
+            e.bookId = bookDate.id;
+            e.bookTitle = bookDate.bookTitle;
+            e.genre = bookDate.genre;
+
+            const authorDate = e.Book.Author;
+            e.authorId = authorDate.id;
+            e.authorName = authorDate.name;
+
+            const userDate = e.User;
+            e.email = userDate.email;
+            e.userId = userDate.id;
+
+            delete e.Book;
+            delete e.User;
         });
 
         res.status(200).json(result);
@@ -30,19 +42,17 @@ export const getAllBooksByState = async (req, res, next) => {
 
 export const createBookState = async (req, res, next) => {
     try {
-        const state = req.params.state;
-        const user_id = req.user._id;
-
+        const userId = req.user._id;
         // Mode in middleware
-        const checkAccount = await verify({ id: user_id, isVerify: true, });
-        if (checkAccount === null) {
+        const checkAccount = await verify({ id: userId, isVerify: true, });
+        if (!checkAccount) {
             res.status(401).json(updateMessage(MESSAGES.ACCOUNT_IS_NOT_VERIFY).user);
         }
 
-        const { bookId, } = req.body;
+        const { bookId, state } = req.body;
 
-        const result = await bookStateService.addingNewBookState({ user_id, book_id: bookId, state, });
-        res.status(201).json(JSON.stringify(result, null, 4));
+        const result = await bookStateService.addingNewBookState({ userId, bookId, state, });
+        res.status(201).json(result);
     } catch (err) {
         next(err);
     }

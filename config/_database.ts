@@ -34,15 +34,17 @@ export const _checkDatabaseIfItExist = async () => {
     }
 };
 
-const sequelize = new Sequelize(
-    DB_NAME as string,
-    DB_USER as string,
-    DB_PASSWORD as string,
-    {
-        host: DB_ADDRESS,
-        port: DB_PORT,
-        dialect: DIALECT as 'postgres',
-    }
-);
+export default () => {
+    const sequelize = new Sequelize(
+        DB_NAME as string,
+        DB_USER as string,
+        DB_PASSWORD as string,
+        {
+            host: DB_ADDRESS,
+            port: DB_PORT,
+            dialect: DIALECT as 'postgres',
+        }
+    );
 
-export default sequelize;
+    return sequelize;
+}

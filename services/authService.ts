@@ -1,8 +1,10 @@
 import 'dotenv/config';
 
-import { cryptCompare, cryptHash, db, updateMessage, } from '../util';
-import { MESSAGES, TABLE_NAME, } from '../constants';
+import { cryptCompare, cryptHash, updateMessage, } from '../util';
+import { MESSAGES, } from '../constants';
 import { addTokenResponse, } from '../Helpers';
+
+import db from '../Model';
 
 // Address for verify Email
 // change password
@@ -11,7 +13,7 @@ import { addTokenResponse, } from '../Helpers';
 export async function register(query) {
     query.email = query.email.toLowerCase();
 
-    const existingEmail = await db(TABLE_NAME.USER).findOne({ where: { email: query.email, }, });
+    const existingEmail = (await db.User.findOne({ where: { email: query.email, }, }))?.dataValues;
 
     if (existingEmail) {
         return updateMessage(MESSAGES.EMAIL_IS_ALREADY_TAKEN, 400);
@@ -19,7 +21,7 @@ export async function register(query) {
 
     const hashedPassword = await cryptHash(query.password);
 
-    await db(TABLE_NAME.USER).create({
+    await db.User.create({
         email: query.email,
         password: hashedPassword,
         year: query.year,
@@ -29,7 +31,7 @@ export async function register(query) {
 }
 
 export async function login(body) {
-    const existingEmail = await db(TABLE_NAME.USER).findOne({ where: { email: body.email, }, });
+    const existingEmail = (await db.User.findOne({ where: { email: body.email, }, }))?.dataValues;
 
     if (!existingEmail) {
         return updateMessage(MESSAGES.WRONG_EMAIL_OR_PASSWORD);
@@ -57,13 +59,13 @@ export async function logout(token) {
 }
 
 export async function checkFieldInDB(email) {
-    const existingEmail = await db(TABLE_NAME.USER).findAndCountAll({ where: { email, }, });
+    const existingEmail = (await db.User.findAndCountAll({ where: { email, }, })).dataValues; // TODO Verify
     return existingEmail.rows.length ? true : false;
 }
 
 export async function verifyTokenFormUser(isVerify) {
 
-    const existingEmail = await db(TABLE_NAME.USER).findOne({ where: { email: isVerify.email, }, });
+    const existingEmail = (await db.User.findOne({ where: { email: isVerify.email, }, })).dataValues;
     if (!existingEmail) {
         return updateMessage(MESSAGES.EMAIL_DOES_NOT_EXIST, 402);
     }

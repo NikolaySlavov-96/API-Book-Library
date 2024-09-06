@@ -1,4 +1,5 @@
 import { MESSAGES, } from '../constants';
+import messages from '../constants/_messages';
 
 import * as bookService from '../services/bookService';
 import { getInfoFromBookState } from '../services/bookStateService';
@@ -23,12 +24,13 @@ export const getAllBooks = async (req, res, next) => {
 export const getBookById = async (req, res, next) => {
     try {
         const id = parseInt(req.params.id);
-        const user_id = req?.user?.id;
+        const userId = req?.user?._id;
 
         const result = await bookService.getDataById(id);
-        if (user_id) {
-            const resFromBookState = await getInfoFromBookState(id, user_id);
-            result.dataValues.bookState = resFromBookState ? resFromBookState.book_state : false;
+
+        if (result && userId) {
+            const data = (await getInfoFromBookState(id, userId))?.dataValues
+            result.dataValues.bookState = data.bookState
         }
 
         res.status(200).json(result);
@@ -39,25 +41,27 @@ export const getBookById = async (req, res, next) => {
 
 export const createBook = async (req, res, next) => {
     try {
-        const user_id = req.user._id;
+        const userId = req.user._id;
 
         // Move in middleware
-        const checkAccount = await verify({ id: user_id, isVerify: true, });
-        if (checkAccount === null) {
-            res.status(401).json(updateMessage(MESSAGES.ACCOUNT_IS_NOT_VERIFY).user);
+        const checkAccount = await verify({ id: userId, isVerify: true, });
+        if (!checkAccount) {
+            return res.status(401).json(updateMessage(MESSAGES.ACCOUNT_IS_NOT_VERIFY).user);
         }
 
-        const { author, booktitle, } = req.body;
+        const { author, bookTitle, } = req.body;
 
-        const result = await bookService.create({ author, booktitle, });
+        const result = await bookService.create({ author, bookTitle, });
 
-        const requestRespond = result.message ? result.message : JSON.stringify(result, null, 4);
-        res.status(result.statusCode ? result.statusCode : 201).json(requestRespond);
+        const requestRespond = result?.user ? result?.user : updateMessage(messages.SUCCESSFULLY_ADDED_BOOK).user;
+        res.status(result?.statusCode ? result?.statusCode : 201).json(requestRespond);
     } catch (err) {
         next(err);
     }
 };
 
+
+// TODO For Future
 export const updateBook = async (req, res, next) => {
     const id = parseInt(req.params.id);
     const { author, booktitle, } = req.body;

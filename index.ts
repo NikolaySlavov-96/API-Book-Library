@@ -1,9 +1,10 @@
 import 'dotenv/config';
 import express from 'express';
 
-import { checkDatabaseIfItExist, database, expressConfig, router, } from './config';
+import { checkDatabaseIfItExist, expressConfig, router, } from './config';
 import { globalErrorHandling, } from './Helpers';
-import { defineAssociations } from './Model';
+
+import db from './Model'
 
 const PORT = process.env.PORT;
 
@@ -14,11 +15,9 @@ async function start() {
 
     await checkDatabaseIfItExist();
 
-    await database.authenticate();
+    await db.sequelize.authenticate();
 
-    defineAssociations();
-
-    await database.sync({ force: false, });
+    await db.sequelize.sync({ force: false, });
 
     expressConfig(app, express);
     router(app);
