@@ -1,6 +1,4 @@
-import 'dotenv/config';
-import jwt from 'jsonwebtoken';
-
+import { jwtSign, } from '.';
 
 export default (user, condition) => {
     const token = createToken(user, condition);
@@ -18,7 +16,7 @@ const createToken = (user, condition) => {
         email: user.email,
     };
     if (condition === 'verify') {
-        const accessToken = jwt.sign(payload, process.env.JWT_SECRET);
+        const accessToken = jwtSign(payload);
         return accessToken;
     }
 

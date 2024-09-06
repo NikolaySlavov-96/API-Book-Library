@@ -1,13 +1,10 @@
 import { sign, verify, } from 'jsonwebtoken';
-// import { jwtDecode, } from 'jwt-decode';
-
-import { IPayload, } from '../Types/verification';
 
 import { updateMessage, } from '../util';
 
 const JWT_SECRET: string | undefined = process.env.JWT_SECRET;
 
-export const _jwtSign = (payload: IPayload | { security: string }, expires?: string): any => {
+export const _jwtSign = (payload, expires?: string): any => {
     return sign(payload, JWT_SECRET!, expires && { expiresIn: expires, });
 };
 

@@ -25,7 +25,7 @@ auth.post('/register',
     authController.createUser
 );
 
-auth.post('/logout', authController.exitUset);
+auth.post('/logout', authController.exitUser);
 auth.get('/check', authController.checkFields);
 
 auth.post('/verify',

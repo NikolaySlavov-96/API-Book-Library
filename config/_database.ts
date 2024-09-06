@@ -1,15 +1,6 @@
-// @ts-nocheck
 import 'dotenv/config';
 import { Client, } from 'pg';
 import { Sequelize, } from 'sequelize';
-
-import {
-    User as UserModel,
-    Author as AuthorModel,
-    Book as BookModel,
-    BookState as BookStateModel,
-} from '../Model';
-
 
 // Constants for login
 const DB_NAME = process.env.DB_NAME;
@@ -43,51 +34,15 @@ export const _checkDatabaseIfItExist = async () => {
     }
 };
 
-
 const sequelize = new Sequelize(
-    DB_NAME,
-    DB_USER,
-    DB_PASSWORD,
+    DB_NAME as string,
+    DB_USER as string,
+    DB_PASSWORD as string,
     {
         host: DB_ADDRESS,
         port: DB_PORT,
-        dialect: DIALECT,
+        dialect: DIALECT as 'postgres',
     }
 );
 
-interface IdbConnect {
-    sequelize: any;
-    Sequelize: any;
-    userModel: any;
-    authorModel: any;
-    bookModel: any;
-    bookStateModel: any;
-}
-
-// export default (): IdbConnect => {
-const data = (): IdbConnect => {
-    // 
-    const User = UserModel(sequelize, Sequelize);
-    const Author = AuthorModel(sequelize, Sequelize);
-    const Book = BookModel(sequelize, Sequelize);
-    const BookState = BookStateModel(sequelize, Sequelize);
-
-    // Creating Relationship
-    BookState.hasOne(User, { foreignKey: 'book_state_id', });
-    BookState.belongsTo(User, { foreignKey: 'user_id', });
-    BookState.belongsTo(Book, { foreignKey: 'book_id', });
-
-    Book.belongsTo(Author, { foreignKey: 'book_id', });
-    Author.belongsTo(Book, { foreignKey: 'author_book_id', });
-
-    return {
-        Sequelize,
-        sequelize,
-        userModel: User,
-        authorModel: Author,
-        bookModel: Book,
-        bookStateModel: BookState,
-    };
-};
-
-export default data();
+export default sequelize;

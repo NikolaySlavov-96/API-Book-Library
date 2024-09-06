@@ -24,8 +24,6 @@ export const _createToken = (data: any, expire?: string): ICreateToken => {
         year: data.year,
     };
 
-    data?.organisation && (payload.organisation = data.organisation);
-
     const accessToken = jwtSign(payload, expire);
     return {
         ...payload,

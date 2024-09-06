@@ -1,7 +1,6 @@
 export { default as updateMessage, } from './_updateMessage';
 export { default as mailUtil, } from './_mailUtil';
 export { default as createLink, } from './_createLink';
-export { default as db, } from './_dbUtil';
 
 export { _jwtSign as jwtSign, } from './_jwt';
 export { _jwtVerify as jwtVerify, } from './_jwt';

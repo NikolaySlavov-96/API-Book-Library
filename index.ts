@@ -3,19 +3,23 @@ import express from 'express';
 
 import { checkDatabaseIfItExist, database, expressConfig, router, } from './config';
 import { globalErrorHandling, } from './Helpers';
+import { defineAssociations } from './Model';
 
 const PORT = process.env.PORT;
 
 start();
 
 async function start() {
+    const app = express();
+
     await checkDatabaseIfItExist();
 
-    // const db = database();
-    // await db.sequelize.sync();
-    await database.sequelize.sync();
+    await database.authenticate();
 
-    const app = express();
+    defineAssociations();
+
+    await database.sync({ force: false, });
+
     expressConfig(app, express);
     router(app);
 
