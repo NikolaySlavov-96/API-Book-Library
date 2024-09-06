@@ -1,22 +1,20 @@
-import { MESSAGES, TABLE_NAME, } from '../constants';
+import { MESSAGES, } from '../constants';
 
-import { db, updateMessage, } from '../util';
+import db from '../Model';
 
-import { database, } from '../config';
-
-const Author = database?.authorModel;
+import { updateMessage, } from '../util';
 
 const ATTRIBUTES = ['name', 'image', 'genre', 'isVerify'];
 
 export const getAllData = async ({ offset, limit, }) => {
-    const getBooks = await db(TABLE_NAME.BOOK).findAndCountAll({
+    const getBooks = await db.Book.findAndCountAll({
         include: [{
-            model: Author,
+            model: db.Author,
             required: false,
             attributes: ATTRIBUTES,
         }],
         order: [['id', 'ASC']],
-        attributes: ['id', 'booktitle', 'image', 'genre', 'isVerify'],
+        attributes: ['id', 'bookTitle', 'image', 'genre', 'isVerify'],
         offset,
         limit,
     });
@@ -25,44 +23,49 @@ export const getAllData = async ({ offset, limit, }) => {
 };
 
 export const getDataById = async (id) => {
-    return db(TABLE_NAME.BOOK).findByPk(id, {
+    return db.Book.findByPk(id, {
         include: [
-            { model: Author, attributes: ATTRIBUTES, required: false, }
+            {
+                model: db.Author,
+                attributes: ATTRIBUTES,
+                required: false
+            },
         ],
     });
 };
 
-export const create = async ({ author, booktitle, }) => {
-    const existingBook = await db(TABLE_NAME.BOOK).findOne({ where: { booktitle, }, });
+export const create = async ({ author, bookTitle, }) => {
+    const existingBook = (await db.Book.findOne({ where: { bookTitle, }, }))?.dataValues;
     if (existingBook) {
         return updateMessage(MESSAGES.BOOK_ALREADY_EXIST);
     }
 
     if (!existingBook) {
-        const isAuthor = await db(TABLE_NAME.AUTHOR).findOne({ where: { name: author, }, });
+        const isAuthor = (await db.Author.findOne({ where: { name: author, }, }))?.dataValues;
 
         if (!isAuthor) {
-            const createAuthor = await db(TABLE_NAME.AUTHOR).create({ name: author, });
-            author = createAuthor.dataValues.author_id;
+            const createAuthor = (await db.Author.create({ name: author, }))?.dataValues;
+            author = createAuthor.id;
         }
-        isAuthor && (author = isAuthor.dataValues.author_id);
+        isAuthor && (author = isAuthor.id);
     }
 
-    const create = await db(TABLE_NAME.BOOK).create({ booktitle, author_id: author, });
+    const create = (await db.Book.create({ bookTitle, authorId: author, }))?.dataValues;
     return create;
 };
 
 export const update = async ({ author, booktitle, id, }) => {
-    const data = await db(TABLE_NAME.BOOK).findByPk(id);
+    const data: any = [] //await Book.findByPk(id);
 
     // data.authorName = author; // To Do Adding editing author name
-    data.booktitle = booktitle;
+    data.bookTitle = booktitle;
     const result = await data.save();
     return result;
 };
 
 
 export const remove = async (id) => {
-    const data = await db(TABLE_NAME.BOOK).findByPk(id);
-    return data.destroy(); // To Do adding isDelete of True
+    const data = []// await Book.findByPk(id);
+    return data
+    // return data.destroy(); // To Do adding isDelete of True
 };

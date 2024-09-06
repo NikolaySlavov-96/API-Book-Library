@@ -1,10 +1,7 @@
-import { db, } from '../util';
-
-import { TABLE_NAME, } from '../constants';
-
+import db from "../Model";
 
 export const verify = async ({ id, isVerify, }) => {
-    const result = await db(TABLE_NAME.USER).findOne({ where: { id, isVerify, }, attributes: ['isVerify'], });
+    const result = (await db.User.findOne({ where: { id, isVerify, }, attributes: ['isVerify'], }))?.dataValues;
 
     return result;
 };
