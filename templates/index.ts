@@ -1,0 +1,1 @@
+export { default as registryTemplate, } from './_registryTemplate';
