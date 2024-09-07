@@ -1,12 +1,9 @@
-import { MESSAGES, } from '../constants';
-import messages from '../constants/_messages';
-
 import * as bookService from '../services/bookService';
-import { getInfoFromBookState } from '../services/bookStateService';
 import { verify, } from '../services/verifyDataService';
 
 import { updateMessage, } from '../util';
 
+import { MESSAGES, ESendEvents, } from '../constants';
 
 export const getAllBooks = async (req, res, next) => {
     const page = parseInt(req?.query?.page) || 1;
@@ -47,7 +44,11 @@ export const createBook = async (req, res, next) => {
 
         const result = await bookService.create({ author, bookTitle, });
 
-        const requestRespond = result?.user ? result?.user : updateMessage(messages.SUCCESSFULLY_ADDED_BOOK).user;
+        if (result.id) {
+            res.SocketIo.emit(ESendEvents.NEW_BOOK_ADDED, result);
+        }
+
+        const requestRespond = result?.user ? result?.user : updateMessage(MESSAGES.SUCCESSFULLY_ADDED_BOOK).user;
         res.status(result?.statusCode ? result?.statusCode : 201).json(requestRespond);
     } catch (err) {
         next(err);
