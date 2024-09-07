@@ -15,7 +15,10 @@ const PORT = process.env.PORT;
 start();
 const app = express();
 const initServer = server.createServer(app);
-const io = new SocketIOServer(initServer, { cors: { origin: '*', }, });
+const io = new SocketIOServer(initServer, {
+    path: '/bookHub',
+    cors: { origin: '*', },
+});
 
 async function start() {
 
