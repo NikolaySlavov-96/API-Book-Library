@@ -24,14 +24,8 @@ export const getAllBooks = async (req, res, next) => {
 export const getBookById = async (req, res, next) => {
     try {
         const id = parseInt(req.params.id);
-        const userId = req?.user?._id;
 
         const result = await bookService.getDataById(id);
-
-        if (result && userId) {
-            const data = (await getInfoFromBookState(id, userId))?.dataValues
-            result.dataValues.bookState = data.bookState
-        }
 
         res.status(200).json(result);
     } catch (err) {

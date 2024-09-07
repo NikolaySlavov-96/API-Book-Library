@@ -6,6 +6,7 @@ const book = Router();
 import { expressValidator, isAuthenticated, } from '../middleware';
 
 import * as bookController from '../controller/bookController';
+import * as bookStateController from '../controller/bookStateController';
 
 import { ROUTING_MESSAGES, } from '../constants';
 
@@ -27,6 +28,18 @@ book.post('/',
 //     isAuthenticated(),
 //     bookController.deleteBook
 // );
+
+
+// TO Book State Controller
+book.get('/booksState/:state', isAuthenticated(), bookStateController.getAllBooksByState);
+book.get('/bookState/:id', isAuthenticated(), bookStateController.getBookStateById);
+book.post('/state/',
+    isAuthenticated(),
+    body('bookId').isLength({ min: 1, }).withMessage(ROUTING_MESSAGES.BOOK_ID_IS_REQUIRED),
+    body('state').isLength({ min: 3 }), // TODO Adding message 
+    expressValidator,
+    bookStateController.createBookState
+);
 
 
 export default book;

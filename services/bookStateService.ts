@@ -31,8 +31,9 @@ export const getAllDate = async ({ state, userId, offset, limit, }) => {
 };
 
 export const getInfoFromBookState = async (bookId, userId) => {
-    return db.BookState.findOne({
-        where: { bookId, userId, isDelete: false, }, attributes: ['bookState'],
+    return await db.BookState.findOne({
+        where: { bookId, userId, isDelete: false, },
+        attributes: ['bookState'],
     });
 };
 
