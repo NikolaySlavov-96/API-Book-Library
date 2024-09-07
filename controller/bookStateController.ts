@@ -1,4 +1,5 @@
 import { MESSAGES, } from '../constants';
+import messages from '../constants/_messages';
 
 import * as bookStateService from '../services/bookStateService';
 
@@ -63,8 +64,8 @@ export const createBookState = async (req, res, next) => {
 
         const { bookId, state } = req.body;
 
-        const result = await bookStateService.addingNewBookState({ userId, bookId, state, });
-        res.status(201).json(result);
+        await bookStateService.addingNewBookState({ userId, bookId, state, });
+        res.status(201).json(updateMessage(messages.SUCCESSFULLY_ADDED_BOOK_IN_COLLECTION).user);
     } catch (err) {
         next(err);
     }
