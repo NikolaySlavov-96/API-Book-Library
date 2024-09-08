@@ -32,7 +32,7 @@ export const BookStateFactory = (sequelize): typeof BookState => {
             allowNull: false,
         },
         bookState: {
-            type: DataTypes.TEXT,
+            type: DataTypes.INTEGER,
             allowNull: false,
         },
         isDelete: {
@@ -46,4 +46,4 @@ export const BookStateFactory = (sequelize): typeof BookState => {
     });
 
     return BookState;
-}
+};

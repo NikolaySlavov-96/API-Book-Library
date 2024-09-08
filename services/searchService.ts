@@ -1,26 +1,75 @@
-// import { TABLE_NAME } from '../constants';
-// import { db } from '../util';
+import db from '../Model';
 
-// const User = database?.userModel;
-// const Book = database?.bookModel;
-// const Op = database?.Sequelize?.Op;
+const Op = db?.Sequelize?.Op;
 
+const ATTRIBUTES = ['name', 'image', 'genre', 'isVerify'];
 
-export const getBookByEmail = async (query) => {
+export const getBookByEmail = async ({ email, offset, limit, }) => {
+    const result = await db.User.findAndCountAll({
+        include: [
+            {
+                model: db.BookState,
+                attributes: ['id', 'bookId'],
+                include: [
+                    {
+                        model: db.Book,
+                        attributes: ['id', 'bookTitle', 'image', 'genre', 'isVerify'],
+                        include: [
+                            {
+                                model: db.Author,
+                                attributes: ['name', 'image', 'genre', 'isVerify'],
+                            }
+                        ],
+                    }
+                ],
+            }
+        ],
+        where: { email, },
+        attributes: ['id', 'email', 'year', 'isVerify'],
+        order: [['id', 'ASC']],
+        offset,
+        limit,
+        raw: true,
+        nest: true,
+    });
 
+    return result;
 };
 
-export const searchBook = async ({ offset, limit, typeSearch, searchContent }) => {
-    // TO DO Improve
-    const result = []// await db(TABLE_NAME.BOOK).findAndCountAll({ offset, limit, });
-    const typeOf = {
-        // 'Op.like': Op.like,
+export const searchBook = async ({ offset, limit, typeSearch, searchContent, }) => {
+    const query = {
+        include: [{
+            model: db.Author,
+            required: false,
+            attributes: ATTRIBUTES,
+        }],
+        order: [['id', 'ASC']],
+        attributes: ['id', 'bookTitle', 'image', 'genre', 'isVerify'],
+        offset,
+        limit,
+        where: {},
     };
 
-    // typeSearch && (query.where = {
-    //     //{ authorName: { [typeOf[typeSearch]]: searchContent } } To Do creating JOIN
-    //     [Op.or]: [{ booktitle: { [typeOf[typeSearch]]: searchContent, }, }, { genre: { [typeOf[typeSearch]]: searchContent, }, }],
+    const typeOf = {
+        'Op.like': Op.like,
+    };
 
-    // });
+    typeSearch && (query.where = {
+        [Op.or]: [
+            {
+                bookTitle: { [typeOf[typeSearch]]: searchContent, },
+            },
+            {
+                genre: { [typeOf[typeSearch]]: searchContent, },
+            },
+            {
+                '$Author.name$': { [typeOf[typeSearch]]: searchContent, },
+            }
+        ],
+
+    });
+
+    const result = await db.Book.findAndCountAll(query);
+
     return result;
 };

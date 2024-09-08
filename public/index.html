@@ -1,0 +1,21 @@
+<!-- public/index.html -->
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Socket Events Test</title>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.js"
+      integrity="sha512-luMnTJZ7oEchNDZAtQhgjomP1eZefnl82ruTH/3Oj/Yu5qYtwL7+dVRccACS/Snp1lFXq188XFipHKYE75IaQQ=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script src="socket.js"></script>
+  </head>
+  <body>
+    <h1>Socket Events Test</h1>
+    <ul id="new-event"></ul>
+    <input type="text" id="event" placeholder="Write a message..." />
+    <button onclick="sendMessage()">Click button</button>
+  </body>
+</html>

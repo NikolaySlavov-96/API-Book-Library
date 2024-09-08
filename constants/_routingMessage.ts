@@ -18,6 +18,7 @@ const routing = {
     BOOK_TITLE_REQUIRED: 'Book title is required',
     AUTHOR_REQUIRED: 'Author is required',
     BOOK_ID_IS_REQUIRED: 'Book ID is required',
+    BOOK_COLLECTION_TYPE: 'Please insert correct collection type',
 };
 
 export default routing;

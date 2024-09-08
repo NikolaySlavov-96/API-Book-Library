@@ -19,11 +19,14 @@ db.Book = BookFactory(sequelize);
 db.Author = AuthorFactory(sequelize);
 db.BookState = BookStateFactory(sequelize);
 
-// Book RelationShip
-db.Book.belongsTo(db.Author, { foreignKey: 'authorId', });
-
-// BookState Relationship
+// Association
+db.User.hasMany(db.BookState, { foreignKey: 'userId', });
 db.BookState.belongsTo(db.User, { foreignKey: 'userId', });
+
+db.Book.belongsTo(db.Author, { foreignKey: 'authorId', });
+db.Author.hasMany(db.Book, { foreignKey: 'authorId', });
+
 db.BookState.belongsTo(db.Book, { foreignKey: 'bookId', });
+db.Book.hasMany(db.BookState, { foreignKey: 'bookId', });
 
 export default db;

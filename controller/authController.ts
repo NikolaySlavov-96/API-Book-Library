@@ -1,9 +1,9 @@
-import * as authService from '../services/authService';
-import { jwtVerify, } from '../util';
-import verifyAccount from '../services/mailService';
-
 import { EMAIL, MESSAGES, } from '../constants';
 
+import * as authService from '../services/authService';
+import verifyAccount from '../services/mailService';
+
+import { jwtVerify, } from '../util';
 
 export const createUser = async (req, res, next) => {
     try {
