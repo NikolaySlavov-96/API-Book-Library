@@ -36,7 +36,7 @@ book.get('/bookState/:id', isAuthenticated(), bookStateController.getBookStateBy
 book.post('/state/',
     isAuthenticated(),
     body('bookId').isLength({ min: 1, }).withMessage(ROUTING_MESSAGES.BOOK_ID_IS_REQUIRED),
-    body('state').isLength({ min: 3 }), // TODO Adding message 
+    body('state').isFloat({ min: 1, max: 5, }).withMessage(ROUTING_MESSAGES.BOOK_COLLECTION_TYPE),
     expressValidator,
     bookStateController.createBookState
 );
