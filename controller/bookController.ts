@@ -1,9 +1,10 @@
+import { MESSAGES, ESendEvents, } from '../constants';
+
+import { checkUserProfileVerification, } from '../Helpers';
+
 import * as bookService from '../services/bookService';
-import { verify, } from '../services/verifyDataService';
 
 import { updateMessage, } from '../util';
-
-import { MESSAGES, ESendEvents, } from '../constants';
 
 export const getAllBooks = async (req, res, next) => {
     const page = parseInt(req?.query?.page) || 1;
@@ -33,9 +34,7 @@ export const getBookById = async (req, res, next) => {
 export const createBook = async (req, res, next) => {
     try {
         const userId = req.user._id;
-
-        // Move in middleware
-        const checkAccount = await verify({ id: userId, isVerify: true, });
+        const checkAccount = await checkUserProfileVerification(userId);
         if (!checkAccount) {
             return res.status(401).json(updateMessage(MESSAGES.ACCOUNT_IS_NOT_VERIFY).user);
         }

@@ -1,4 +1,4 @@
-import db from "../Model";
+import db from '../Model';
 
 export const getAllDate = async ({ state, userId, offset, limit, }) => {
     const response = await db.BookState.findAndCountAll({
@@ -47,5 +47,5 @@ export const addingNewBookState = async ({ userId, bookId, state, }) => {
     }
 
     const result = (await db.BookState.create({ userId, bookId, bookState: state, }))?.dataValues;
-    return result
+    return result;
 };

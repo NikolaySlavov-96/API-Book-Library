@@ -1,9 +1,9 @@
 import { MESSAGES, } from '../constants';
-import messages from '../constants/_messages';
+
+import { checkUserProfileVerification, } from '../Helpers';
 
 import * as bookStateService from '../services/bookStateService';
 
-import { verify, } from '../services/verifyDataService';
 import { updateMessage, } from '../util';
 
 
@@ -56,16 +56,15 @@ export const getBookStateById = async (req, res, next) => {
 export const createBookState = async (req, res, next) => {
     try {
         const userId = req.user._id;
-        // Mode in middleware
-        const checkAccount = await verify({ id: userId, isVerify: true, });
+        const checkAccount = await checkUserProfileVerification(userId);
         if (!checkAccount) {
             res.status(401).json(updateMessage(MESSAGES.ACCOUNT_IS_NOT_VERIFY).user);
         }
 
-        const { bookId, state } = req.body;
+        const { bookId, state, } = req.body;
 
         await bookStateService.addingNewBookState({ userId, bookId, state, });
-        res.status(201).json(updateMessage(messages.SUCCESSFULLY_ADDED_BOOK_IN_COLLECTION).user);
+        res.status(201).json(updateMessage(MESSAGES.SUCCESSFULLY_ADDED_BOOK_IN_COLLECTION).user);
     } catch (err) {
         next(err);
     }
