@@ -3,12 +3,13 @@ import { getBookByEmail, searchBook, } from '../services/searchService';
 
 export const viewUserBooksFromEmail = async (req, res, next) => {
     try {
+        const email = req?.query?.email;
         const page = parseInt(req?.query?.page) || 1;
         const limit = parseInt(req?.query?.limit) || 10;
         const skipSource = (page - 1) * limit;
 
-        const books = {}; //await getBookByEmail();
-        res.json(books);
+        const result = await getBookByEmail({ email, offset: skipSource, limit, });
+        res.status(200).json(result);
     } catch (err) {
         next(err);
     }

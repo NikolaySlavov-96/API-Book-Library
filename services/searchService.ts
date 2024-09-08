@@ -4,8 +4,36 @@ const Op = db?.Sequelize?.Op;
 
 const ATTRIBUTES = ['name', 'image', 'genre', 'isVerify'];
 
-export const getBookByEmail = async (query) => {
+export const getBookByEmail = async ({ email, offset, limit, }) => {
+    const result = await db.User.findAndCountAll({
+        include: [
+            {
+                model: db.BookState,
+                attributes: ['id', 'bookId'],
+                include: [
+                    {
+                        model: db.Book,
+                        attributes: ['id', 'bookTitle', 'image', 'genre', 'isVerify'],
+                        include: [
+                            {
+                                model: db.Author,
+                                attributes: ['name', 'image', 'genre', 'isVerify'],
+                            }
+                        ],
+                    }
+                ],
+            }
+        ],
+        where: { email, },
+        attributes: ['id', 'email', 'year', 'isVerify'],
+        order: [['id', 'ASC']],
+        offset,
+        limit,
+        raw: true,
+        nest: true,
+    });
 
+    return result;
 };
 
 export const searchBook = async ({ offset, limit, typeSearch, searchContent, }) => {
