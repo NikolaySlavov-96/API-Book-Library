@@ -1,6 +1,6 @@
 import { MESSAGES, } from '../constants';
 
-import { checkUserProfileVerification, } from '../Helpers';
+import { checkUserProfileVerification, paginationParser, } from '../Helpers';
 
 import * as bookStateService from '../services/bookStateService';
 
@@ -8,15 +8,13 @@ import { updateMessage, } from '../util';
 
 
 export const getAllBooksByState = async (req, res, next) => {
-    const state = req.params.state;
-    const page = parseInt(req?.query?.page) || 1;
-    const limit = parseInt(req?.query?.limit) || 10;
-    const skipSource = (page - 1) * limit;
+    const { limit, offset, } = paginationParser(req?.query);
+
     const userId = req?.user?._id;
+    const state = req.params.state;
 
     try {
-        const result = await bookStateService.getAllDate({ state, userId, offset: skipSource, limit, });
-
+        const result = await bookStateService.getAllDate({ state, userId, offset, limit, });
 
         res.status(200).json(result);
     } catch (err) {

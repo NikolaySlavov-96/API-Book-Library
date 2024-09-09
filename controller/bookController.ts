@@ -1,18 +1,16 @@
 import { MESSAGES, ESendEvents, } from '../constants';
 
-import { checkUserProfileVerification, } from '../Helpers';
+import { checkUserProfileVerification, paginationParser, } from '../Helpers';
 
 import * as bookService from '../services/bookService';
 
 import { updateMessage, } from '../util';
 
 export const getAllBooks = async (req, res, next) => {
-    const page = parseInt(req?.query?.page) || 1;
-    const limit = parseInt(req?.query?.limit) || 10;
-    const skipSource = (page - 1) * limit;
+    const { limit, offset, } = paginationParser(req?.query);
 
     try {
-        const result = await bookService.getAllData({ offset: skipSource, limit, });
+        const result = await bookService.getAllData({ offset, limit, });
         res.status(200).json(result);
     } catch (err) {
         next(err);
