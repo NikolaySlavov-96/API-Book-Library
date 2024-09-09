@@ -17,23 +17,6 @@ export const getAllBooksByState = async (req, res, next) => {
     try {
         const result = await bookStateService.getAllDate({ state, userId, offset: skipSource, limit, });
 
-        result.rows.map((e) => {
-            const bookDate = e.Book;
-            e.bookId = bookDate.id;
-            e.bookTitle = bookDate.bookTitle;
-            e.genre = bookDate.genre;
-
-            const authorDate = e.Book.Author;
-            e.authorId = authorDate.id;
-            e.authorName = authorDate.name;
-
-            const userDate = e.User;
-            e.email = userDate.email;
-            e.userId = userDate.id;
-
-            delete e.Book;
-            delete e.User;
-        });
 
         res.status(200).json(result);
     } catch (err) {
