@@ -1,7 +1,9 @@
+import { responseMapper, EMappedType, } from '../Helpers';
+
 import db from '../Model';
 
 export const getAllDate = async ({ state, userId, offset, limit, }) => {
-    const response = await db.BookState.findAndCountAll({
+    const result = await db.BookState.findAndCountAll({
         include: [
             {
                 model: db.Book as 'book',
@@ -27,7 +29,9 @@ export const getAllDate = async ({ state, userId, offset, limit, }) => {
         nest: true,
     });
 
-    return response;
+    const mappedResponse = responseMapper(result, EMappedType.BOOK_STATE);
+
+    return mappedResponse;
 };
 
 export const getInfoFromBookState = async (bookId, userId) => {

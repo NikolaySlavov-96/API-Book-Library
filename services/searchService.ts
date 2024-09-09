@@ -1,3 +1,5 @@
+import { EMappedType, responseMapper, } from '../Helpers';
+
 import db from '../Model';
 
 const Op = db?.Sequelize?.Op;
@@ -33,7 +35,9 @@ export const getBookByEmail = async ({ email, offset, limit, }) => {
         nest: true,
     });
 
-    return result;
+    const mappedResponse = responseMapper(result, EMappedType.BOOK_SEARCH);
+
+    return mappedResponse;
 };
 
 export const searchBook = async ({ offset, limit, typeSearch, searchContent, }) => {

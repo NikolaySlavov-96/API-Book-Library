@@ -1,4 +1,5 @@
 import { MESSAGES, } from '../constants';
+import { responseMapper, EMappedType, } from '../Helpers';
 
 import db from '../Model';
 
@@ -7,7 +8,7 @@ import { updateMessage, } from '../util';
 const ATTRIBUTES = ['name', 'image', 'genre', 'isVerify'];
 
 export const getAllData = async ({ offset, limit, }) => {
-    const getBooks = await db.Book.findAndCountAll({
+    const result = await db.Book.findAndCountAll({
         include: [{
             model: db.Author,
             required: false,
@@ -17,9 +18,13 @@ export const getAllData = async ({ offset, limit, }) => {
         attributes: ['id', 'bookTitle', 'image', 'genre', 'isVerify'],
         offset,
         limit,
+        raw: true,
+        nest: true,
     });
 
-    return getBooks;
+    const mappedResponse = responseMapper(result, EMappedType.BOOK);
+
+    return mappedResponse;
 };
 
 export const getDataById = async (id) => {
@@ -28,8 +33,8 @@ export const getDataById = async (id) => {
             {
                 model: db.Author,
                 attributes: ATTRIBUTES,
-                required: false
-            },
+                required: false,
+            }
         ],
     });
 };
