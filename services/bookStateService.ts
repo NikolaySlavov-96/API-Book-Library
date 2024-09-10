@@ -18,10 +18,15 @@ export const getAllDate = async ({ state, userId, offset, limit, }) => {
                 model: db.User as 'user',
                 required: true,
                 attributes: ['email', 'id'],
+            },
+            {
+                model: db.State,
+                required: true,
+                attributes: ['stateName'],
             }
         ],
-        where: { bookState: state, userId, },
-        attributes: ['id', 'bookState', 'isDelete'],
+        where: { stateId: state, userId, },
+        attributes: ['id', 'stateId', 'isDelete'],
         order: [['id', 'ASC']],
         offset,
         limit,
@@ -37,7 +42,7 @@ export const getAllDate = async ({ state, userId, offset, limit, }) => {
 export const getInfoFromBookState = async (bookId, userId) => {
     return await db.BookState.findOne({
         where: { bookId, userId, isDelete: false, },
-        attributes: ['bookState'],
+        attributes: ['stateId'],
     });
 };
 
@@ -45,10 +50,10 @@ export const addingNewBookState = async ({ userId, bookId, state, }) => {
     const existingBook = await db.BookState.findOne({ where: { bookId, userId, isDelete: false, }, });
 
     if (existingBook) {
-        existingBook.bookState = state;
+        existingBook.stateId = state;
         return await existingBook.save();
     }
 
-    const result = (await db.BookState.create({ userId, bookId, bookState: state, }))?.dataValues;
+    const result = (await db.BookState.create({ userId, bookId, stateId: state, }))?.dataValues;
     return result;
 };

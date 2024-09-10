@@ -34,8 +34,8 @@ const bookStateModel = (data) => {
     const updateUser = userModel(data.User);
 
     return {
-        bookStateId: data.id,
-        bookState: data.bookState,
+        bookStateId: data.stateId,
+        // bookStateName: data.State.stateName,
         bookStateIsDelete: data.isDelete,
         ...updatedBook,
         ...updateUser,
@@ -49,7 +49,7 @@ const bookSearchModel = (data) => {
     return {
         ...updateUser,
         ...updateBook,
-        bookStateId: data.id,
+        stateId: data.id, // TODO
     };
 };
 

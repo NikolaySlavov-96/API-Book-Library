@@ -1,25 +1,18 @@
 import { DataTypes, Model, Optional, } from 'sequelize';
 
-// Types Book Collection Number to Type -->;
-// 1: FOR_PURCHASE,
-// 2: PURCHASE,
-// 3: FOR_READING,
-// 4: READING,
-// 5: LISTENING,
-
 interface IBookStateAttributes {
     userId: number;
     bookId: number;
-    bookState: number;
+    stateId: number;
     isDelete: boolean;
 }
 
-interface IBookStateCreationAttributes extends Optional<IBookStateAttributes, 'bookState'> { }
+interface IBookStateCreationAttributes extends Optional<IBookStateAttributes, 'stateId'> { }
 // eslint-disable-next-line max-len
 export class BookState extends Model<IBookStateAttributes, IBookStateCreationAttributes> implements IBookStateAttributes {
     userId: number;
     bookId: number;
-    declare bookState: number;
+    declare stateId: number;
     declare isDelete: boolean;
 }
 
@@ -33,7 +26,7 @@ export const BookStateFactory = (sequelize): typeof BookState => {
             type: DataTypes.INTEGER,
             allowNull: false,
         },
-        bookState: {
+        stateId: {
             type: DataTypes.INTEGER,
             allowNull: false,
         },
