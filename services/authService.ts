@@ -65,14 +65,17 @@ export async function checkFieldInDB(email) {
 
 export async function verifyTokenFormUser(isVerify) {
 
-    const existingEmail = (await db.User.findOne({ where: { email: isVerify.email, }, })).dataValues;
-    if (!existingEmail) {
+    const existingEmail = await db.User.findOne({ where: { email: isVerify.email, }, });
+
+    if (!existingEmail?.dataValues) {
         return updateMessage(MESSAGES.EMAIL_DOES_NOT_EXIST, 402);
     }
-    if (existingEmail.isVerify) {
+    if (existingEmail?.dataValues?.isVerify) {
         return updateMessage(MESSAGES.ACCOUNT_ALREADY_TAKEN, 401);
     }
+
     existingEmail.isVerify = true;
-    const result = await existingEmail.save();
-    return result.isVerify;
+    await existingEmail.save();
+
+    return updateMessage(MESSAGES.SUCCESSFULLY_VERIFY_ACCOUNT, 200);
 }

@@ -45,8 +45,7 @@ export const addingNewBookState = async ({ userId, bookId, state, }) => {
     const existingBook = await db.BookState.findOne({ where: { bookId, userId, isDelete: false, }, });
 
     if (existingBook) {
-        existingBook.dataValues.bookState = state;
-        existingBook.dataValues.isDelete = true;
+        existingBook.bookState = state;
         return await existingBook.save();
     }
 
