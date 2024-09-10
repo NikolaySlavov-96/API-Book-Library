@@ -1,4 +1,4 @@
-import { EMAIL, MESSAGES, } from '../constants';
+import { EMAIL, } from '../constants';
 
 import * as authService from '../services/authService';
 import verifyAccount from '../services/mailService';
@@ -59,7 +59,7 @@ export const verifyUser = async (req, res, next) => {
         const isVerify = await jwtVerify(verifyToken);
         const verifyState = await authService.verifyTokenFormUser(isVerify);
 
-        res.status(verifyState).json(verifyState || MESSAGES.SUCCESSFULLY_VERIFY_ACCOUNT);
+        res.status(verifyState?.statusCode).json(verifyState?.user);
     } catch (err) {
         next(err);
     }
