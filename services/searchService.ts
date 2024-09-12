@@ -51,6 +51,8 @@ export const searchBook = async ({ offset, limit, typeSearch, searchContent, }) 
         attributes: ['id', 'bookTitle', 'image', 'genre', 'isVerify'],
         offset,
         limit,
+        raw: true,
+        nest: true,
         where: {},
     };
 
@@ -75,5 +77,7 @@ export const searchBook = async ({ offset, limit, typeSearch, searchContent, }) 
 
     const result = await db.Book.findAndCountAll(query);
 
-    return result;
+    const mappedResponse = responseMapper(result, EMappedType.BOOK);
+
+    return mappedResponse;
 };
