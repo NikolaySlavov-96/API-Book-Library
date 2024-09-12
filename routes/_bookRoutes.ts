@@ -7,6 +7,7 @@ import { expressValidator, isAuthenticated, } from '../middleware';
 
 import * as bookController from '../controller/bookController';
 import * as bookStateController from '../controller/bookStateController';
+import * as stateController from '../controller/stateController';
 
 import { ROUTING_MESSAGES, } from '../constants';
 
@@ -31,6 +32,7 @@ book.post('/',
 
 
 // TO Book State Controller
+book.get('/bookStates/all', stateController.getStates);
 book.get('/booksState/:state', isAuthenticated(), bookStateController.getAllBooksByState);
 book.get('/bookState/:id', isAuthenticated(), bookStateController.getBookStateById);
 book.post('/state/',
