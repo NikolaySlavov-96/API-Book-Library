@@ -18,7 +18,7 @@ export const createUser = async (req, res, next) => {
         const emailData = [{ type: EMAIL.REGISTER_CONFIRM, }];
         verifyAccount({ email: req.body.email, }, emailData);
 
-        res.status(201).json(result);
+        res.status(201).json(result.user);
     } catch (err) {
         next(err);
     }
