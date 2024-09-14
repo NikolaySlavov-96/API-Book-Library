@@ -34,17 +34,17 @@ export async function login(body) {
     const existingEmail = (await db.User.findOne({ where: { email: body.email, }, }))?.dataValues;
 
     if (!existingEmail) {
-        return updateMessage(MESSAGES.WRONG_EMAIL_OR_PASSWORD);
+        return updateMessage(MESSAGES.WRONG_EMAIL_OR_PASSWORD, 400);
     }
     if (existingEmail.isDelete) {
-        return updateMessage(MESSAGES.DELETED_PROFILE);
+        return updateMessage(MESSAGES.DELETED_PROFILE, 400);
     }
 
     const { stayLogin, password, } = body;
     const matchPassword = await cryptCompare(password, existingEmail.password);
 
     if (!matchPassword) {
-        return updateMessage(MESSAGES.WRONG_EMAIL_OR_PASSWORD);
+        return updateMessage(MESSAGES.WRONG_EMAIL_OR_PASSWORD, 400);
     }
 
     return addTokenResponse(existingEmail, MESSAGES.SUCCESSFULLY_LOGIN);
