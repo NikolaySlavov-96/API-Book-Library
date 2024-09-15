@@ -2,7 +2,8 @@ const _paginationParser = (query) => {
     const page = parseInt(query?.page) || 1;
     const limit = parseInt(query?.limit) || 10;
 
-    const skipSource = (page - 1) * limit;
+    const maxLimit = Math.max(limit, 140);
+    const skipSource = (page - 1) * maxLimit;
 
     return {
         limit,
