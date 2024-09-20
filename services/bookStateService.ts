@@ -1,9 +1,13 @@
 import { responseMapper, EMappedType, } from '../Helpers';
 
 import db from '../Model';
+const Op = db?.Sequelize?.Op;
 
-export const getAllDate = async ({ state, userId, offset, limit, }) => {
-    const result = await db.BookState.findAndCountAll({
+export const getAllDate = async ({ state, userId, offset, limit, filterOperator, searchContent, }) => {
+    const queryOperator = Op[filterOperator];
+    const hasSearchContent = !!searchContent;
+
+    const query = {
         include: [
             {
                 model: db.Book as 'book',
@@ -13,6 +17,20 @@ export const getAllDate = async ({ state, userId, offset, limit, }) => {
                     model: db.Author as 'author',
                     attributes: ['name', 'image', 'isVerify', 'genre'],
                 },
+                where: hasSearchContent ? {
+                    [Op.or]: [
+                        {
+                            bookTitle: { [queryOperator]: searchContent, },
+                        },
+                        {
+                            genre: { [queryOperator]: searchContent, },
+                        }
+                        // TODO resolve problem
+                        // , {
+                        // '$Author.name$': { [queryOperator]: searchContent, },
+                        // }
+                    ],
+                } : {},
             },
             {
                 model: db.User as 'user',
@@ -32,7 +50,9 @@ export const getAllDate = async ({ state, userId, offset, limit, }) => {
         limit,
         raw: true,
         nest: true,
-    });
+    };
+
+    const result = await db.BookState.findAndCountAll(query);
 
     const mappedResponse = responseMapper(result, EMappedType.BOOK_STATE);
 

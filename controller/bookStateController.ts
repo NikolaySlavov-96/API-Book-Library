@@ -1,4 +1,4 @@
-import { MESSAGES, } from '../constants';
+import { MESSAGES, queryOperators, } from '../constants';
 
 import { checkUserProfileVerification, paginationParser, } from '../Helpers';
 
@@ -10,11 +10,16 @@ import { updateMessage, } from '../util';
 export const getAllBooksByState = async (req, res, next) => {
     const { limit, offset, } = paginationParser(req?.query);
 
+    const searchContent = req.query.search && `%${req?.query?.search}%`;
+    const filterOperator = queryOperators.LIKE;
+
     const userId = req?.user?._id;
     const state = req.params.state;
 
     try {
-        const result = await bookStateService.getAllDate({ state, userId, offset, limit, });
+        const result = await bookStateService.getAllDate({
+            state, userId, offset, limit, searchContent, filterOperator,
+        });
 
         res.status(200).json(result);
     } catch (err) {
