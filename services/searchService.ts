@@ -2,10 +2,6 @@ import { EMappedType, responseMapper, } from '../Helpers';
 
 import db from '../Model';
 
-const Op = db?.Sequelize?.Op;
-
-const ATTRIBUTES = ['name', 'image', 'genre', 'isVerify'];
-
 export const getBookByEmail = async ({ email, offset, limit, }) => {
     const result = await db.User.findAndCountAll({
         include: [
@@ -36,48 +32,6 @@ export const getBookByEmail = async ({ email, offset, limit, }) => {
     });
 
     const mappedResponse = responseMapper(result, EMappedType.BOOK_SEARCH);
-
-    return mappedResponse;
-};
-
-export const searchBook = async ({ offset, limit, typeSearch, searchContent, }) => {
-    const query = {
-        include: [{
-            model: db.Author,
-            required: false,
-            attributes: ATTRIBUTES,
-        }],
-        order: [['id', 'ASC']],
-        attributes: ['id', 'bookTitle', 'image', 'genre', 'isVerify'],
-        offset,
-        limit,
-        raw: true,
-        nest: true,
-        where: {},
-    };
-
-    const typeOf = {
-        'Op.like': Op.like,
-    };
-
-    typeSearch && (query.where = {
-        [Op.or]: [
-            {
-                bookTitle: { [typeOf[typeSearch]]: searchContent, },
-            },
-            {
-                genre: { [typeOf[typeSearch]]: searchContent, },
-            },
-            {
-                '$Author.name$': { [typeOf[typeSearch]]: searchContent, },
-            }
-        ],
-
-    });
-
-    const result = await db.Book.findAndCountAll(query);
-
-    const mappedResponse = responseMapper(result, EMappedType.BOOK);
 
     return mappedResponse;
 };

@@ -8,8 +8,4 @@ search.get('/email',
     searchController.viewUserBooksFromEmail
 );
 
-search.get('/books',
-    searchController.searchBooksByParams
-);
-
 export default search;
