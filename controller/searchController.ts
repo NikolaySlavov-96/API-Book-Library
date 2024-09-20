@@ -1,10 +1,10 @@
 import { getBookByEmail, } from '../services/searchService';
 
-import { paginationParser, } from '../Helpers';
+import { queryParser, } from '../Helpers';
 
 export const viewUserBooksFromEmail = async (req, res, next) => {
     try {
-        const { limit, offset, } = paginationParser(req?.query);
+        const { limit, offset, } = queryParser(req?.query);
 
         const email = req?.query?.email;
 

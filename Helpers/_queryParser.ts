@@ -1,4 +1,4 @@
-const _paginationParser = (query) => {
+const _queryParser = (query) => {
     const page = parseInt(query?.page) || 1;
     const limit = parseInt(query?.limit) || 10;
 
@@ -11,4 +11,4 @@ const _paginationParser = (query) => {
     };
 };
 
-export default _paginationParser;
+export default _queryParser;

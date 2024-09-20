@@ -1,6 +1,6 @@
 import { MESSAGES, queryOperators, } from '../constants';
 
-import { checkUserProfileVerification, paginationParser, } from '../Helpers';
+import { checkUserProfileVerification, queryParser, } from '../Helpers';
 
 import * as bookStateService from '../services/bookStateService';
 
@@ -8,7 +8,7 @@ import { updateMessage, } from '../util';
 
 
 export const getAllBooksByState = async (req, res, next) => {
-    const { limit, offset, } = paginationParser(req?.query);
+    const { limit, offset, } = queryParser(req?.query);
 
     const searchContent = req.query.search && `%${req?.query?.search}%`;
     const filterOperator = queryOperators.LIKE;

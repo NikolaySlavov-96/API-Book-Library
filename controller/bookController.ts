@@ -1,13 +1,13 @@
 import { MESSAGES, ESendEvents, queryOperators, } from '../constants';
 
-import { checkUserProfileVerification, paginationParser, } from '../Helpers';
+import { checkUserProfileVerification, queryParser, } from '../Helpers';
 
 import * as bookService from '../services/bookService';
 
 import { updateMessage, } from '../util';
 
 export const getAllBooks = async (req, res, next) => {
-    const { limit, offset, } = paginationParser(req?.query);
+    const { limit, offset, } = queryParser(req?.query);
 
     const searchContent = req.query.search && `%${req?.query?.search}%`;
     const filterOperator = queryOperators.LIKE;
