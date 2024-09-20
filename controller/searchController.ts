@@ -4,9 +4,7 @@ import { queryParser, } from '../Helpers';
 
 export const viewUserBooksFromEmail = async (req, res, next) => {
     try {
-        const { limit, offset, } = queryParser(req?.query);
-
-        const email = req?.query?.email;
+        const { limit, offset, email, } = queryParser(req?.query);
 
         const result = await getBookByEmail({ email, offset, limit, });
         res.status(200).json(result);

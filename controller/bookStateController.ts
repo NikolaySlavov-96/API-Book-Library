@@ -8,9 +8,8 @@ import { updateMessage, } from '../util';
 
 
 export const getAllBooksByState = async (req, res, next) => {
-    const { limit, offset, } = queryParser(req?.query);
+    const { limit, offset, searchContent, } = queryParser(req?.query);
 
-    const searchContent = req.query.search && `%${req?.query?.search}%`;
     const filterOperator = queryOperators.LIKE;
 
     const userId = req?.user?._id;

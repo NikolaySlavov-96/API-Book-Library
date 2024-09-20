@@ -7,9 +7,8 @@ import * as bookService from '../services/bookService';
 import { updateMessage, } from '../util';
 
 export const getAllBooks = async (req, res, next) => {
-    const { limit, offset, } = queryParser(req?.query);
+    const { limit, offset, searchContent, } = queryParser(req?.query);
 
-    const searchContent = req.query.search && `%${req?.query?.search}%`;
     const filterOperator = queryOperators.LIKE;
 
     try {

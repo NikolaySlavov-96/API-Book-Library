@@ -5,9 +5,14 @@ const _queryParser = (query) => {
     const maxLimit = Math.max(limit, 140);
     const skipSource = (page - 1) * maxLimit;
 
+    const email = query?.email as string;
+    const searchContent = query.search && `%${query?.search}%`;
+
     return {
         limit,
         offset: skipSource,
+        email,
+        searchContent,
     };
 };
 
