@@ -5,7 +5,6 @@ import { jwtSign, jwtVerify, } from '../util';
 interface IVerifyToken {
     _id: string;
     email: string;
-    organisation?: string;
     iat?: number;
 }
 
@@ -22,6 +21,7 @@ export const _createToken = (data: any, expire?: string): ICreateToken => {
         _id: data.id,
         email: data.email,
         year: data.year,
+        isVerify: data.isVerify,
     };
 
     const accessToken = jwtSign(payload, expire);

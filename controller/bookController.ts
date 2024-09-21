@@ -1,18 +1,18 @@
-import { MESSAGES, ESendEvents, } from '../constants';
+import { MESSAGES, ESendEvents, queryOperators, } from '../constants';
 
-import { checkUserProfileVerification, } from '../Helpers';
+import { checkUserProfileVerification, queryParser, } from '../Helpers';
 
 import * as bookService from '../services/bookService';
 
 import { updateMessage, } from '../util';
 
 export const getAllBooks = async (req, res, next) => {
-    const page = parseInt(req?.query?.page) || 1;
-    const limit = parseInt(req?.query?.limit) || 10;
-    const skipSource = (page - 1) * limit;
+    const { limit, offset, searchContent, } = queryParser(req?.query);
+
+    const filterOperator = queryOperators.LIKE;
 
     try {
-        const result = await bookService.getAllData({ offset: skipSource, limit, });
+        const result = await bookService.getAllData({ offset, limit, filterOperator, searchContent, });
         res.status(200).json(result);
     } catch (err) {
         next(err);

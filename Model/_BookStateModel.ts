@@ -1,24 +1,19 @@
-import { DataTypes, Model, Optional, } from "sequelize";
-
-import { EBookState } from "../Types/BookEnum";
+import { DataTypes, Model, Optional, } from 'sequelize';
 
 interface IBookStateAttributes {
     userId: number;
     bookId: number;
-    bookState: string;
+    stateId: number;
     isDelete: boolean;
 }
 
-interface IBookStateCreationAttributes extends Optional<IBookStateAttributes, 'isDelete'> { }
+interface IBookStateCreationAttributes extends Optional<IBookStateAttributes, 'stateId'> { }
+// eslint-disable-next-line max-len
 export class BookState extends Model<IBookStateAttributes, IBookStateCreationAttributes> implements IBookStateAttributes {
-    userId!: number;
-    bookId!: number;
-    bookState!: string;
-    isDelete!: boolean;
-
-    // timestamps!
-    public readonly createdAt!: Date;
-    public readonly updatedAt!: Date;
+    userId: number;
+    bookId: number;
+    declare stateId: number;
+    declare isDelete: boolean;
 }
 
 export const BookStateFactory = (sequelize): typeof BookState => {
@@ -31,7 +26,7 @@ export const BookStateFactory = (sequelize): typeof BookState => {
             type: DataTypes.INTEGER,
             allowNull: false,
         },
-        bookState: {
+        stateId: {
             type: DataTypes.INTEGER,
             allowNull: false,
         },

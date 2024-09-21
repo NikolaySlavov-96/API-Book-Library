@@ -1,4 +1,4 @@
-import { DataTypes, Model, Optional } from "sequelize";
+import { DataTypes, Model, Optional, } from 'sequelize';
 
 interface IBookAttributes {
     id: number;
@@ -12,12 +12,12 @@ interface IBookAttributes {
 interface IBookCreationAttributes extends Optional<IBookAttributes, 'id'> { }
 
 export class Book extends Model<IBookAttributes, IBookCreationAttributes> implements IBookAttributes {
-    id: number;
+    declare id: number;
     authorId: number;
     bookTitle: string;
     image: string;
     genre: string;
-    isVerify: string;
+    declare isVerify: string;
 }
 
 export const BookFactory = (sequelize): typeof Book => {
@@ -58,4 +58,4 @@ export const BookFactory = (sequelize): typeof Book => {
     );
 
     return Book;
-}
+};

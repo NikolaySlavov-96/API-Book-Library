@@ -1,13 +1,15 @@
 import { MESSAGES, } from '../constants';
+import { responseMapper, EMappedType, } from '../Helpers';
 
 import db from '../Model';
+const Op = db?.Sequelize?.Op;
 
 import { updateMessage, } from '../util';
 
 const ATTRIBUTES = ['name', 'image', 'genre', 'isVerify'];
 
-export const getAllData = async ({ offset, limit, }) => {
-    const getBooks = await db.Book.findAndCountAll({
+export const getAllData = async ({ offset, limit, filterOperator, searchContent, }) => {
+    const query = {
         include: [{
             model: db.Author,
             required: false,
@@ -17,9 +19,32 @@ export const getAllData = async ({ offset, limit, }) => {
         attributes: ['id', 'bookTitle', 'image', 'genre', 'isVerify'],
         offset,
         limit,
+        raw: true,
+        nest: true,
+        where: {},
+    };
+
+    const queryOperator = Op[filterOperator];
+
+    !!searchContent && (query.where = {
+        [Op.or]: [
+            {
+                bookTitle: { [queryOperator]: searchContent, },
+            },
+            {
+                genre: { [queryOperator]: searchContent, },
+            },
+            {
+                '$Author.name$': { [queryOperator]: searchContent, },
+            }
+        ],
     });
 
-    return getBooks;
+    const result = await db.Book.findAndCountAll(query);
+
+    const mappedResponse = responseMapper(result, EMappedType.BOOK);
+
+    return mappedResponse;
 };
 
 export const getDataById = async (id) => {
@@ -28,8 +53,8 @@ export const getDataById = async (id) => {
             {
                 model: db.Author,
                 attributes: ATTRIBUTES,
-                required: false
-            },
+                required: false,
+            }
         ],
     });
 };

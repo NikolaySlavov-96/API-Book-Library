@@ -1,28 +1,12 @@
-import { getBookByEmail, searchBook, } from '../services/searchService';
+import { getBookByEmail, } from '../services/searchService';
 
+import { queryParser, } from '../Helpers';
 
 export const viewUserBooksFromEmail = async (req, res, next) => {
     try {
-        const email = req?.query?.email;
-        const page = parseInt(req?.query?.page) || 1;
-        const limit = parseInt(req?.query?.limit) || 10;
-        const skipSource = (page - 1) * limit;
+        const { limit, offset, email, } = queryParser(req?.query);
 
-        const result = await getBookByEmail({ email, offset: skipSource, limit, });
-        res.status(200).json(result);
-    } catch (err) {
-        next(err);
-    }
-};
-
-export const searchBooksByParams = async (req, res, next) => {
-    try {
-        const page = parseInt(req?.query?.page) || 1;
-        const limit = parseInt(req?.query?.limit) || 10;
-        const skipSource = (page - 1) * limit;
-        const searchContent = req.query.search && `%${req?.query?.search}%`;
-
-        const result = await searchBook({ offset: skipSource, limit, typeSearch: 'Op.like', searchContent, });
+        const result = await getBookByEmail({ email, offset, limit, });
         res.status(200).json(result);
     } catch (err) {
         next(err);

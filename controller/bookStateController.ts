@@ -1,6 +1,6 @@
-import { MESSAGES, } from '../constants';
+import { MESSAGES, queryOperators, } from '../constants';
 
-import { checkUserProfileVerification, } from '../Helpers';
+import { checkUserProfileVerification, queryParser, } from '../Helpers';
 
 import * as bookStateService from '../services/bookStateService';
 
@@ -8,31 +8,16 @@ import { updateMessage, } from '../util';
 
 
 export const getAllBooksByState = async (req, res, next) => {
-    const state = req.params.state;
-    const page = parseInt(req?.query?.page) || 1;
-    const limit = parseInt(req?.query?.limit) || 10;
-    const skipSource = (page - 1) * limit;
+    const { limit, offset, searchContent, } = queryParser(req?.query);
+
+    const filterOperator = queryOperators.LIKE;
+
     const userId = req?.user?._id;
+    const state = req.params.state;
 
     try {
-        const result = await bookStateService.getAllDate({ state, userId, offset: skipSource, limit, });
-
-        result.rows.map((e) => {
-            const bookDate = e.Book;
-            e.bookId = bookDate.id;
-            e.bookTitle = bookDate.bookTitle;
-            e.genre = bookDate.genre;
-
-            const authorDate = e.Book.Author;
-            e.authorId = authorDate.id;
-            e.authorName = authorDate.name;
-
-            const userDate = e.User;
-            e.email = userDate.email;
-            e.userId = userDate.id;
-
-            delete e.Book;
-            delete e.User;
+        const result = await bookStateService.getAllDate({
+            state, userId, offset, limit, searchContent, filterOperator,
         });
 
         res.status(200).json(result);

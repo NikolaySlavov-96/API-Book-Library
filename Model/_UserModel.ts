@@ -1,4 +1,4 @@
-import { DataTypes, Model, Optional, Sequelize } from "sequelize";
+import { DataTypes, Model, Optional, Sequelize, } from 'sequelize';
 
 interface IUserAttributes {
     id: number;
@@ -13,12 +13,12 @@ interface IUserCreationAttributes extends Optional<IUserAttributes, 'id'> { }
 
 
 export class User extends Model<IUserAttributes, IUserCreationAttributes> implements IUserAttributes {
-    id!: number;
+    declare id: number;
     email: string;
-    isDelete: boolean;
-    isVerify: boolean;
-    password: string;
-    year: number;
+    declare isDelete: boolean;
+    declare isVerify: boolean;
+    declare password: string;
+    declare year: number;
 }
 
 export const UserFactory = (sequelize: Sequelize): typeof User => {
@@ -54,4 +54,4 @@ export const UserFactory = (sequelize: Sequelize): typeof User => {
     });
 
     return User;
-}
+};
