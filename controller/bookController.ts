@@ -3,6 +3,7 @@ import { MESSAGES, ESendEvents, queryOperators, } from '../constants';
 import { checkUserProfileVerification, queryParser, } from '../Helpers';
 
 import * as bookService from '../services/bookService';
+import * as fileService from '../services/fileService';
 
 import { updateMessage, } from '../util';
 
@@ -54,6 +55,37 @@ export const createBook = async (req, res, next) => {
     }
 };
 
+export const addedImageOnBook = async (req, res, next) => {
+    try {
+        if (!req.files) {
+            return res.status(400).json(updateMessage(MESSAGES.PLEASE_ADDED_FILE).user);
+        }
+        const { deliverFile, } = req.files;
+        const src = req.body?.src;
+        // Writes to the Local device and also writes to the DB in a table "File"
+        const fileData = await fileService.addedFile(deliverFile, src);
+
+        // Creation
+        // const relationship = '';
+        res.status(200).json(fileData);
+    } catch (err) {
+        next(err);
+    }
+};
+
+export const removeImageOnBook = async (req, res, next) => {
+    try {
+        const fileId = req.params.id;
+        // Remove relation between Table book and Table file
+
+        // Remove from Local device and also remove from DB a table "File" ( Maybe )
+        const resultFromUnlink = await fileService.removeFile(fileId);
+        res.status(resultFromUnlink.statusCode).json(resultFromUnlink.user);
+    } catch (err) {
+        next(err);
+    }
+};
+
 
 // TODO For Future
 export const updateBook = async (req, res, next) => {
@@ -62,7 +94,7 @@ export const updateBook = async (req, res, next) => {
 
     try {
         const result = await bookService.update({ author, booktitle, id, });
-        res.status(200).send(result);
+        res.status(200).send(result); // TODO Check if it should be "send" or "json"
     } catch (err) {
         next(err);
     }

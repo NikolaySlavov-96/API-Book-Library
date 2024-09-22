@@ -21,6 +21,16 @@ book.post('/',
     expressValidator,
     bookController.createBook
 );
+book.post('/addImage',
+    isAuthenticated(),
+    body('src').isLength({ max: 145, }).withMessage(ROUTING_MESSAGES.FILE_NAME),
+    expressValidator,
+    bookController.addedImageOnBook
+);
+book.delete('/removeImage/:id',
+    isAuthenticated(),
+    bookController.removeImageOnBook
+);
 // book.put('/:id',
 //     isAuthenticated(),
 //     bookController.updateBook
