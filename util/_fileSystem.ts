@@ -28,16 +28,15 @@ export const _createDirectoryPath = (directory, fileName) => {
     return fullDirectoryPath;
 };
 
-export const _unlinkFileFromSystem = (directory, fileName) => {
+export const _unlinkFileFromSystem = async (directory, fileName) => {
     if (!isDirectoryExisting) {
         return false; // Directory don't exist
     }
     const fullDirectoryPath = rootDirectoryPath + directory + '/' + fileName;
-    fs.unlink(fullDirectoryPath, (err) => {
-        if (err) {
-            console.log("🚀 ~ _fileSystem ~ fs.unlink ~ err:", err);
-            return false;
-        }
+    try {
+        await fs.promises.unlink(fullDirectoryPath);
         return true;
-    });
+    } catch (err) {
+        return false;
+    }
 };
