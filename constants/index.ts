@@ -8,3 +8,4 @@ export { _tableName as TABLE_NAME, } from './_dataBaseNames';
 export { default as MESSAGES, } from './_messages';
 export { default as queryOperators, } from './_queryOperators';
 export { default as ROUTING_MESSAGES, } from './_routingMessage';
+export { default as SYSTEM_FILE_DIRECTORY, } from './_SystemFileDirectory';
