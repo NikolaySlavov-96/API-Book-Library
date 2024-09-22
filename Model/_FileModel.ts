@@ -4,18 +4,20 @@ import ModelName from './modelNames';
 
 interface IFileAttributes {
     id: number;
-    uniqueName: string;
-    src: string; // Desire user name
     extension: string;
+    realImageName: string;
+    src: string; // Desire user name
+    uniqueName: string;
 }
 
 interface IFileCreationAttributes extends Optional<IFileAttributes, 'id'> { }
 
 export class File extends Model<IFileAttributes, IFileCreationAttributes> implements IFileAttributes {
     declare id: number;
-    uniqueName: string;
-    src: string;
     extension: string;
+    realImageName: string;
+    src: string;
+    uniqueName: string;
 }
 
 export const FileFactory = (sequelize: Sequelize): typeof File => {
@@ -25,14 +27,17 @@ export const FileFactory = (sequelize: Sequelize): typeof File => {
             primaryKey: true,
             autoIncrement: true,
         },
-        uniqueName: {
-            type: DataTypes.STRING(145),
+        extension: {
+            type: DataTypes.STRING(10),
+        },
+        realImageName: {
+            type: DataTypes.STRING(60),
         },
         src: {
-            type: DataTypes.STRING(45),
+            type: DataTypes.STRING(120),
         },
-        extension: {
-            type: DataTypes.STRING(45),
+        uniqueName: {
+            type: DataTypes.STRING(145),
         },
     }, {
         sequelize,
