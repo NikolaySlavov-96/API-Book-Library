@@ -9,6 +9,7 @@ import { BookStateFactory, } from './_BookStateModel';
 import { BookFactory, } from './_BookModel';
 import { AuthorFactory, } from './_AuthorMode';
 import { StateFactory, } from './_States';
+import { FileFactory, } from './_FileModel';
 
 const db: any = {};
 
@@ -20,6 +21,7 @@ db.Book = BookFactory(sequelize);
 db.Author = AuthorFactory(sequelize);
 db.BookState = BookStateFactory(sequelize);
 db.State = StateFactory(sequelize);
+db.File = FileFactory(sequelize);
 
 // Association
 db.User.hasMany(db.BookState, { foreignKey: 'userId', });
