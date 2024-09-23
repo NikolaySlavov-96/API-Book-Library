@@ -5,10 +5,11 @@
   "main": "index.js",
   "scripts": {
     "start": "node dist/bundle.js",
+    "start:old": "node dist/index.js",
     "dev": "nodemon ./index.ts",
     "build": "webpack",
-    "lint": "npx eslint . --fix",
-    "dev:build": "npx tsc"
+    "build:old": "npx tsc",
+    "lint": "npx eslint . --fix"
   },
   "repository": {
     "type": "git",

@@ -8,8 +8,8 @@ RUN npm install
 
 COPY . .
 
-RUN npm run build
+RUN npm run build:old
 
-EXPOSE 3030
+EXPOSE 8080
 
-CMD [ "npm", "start" ]
+CMD [ "npm", "run", "start:old" ]
