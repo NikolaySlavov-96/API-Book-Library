@@ -12,4 +12,4 @@ RUN npm run build
 
 EXPOSE 3030
 
-CMD [ "node", "index.js" ]
+CMD [ "node", "dist/bundle.js" ]
