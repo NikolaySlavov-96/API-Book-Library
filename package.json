@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "ts-node index.ts",
+    "start": "node dist/bundle.js",
     "dev": "nodemon ./index.ts",
     "build": "webpack",
     "lint": "npx eslint . --fix",
