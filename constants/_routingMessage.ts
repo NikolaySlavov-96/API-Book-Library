@@ -19,7 +19,7 @@ const routing = {
     AUTHOR_REQUIRED: 'Author is required',
     BOOK_ID_IS_REQUIRED: 'Book ID is required',
     BOOK_COLLECTION_TYPE: 'Please insert correct collection type',
-    FILE_NAME: 'scr name is max 145 characters',
+    FILE_NAME: 'src name is max 145 characters',
 };
 
 export default routing;

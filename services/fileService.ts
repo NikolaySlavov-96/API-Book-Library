@@ -8,7 +8,7 @@ import { createDirectoryPath, unlinkFileFromSystem, updateMessage, UUID, } from 
 const UPLOAD_DIRECTORY = SYSTEM_FILE_DIRECTORY.UPLOAD;
 
 export const addedFile = async (deliverFile, src) => {
-    const { name: realImageName, mimetype, } = deliverFile;
+    const { name: realFileName, mimetype, } = deliverFile;
 
     const uniqueFileName = UUID();
 
@@ -17,7 +17,7 @@ export const addedFile = async (deliverFile, src) => {
 
     const creationResult = await db.File.create({
         extension: fileExtension,
-        realImageName,
+        realFileName,
         src,
         uniqueName: fileName,
     });
