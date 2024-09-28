@@ -63,7 +63,7 @@ export const addedImageOnBook = async (req, res, next) => {
         const { deliverFile, } = req.files;
         const src = req.body?.src;
         // Writes to the Local device and also writes to the DB in a table "File"
-        const fileData = await fileService.addedFile(deliverFile, src);
+        const fileData = await fileService.addingFile(deliverFile, src);
 
         // Creation
         // const relationship = '';
