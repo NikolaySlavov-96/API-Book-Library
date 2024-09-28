@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import express from 'express';
+import fileUpload from 'express-fileupload';
 import server from 'http';
 import { Server as SocketIOServer, } from 'socket.io';
 
@@ -28,7 +29,7 @@ async function start() {
 
     await db.sequelize.sync({ force: false, });
 
-    expressConfig(app, express, io);
+    expressConfig(app, express, io, fileUpload);
 
     router(app);
 
