@@ -7,7 +7,7 @@ const sequelize = initNewConnection();
 import { UserFactory, } from './_UserModel';
 import { BookStateFactory, } from './_BookStateModel';
 import { BookFactory, } from './_BookModel';
-import { AuthorFactory, } from './_AuthorMode';
+import { AuthorFactory, } from './_AuthorModel';
 import { StateFactory, } from './_States';
 import { FileFactory, } from './_FileModel';
 

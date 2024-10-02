@@ -1,4 +1,6 @@
-import { DataTypes, Model, Optional, } from 'sequelize';
+import { DataTypes, Model, Optional, Sequelize, } from 'sequelize';
+
+import ModelName from './modelNames';
 
 interface IBookAttributes {
     id: number;
@@ -20,7 +22,7 @@ export class Book extends Model<IBookAttributes, IBookCreationAttributes> implem
     declare isVerify: string;
 }
 
-export const BookFactory = (sequelize): typeof Book => {
+export const BookFactory = (sequelize: Sequelize): typeof Book => {
     Book.init({
         id: {
             type: DataTypes.INTEGER,
@@ -46,7 +48,7 @@ export const BookFactory = (sequelize): typeof Book => {
         },
     }, {
         sequelize,
-        tableName: 'book',
+        tableName: ModelName.BOOK,
         indexes: [
             {
                 unique: true,

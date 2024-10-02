@@ -1,5 +1,7 @@
 import { DataTypes, Model, Optional, Sequelize, } from 'sequelize';
 
+import ModelName from './modelNames';
+
 interface IUserAttributes {
     id: number;
     email: string;
@@ -50,7 +52,7 @@ export const UserFactory = (sequelize: Sequelize): typeof User => {
         },
     }, {
         sequelize,
-        tableName: 'user',
+        tableName: ModelName.USER,
     });
 
     return User;
