@@ -1,4 +1,4 @@
-const socket = io.connect('http://localhost:8080');
+const socket = io.connect('http://localhost:8080', { path: '/bookHub', });
 
 // Send event to the server
 const sendMessage = () => {
