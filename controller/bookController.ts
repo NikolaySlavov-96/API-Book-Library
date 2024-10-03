@@ -40,9 +40,7 @@ export const createBook = async (req, res, next) => {
             return res.status(401).json(updateMessage(MESSAGES.ACCOUNT_IS_NOT_VERIFY).user);
         }
 
-        const { author, bookTitle, } = req.body;
-
-        const result = await bookService.create({ author, bookTitle, });
+        const result = await bookService.create(req.body);
 
         if (result.id) {
             res.SocketIo.emit(ESendEvents.NEW_BOOK_ADDED, result);
