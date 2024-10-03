@@ -18,7 +18,9 @@ const app = express();
 const initServer = server.createServer(app);
 const io = new SocketIOServer(initServer, {
     path: '/bookHub',
-    cors: { origin: '*', },
+    cors: {
+        origin: '*',
+    },
 });
 
 async function start() {
