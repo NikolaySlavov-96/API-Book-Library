@@ -18,6 +18,17 @@ book.post('/',
     isAuthenticated(),
     body('bookTitle').isLength({ min: 2, }).withMessage(ROUTING_MESSAGES.BOOK_TITLE_REQUIRED),
     body('author').isLength({ min: 2, }).withMessage(ROUTING_MESSAGES.AUTHOR_REQUIRED),
+    body('genre').isLength({ min: 2, }).withMessage(ROUTING_MESSAGES.BOOK_GENRE),
+    body('url').optional().isURL().withMessage(ROUTING_MESSAGES.BOOK_URL),
+    body('fieldId').optional().isString().withMessage(ROUTING_MESSAGES.BOOK_FIELD_ID),
+    body('resourcePath').optional().isInt().withMessage(ROUTING_MESSAGES.BOOK_RESOURCE_PATH),
+    body().custom((value, { req, }) => {
+        if (!req.body.url && (!req.body.fieldId || !req.body.resourcePath)) {
+            throw new Error(ROUTING_MESSAGES.BOOK_FIELD_OR_URL_IS_REQUIRED);
+        }
+
+        return true;
+    }),
     expressValidator,
     bookController.createBook
 );

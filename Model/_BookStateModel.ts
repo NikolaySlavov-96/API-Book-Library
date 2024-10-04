@@ -1,4 +1,6 @@
-import { DataTypes, Model, Optional, } from 'sequelize';
+import { DataTypes, Model, Optional, Sequelize, } from 'sequelize';
+
+import ModelName from './modelNames';
 
 interface IBookStateAttributes {
     userId: number;
@@ -16,7 +18,7 @@ export class BookState extends Model<IBookStateAttributes, IBookStateCreationAtt
     declare isDelete: boolean;
 }
 
-export const BookStateFactory = (sequelize): typeof BookState => {
+export const BookStateFactory = (sequelize: Sequelize): typeof BookState => {
     BookState.init({
         userId: {
             type: DataTypes.INTEGER,
@@ -36,7 +38,7 @@ export const BookStateFactory = (sequelize): typeof BookState => {
         },
     }, {
         sequelize,
-        tableName: 'bookState',
+        tableName: ModelName.BOOK_STATE,
         timestamps: true,
     });
 

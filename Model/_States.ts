@@ -1,5 +1,7 @@
 import { DataTypes, Model, Optional, Sequelize, } from 'sequelize';
 
+import ModelName from './modelNames';
+
 interface IStateAttributes {
     id: number;
     stateName: string;
@@ -32,7 +34,7 @@ export const StateFactory = (sequelize: Sequelize): typeof States => {
         },
     }, {
         sequelize,
-        tableName: 'states',
+        tableName: ModelName.STATE,
         timestamps: false,
     });
 

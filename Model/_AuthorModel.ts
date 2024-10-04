@@ -1,4 +1,6 @@
-import { DataTypes, Model, } from 'sequelize';
+import { DataTypes, Model, Sequelize, } from 'sequelize';
+
+import ModelName from './modelNames';
 
 interface IAuthorAttributes {
     id: number;
@@ -17,7 +19,7 @@ export class Author extends Model<IAuthorAttributes> implements IAuthorAttribute
 }
 
 
-export const AuthorFactory = (sequelize): typeof Author => {
+export const AuthorFactory = (sequelize: Sequelize): typeof Author => {
     Author.init({
         id: {
             type: DataTypes.INTEGER,
@@ -40,7 +42,7 @@ export const AuthorFactory = (sequelize): typeof Author => {
         },
     }, {
         sequelize,
-        tableName: 'author',
+        tableName: ModelName.AUTHOR,
     });
     return Author;
 };
