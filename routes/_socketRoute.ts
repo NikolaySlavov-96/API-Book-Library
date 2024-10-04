@@ -1,17 +1,17 @@
+import { EReceiveEvents, ESendEvents, } from '../constants';
+
+import { storeVisitorInfo, } from '../services/visitorService';
+
 export default (io) => {
     io.on('connection', (socket) => {
+        console.log(`User ${socket.id} connected`);
 
-        console.log('Client connected');
-
-        // socket.on('message', (message) => {
-        //     console.log('Message Received: ', message);
-
-        //     io.emit('message', message);
-        // });
-
-        // socket.on('disconnect', () => {
-        //     console.log('Client Disconnected');
-        // });
-
+        socket.on(EReceiveEvents.USER_JOINED, async (data) => {
+            const count = await storeVisitorInfo(data);
+            if (count.isNewUser) {
+                socket.broadcast.emit(ESendEvents.USER_JOINED, count);
+            }
+            socket.emit(ESendEvents.USER_JOINED, count);
+        });
     });
 };
