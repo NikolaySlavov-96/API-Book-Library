@@ -1,4 +1,5 @@
 import { DataTypes, Model, Optional, Sequelize, } from 'sequelize';
+
 import ModelName from './modelNames';
 
 interface IBookStateAttributes {
