@@ -2,7 +2,7 @@ import { cors, auth, socketMiddleware, trimBody, checkClientIP, } from '../middl
 
 import { SYSTEM_FILE_DIRECTORY, } from '../constants';
 
-const MAX_FILE_SIZE = 10000000;
+const { FILE_SIZE, } = process.env;
 
 export default (app, express, io, fileUpload) => {
     app.use(socketMiddleware(io));
@@ -15,7 +15,7 @@ export default (app, express, io, fileUpload) => {
 
     app.use(fileUpload({
         limits: {
-            fieldSize: MAX_FILE_SIZE,
+            fieldSize: FILE_SIZE,
         },
         abortOnLimit: true,
     }));
