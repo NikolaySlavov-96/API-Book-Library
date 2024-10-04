@@ -3,11 +3,11 @@ import { Client, } from 'pg';
 import { Sequelize, } from 'sequelize';
 
 // Constants for login
-const DB_NAME = process.env.DB_NAME;
-const DB_USER = process.env.DB_USER;
-const DB_PASSWORD = process.env.DB_PASSWORD;
-const DB_ADDRESS = process.env.DB_ADDRESS;
-const DB_PORT = Number(process.env.DB_PORT);
+const DB_NAME = process.env.P_DB_NAME;
+const DB_USER = process.env.P_DB_USER;
+const DB_PASSWORD = process.env.P_DB_PASSWORD;
+const DB_ADDRESS = process.env.P_DB_ADDRESS;
+const DB_PORT = Number(process.env.P_DB_PORT);
 const DIALECT = 'postgres';
 
 
