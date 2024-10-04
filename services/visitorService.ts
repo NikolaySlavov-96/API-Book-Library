@@ -6,7 +6,7 @@ import UserDataModel from '../Model/UserDataModel';
 
 export const storeVisitorInfo = async (data) => {
     const redisKey = getCurrentDate();
-    const userIp = data.IPv4;
+    const userIp = data.IPv4.toString();
 
     const returnedData = {
         dailyUsers: 0,
