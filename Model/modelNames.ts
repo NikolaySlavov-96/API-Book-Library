@@ -5,6 +5,7 @@ const ModelName = {
     FILE: 'file',
     STATE: 'state',
     USER: 'user',
+    USER_DATA: 'userData',
 };
 
 export default ModelName;
