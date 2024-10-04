@@ -4,14 +4,20 @@ import fileUpload from 'express-fileupload';
 import server from 'http';
 import { Server as SocketIOServer, } from 'socket.io';
 
-import { checkDatabaseIfItExist, expressConfig, router, } from './config';
+import {
+    checkDatabaseIfItExist,
+    expressConfig,
+    router,
+    mongoClient,
+    redisClient,
+} from './config';
 
 import { globalErrorHandling, } from './Helpers';
 
 import db from './Model';
 import { socketRoute, } from './routes';
 
-const PORT = process.env.PORT;
+const { PORT, } = process.env;
 
 start();
 const app = express();
@@ -24,6 +30,9 @@ const io = new SocketIOServer(initServer, {
 });
 
 async function start() {
+    await mongoClient();
+
+    await redisClient.connect();
 
     await checkDatabaseIfItExist();
 
