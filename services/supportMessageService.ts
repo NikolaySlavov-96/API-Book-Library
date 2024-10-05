@@ -1,5 +1,5 @@
 import db from '../Model';
-import { updateMessage, UUID } from '../util';
+import { updateMessage, UUID, } from '../util';
 
 type TUserStatus = 'active' | 'inactive';
 
@@ -12,12 +12,10 @@ interface IUserData {
     role?: string;
 }
 
-const UserSessionData: IUserData[] = [];
-
 const supports = new Set<IUserData>();
 
 // Initialize user data to set up a support chat session
-export const validateConnectionId = async (data, socketId) => {
+export const validateConnectionId = async (data) => {
     const result = await db.UserSessionData.findOne({
         where: { connectId: data.connectId, },
         include: [{
@@ -33,7 +31,6 @@ export const validateConnectionId = async (data, socketId) => {
         return { state: !!result, role: '', };
     }
 
-    // await changeUserStatus(result.currentSocketId, 'active', socketId); // Check and Improve
     return result;
 };
 export const createConnectionId = async (data) => {
@@ -66,21 +63,21 @@ export const createConnectionId = async (data) => {
 };
 
 export const changeUserStatus = async (socketId, status: TUserStatus, newSocketId?: string) => {
-    const updateUserStatus = UserSessionData.find(u => u.currentSocketId === socketId);
+    const updateUserStatus = await db.UserSessionData.findOne({ where: { currentSocketId: socketId, }, });
     if (updateUserStatus) {
-        // IN DB findOneAndUpdate()
         newSocketId ? updateUserStatus.currentSocketId = newSocketId : null;
         updateUserStatus.userStatus = status;
+        await db.UserSessionData.update(updateUserStatus.dataValues, {
+            where: { currentSocketId: socketId, },
+        });
         return updateUserStatus;
     }
     return updateUserStatus;
 };
 
 export const joinUserToSupportChat = async (data, socketId) => {
-    const newConnectionId = UUID();
-
     const newSupport: IUserData = {
-        connectId: newConnectionId,
+        connectId: data.connectId,
         currentSocketId: socketId,
         userStatus: 'active',
     };
@@ -89,9 +86,14 @@ export const joinUserToSupportChat = async (data, socketId) => {
     return;
 };
 
+export const leaveSupportChat = async () => {
+
+};
+
 export const getAllConnectedSupports = async () => {
     return supports;
 };
+
 
 
 // Send or receive messages within the support chat

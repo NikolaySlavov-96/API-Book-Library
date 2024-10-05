@@ -51,10 +51,12 @@ export default (io) => {
                     connectId: '',
                 };
 
-                // const supports = await getAllConnectedSupports();
+                const supports = await getAllConnectedSupports();
 
                 if (data?.connectId) {
-                    const result = await validateConnectionId(data, socketId);
+                    const result = await validateConnectionId(data);
+
+                    await changeUserStatus(result.currentSocketId, 'active', socketId);
 
                     result?.connectId ?
                         messageResponseJoinToChat.connectId = data.connectId :
@@ -62,7 +64,7 @@ export default (io) => {
 
                     if (result?.User?.role === 'support') {
                         messageResponseJoinToChat.message = WELCOME_ADMIN_TEXT;
-                        // await joinUserToSupportChat(result, socketId);
+                        await joinUserToSupportChat(result, socketId);
                     }
                 }
 
@@ -76,9 +78,9 @@ export default (io) => {
                 }
 
                 // To all the "supports" who have joined
-                // supports.forEach(support => {
-                //     io.to(support.currentSocketId).emit('notify_admins_of_new_user', socketId);
-                // });
+                supports.forEach(support => {
+                    io.to(support.currentSocketId).emit(ESendEvents.NOTIFY_ADMINS_OF_NEW_USER, socketId);
+                });
 
                 // To user who joined 
                 socket.emit(ESendEvents.SUPPORT_CHAT_USER_JOIN_ACKNOWLEDGMENT, messageResponseJoinToChat);
