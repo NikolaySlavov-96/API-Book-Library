@@ -10,6 +10,7 @@ import { BookFactory, } from './_BookModel';
 import { AuthorFactory, } from './_AuthorModel';
 import { StateFactory, } from './_States';
 import { FileFactory, } from './_FileModel';
+import { UserSessionDataFactory, } from './_UserSessionDataModel';
 
 const db: any = {};
 
@@ -22,10 +23,21 @@ db.Author = AuthorFactory(sequelize);
 db.BookState = BookStateFactory(sequelize);
 db.State = StateFactory(sequelize);
 db.File = FileFactory(sequelize);
+db.UserSessionData = UserSessionDataFactory(sequelize);
 
 // Association
 db.User.hasMany(db.BookState, { foreignKey: 'userId', });
 db.BookState.belongsTo(db.User, { foreignKey: 'userId', });
+
+db.User.hasOne(db.UserSessionData, {
+    foreignKey: 'userId',
+    constraints: false,
+    // onDelete: 'CASCADE',
+});
+db.UserSessionData.belongsTo(db.User, {
+    foreignKey: 'userId',
+    // constraints: false,
+});
 
 db.BookState.belongsTo(db.State, { foreignKey: 'stateId', });
 
