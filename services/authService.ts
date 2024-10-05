@@ -1,6 +1,6 @@
 import 'dotenv/config';
 
-import { cryptCompare, cryptHash, updateMessage, } from '../util';
+import { cryptCompare, cryptHash, updateMessage, UUID, } from '../util';
 import { MESSAGES, } from '../constants';
 import { addTokenResponse, } from '../Helpers';
 
@@ -20,11 +20,18 @@ export async function register(query) {
     }
 
     const hashedPassword = await cryptHash(query.password);
-
-    await db.User.create({
+    const userData = await db.User.create({
         email: query.email,
         password: hashedPassword,
         year: query.year,
+    });
+
+    const newConnectionId = UUID();
+    await db.UserSessionData.create({
+        connectId: newConnectionId,
+        currentSocketId: query?.currentSocketId || '',
+        userStatus: 'active',
+        userId: userData.id,
     });
 
     return updateMessage(MESSAGES.SUCCESSFULLY_REGISTER);

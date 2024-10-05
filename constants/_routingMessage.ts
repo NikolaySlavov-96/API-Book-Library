@@ -15,6 +15,7 @@ const routing = {
     BOOK_RESOURCE_PATH: 'Resource path must be a required',
     BOOK_TITLE_REQUIRED: 'Book title is required',
     BOOK_URL: 'URL must be a required filed',
+    CURRENT_SOCKET_ID: 'Please insert socket Id',
     EMAIL_ADDRESS_INCORRECT: 'Email address is not correct',
     EMAIL_IS_REQUIRED: 'Email address is required',
     FILE_NAME: 'src name is max 145 characters',

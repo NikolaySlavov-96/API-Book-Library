@@ -9,6 +9,7 @@ interface IUserAttributes {
     isVerify: boolean;
     password: string;
     year: number;
+    role: string;
 }
 
 interface IUserCreationAttributes extends Optional<IUserAttributes, 'id'> { }
@@ -16,11 +17,12 @@ interface IUserCreationAttributes extends Optional<IUserAttributes, 'id'> { }
 
 export class User extends Model<IUserAttributes, IUserCreationAttributes> implements IUserAttributes {
     declare id: number;
-    email: string;
+    declare email: string;
     declare isDelete: boolean;
     declare isVerify: boolean;
     declare password: string;
     declare year: number;
+    declare role: string;
 }
 
 export const UserFactory = (sequelize: Sequelize): typeof User => {
@@ -49,6 +51,10 @@ export const UserFactory = (sequelize: Sequelize): typeof User => {
         isDelete: {
             type: DataTypes.BOOLEAN,
             defaultValue: false,
+        },
+        role: {
+            type: DataTypes.STRING(20),
+            defaultValue: 'user',
         },
     }, {
         sequelize,
