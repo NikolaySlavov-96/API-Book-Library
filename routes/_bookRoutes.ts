@@ -21,9 +21,9 @@ book.post('/',
     body('genre').isLength({ min: 2, }).withMessage(ROUTING_MESSAGES.BOOK_GENRE),
     body('url').optional().isURL().withMessage(ROUTING_MESSAGES.BOOK_URL),
     body('fieldId').optional().isString().withMessage(ROUTING_MESSAGES.BOOK_FIELD_ID),
-    body('resourcePath').optional().isInt().withMessage(ROUTING_MESSAGES.BOOK_RESOURCE_PATH),
+    body('src').isLength({ max: 145, }).withMessage(ROUTING_MESSAGES.FILE_NAME),
     body().custom((value, { req, }) => {
-        if (!req.body.url && (!req.body.fieldId || !req.body.resourcePath)) {
+        if ((!req.body.url && req.body.fieldId) || (req.body.url && !req.body.fieldId)) {
             throw new Error(ROUTING_MESSAGES.BOOK_FIELD_OR_URL_IS_REQUIRED);
         }
 

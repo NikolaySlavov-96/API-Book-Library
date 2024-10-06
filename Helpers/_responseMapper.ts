@@ -13,12 +13,20 @@ const userModel = (data) => {
     };
 };
 
+const fileModel = (data) => {
+    return {
+        imageUrl: data.uniqueName || data.image,
+        bookSrc: data?.src,
+        imageId: data?.id,
+    };
+};
+
 const bookModel = (data) => {
     const author = data.Author;
+    const updatedFile = fileModel(data?.File || data);
 
     return {
         bookId: data.id,
-        bookImage: data.image,
         bookGenre: data.genre,
         bookIsVerify: data.isVerify,
         bookTitle: data.bookTitle,
@@ -26,6 +34,7 @@ const bookModel = (data) => {
         authorImage: author.image,
         authorGenre: author.genre,
         authorIsVerify: author.isVerify,
+        ...updatedFile,
     };
 };
 

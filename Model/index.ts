@@ -27,6 +27,14 @@ db.File = FileFactory(sequelize);
 db.User.hasMany(db.BookState, { foreignKey: 'userId', });
 db.BookState.belongsTo(db.User, { foreignKey: 'userId', });
 
+db.File.hasOne(db.Book, {
+    foreignKey: 'fileId',
+    constraints: false,
+});
+db.Book.belongsTo(db.File, {
+    foreignKey: 'fileId',
+});
+
 db.BookState.belongsTo(db.State, { foreignKey: 'stateId', });
 
 db.Book.belongsTo(db.Author, { foreignKey: 'authorId', });

@@ -9,6 +9,7 @@ interface IBookAttributes {
     image: string;
     genre: string;
     isVerify: string;
+    fileId: number;
 }
 
 interface IBookCreationAttributes extends Optional<IBookAttributes, 'id'> { }
@@ -19,6 +20,7 @@ export class Book extends Model<IBookAttributes, IBookCreationAttributes> implem
     bookTitle: string;
     image: string;
     genre: string;
+    fileId: number;
     declare isVerify: string;
 }
 
@@ -45,6 +47,10 @@ export const BookFactory = (sequelize: Sequelize): typeof Book => {
         isVerify: {
             type: DataTypes.BOOLEAN,
             defaultValue: false,
+        },
+        fileId: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
         },
     }, {
         sequelize,

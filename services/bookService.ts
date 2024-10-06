@@ -14,6 +14,11 @@ export const getAllData = async ({ offset, limit, filterOperator, searchContent,
             model: db.Author,
             required: false,
             attributes: ATTRIBUTES,
+        },
+        {
+            model: db.File,
+            required: false,
+            attributes: ['id', 'src', 'uniqueName'],
         }],
         order: [['id', 'ASC']],
         attributes: ['id', 'bookTitle', 'image', 'genre', 'isVerify'],
@@ -54,12 +59,17 @@ export const getDataById = async (id) => {
                 model: db.Author,
                 attributes: ATTRIBUTES,
                 required: false,
+            },
+            {
+                model: db.File,
+                required: false,
+                attributes: ['id', 'src', 'uniqueName'],
             }
         ],
     });
 };
 
-export const create = async ({ author, bookTitle, }) => {
+export const create = async ({ author, bookTitle, image, genre, fileId, src }) => {
     const existingBook = (await db.Book.findOne({ where: { bookTitle, }, }))?.dataValues;
     if (existingBook) {
         return updateMessage(MESSAGES.BOOK_ALREADY_EXIST);
@@ -75,7 +85,7 @@ export const create = async ({ author, bookTitle, }) => {
         isAuthor && (author = isAuthor.id);
     }
 
-    const create = (await db.Book.create({ bookTitle, authorId: author, }))?.dataValues;
+    const create = (await db.Book.create({ bookTitle, authorId: author, image, genre, fileId, }))?.dataValues;
     return create;
 };
 
