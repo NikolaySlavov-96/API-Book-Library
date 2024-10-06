@@ -22,6 +22,7 @@ export const _createToken = (data: any, expire?: string) => {
         email: data.email,
         year: data.year,
         isVerify: data.isVerify,
+        role: data.role,
         connectId: data?.UserSessionDatum?.connectId,
     };
 
