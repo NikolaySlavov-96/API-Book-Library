@@ -1,4 +1,4 @@
-import isEmpty from 'lodash/isEmpty';
+import { isEmpty, } from 'lodash';
 
 import { EReceiveEvents, ESendEvents, } from '../constants';
 
@@ -16,11 +16,8 @@ interface ISupportChat {
 }
 
 interface IMessageResponseJoinToChat {
-    message
-    : string,
-    connectId
-    : string
-
+    message: string;
+    connectId: string;
 }
 
 const WELCOME_USER_TEXT = 'Welcome to Support Chat!';
@@ -56,11 +53,15 @@ export default (io) => {
                 if (data?.connectId) {
                     const result = await validateConnectionId(data);
 
-                    await changeUserStatus(result.currentSocketId, 'active', socketId);
-
-                    result?.connectId ?
-                        messageResponseJoinToChat.connectId = data.connectId :
-                        messageResponseJoinToChat.connectId = '';
+                    if (result.connectId) {
+                        messageResponseJoinToChat.connectId = result.connectId;
+                        await changeUserStatus({
+                            socketId: result.currentSocketId,
+                            userSessionId: result.id,
+                            status: 'active',
+                            newSocketId: socketId,
+                        });
+                    }
 
                     if (result?.User?.role === 'support') {
                         messageResponseJoinToChat.message = WELCOME_ADMIN_TEXT;
@@ -68,7 +69,7 @@ export default (io) => {
                     }
                 }
 
-                if (messageResponseJoinToChat.connectId === '') {
+                if (!data?.connectId) {
                     const newConnectionId = await createConnectionId({ socketId, });
                     if ('connectId' in newConnectionId) {
                         messageResponseJoinToChat.connectId = newConnectionId.connectId;
@@ -95,7 +96,7 @@ export default (io) => {
             console.log(`User ${socketId} disconnected`);
 
             // Update user status on Offline
-            await changeUserStatus(socketId, 'inactive');
+            await changeUserStatus({ socketId, status: 'inactive', });
 
             // At disconnect on user send event to everyone else 
             // socket.broadcast.emit('message', `User ${socket.id.substring(0, 5)}} disconnected`);

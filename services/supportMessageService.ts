@@ -27,10 +27,6 @@ export const validateConnectionId = async (data) => {
         nest: true,
     });
 
-    if (!result) {
-        return { state: !!result, role: '', };
-    }
-
     return result;
 };
 export const createConnectionId = async (data) => {
@@ -62,14 +58,22 @@ export const createConnectionId = async (data) => {
     return userData;
 };
 
-export const changeUserStatus = async (socketId, status: TUserStatus, newSocketId?: string) => {
-    const updateUserStatus = await db.UserSessionData.findOne({ where: { currentSocketId: socketId, }, });
+interface IChangeUserStatus {
+    socketId: string | undefined;
+    userSessionId?: string;
+    status: TUserStatus;
+    newSocketId?: string;
+}
+export const changeUserStatus = async ({ socketId, userSessionId, status, newSocketId, }: IChangeUserStatus) => {
+    const query = { where: {}, };
+    socketId ? query.where = { currentSocketId: socketId, } : query.where = { id: userSessionId, };
+
+    const updateUserStatus = await db.UserSessionData.findOne(query);
     if (updateUserStatus) {
         newSocketId ? updateUserStatus.currentSocketId = newSocketId : null;
         updateUserStatus.userStatus = status;
-        await db.UserSessionData.update(updateUserStatus.dataValues, {
-            where: { currentSocketId: socketId, },
-        });
+        await db.UserSessionData.update(updateUserStatus.dataValues, query);
+
         return updateUserStatus;
     }
     return updateUserStatus;
