@@ -7,7 +7,9 @@ import {
     changeUserStatus,
     createConnectionId,
     getAllConnectedSupports,
+    getQueuedUsers,
     joinUserToSupportChat,
+    joinUserToUserQueue,
     validateConnectionId,
 } from '../services/supportMessageService';
 
@@ -41,14 +43,13 @@ export default (io) => {
             }
         });
 
+        // Handle the event when a user opens a support chat session
         socket.on(EReceiveEvents.SUPPORT_CHAT_USER_JOIN, async (data: ISupportChat) => {
             try {
                 const messageResponseJoinToChat: IMessageResponseJoinToChat = {
                     message: WELCOME_USER_TEXT,
                     connectId: '',
                 };
-
-                const supports = await getAllConnectedSupports();
 
                 if (data?.connectId) {
                     const result = await validateConnectionId(data);
@@ -66,6 +67,9 @@ export default (io) => {
                     if (result?.User?.role === 'support') {
                         messageResponseJoinToChat.message = WELCOME_ADMIN_TEXT;
                         await joinUserToSupportChat(result, socketId);
+                    } else {
+                        // add user to userQueue
+                        await joinUserToUserQueue(data, socketId);
                     }
                 }
 
@@ -73,14 +77,22 @@ export default (io) => {
                     const newConnectionId = await createConnectionId({ socketId, });
                     if ('connectId' in newConnectionId) {
                         messageResponseJoinToChat.connectId = newConnectionId.connectId;
+                        await joinUserToUserQueue({ connectId: newConnectionId.connectId, }, socketId);
                     } else {
                         throw newConnectionId;
                     }
                 }
 
                 // To all the "supports" who have joined
+                const supports = await getAllConnectedSupports();
+                const usersInQueue = await getQueuedUsers();
                 supports.forEach(support => {
-                    io.to(support.currentSocketId).emit(ESendEvents.NOTIFY_ADMINS_OF_NEW_USER, socketId);
+                    io.to(support.currentSocketId).emit(ESendEvents.NOTIFY_ADMINS_OF_NEW_USER,
+                        {
+                            newUserSocketId: socketId,
+                            userQueue: usersInQueue,
+                        }
+                    );
                 });
 
                 // To user who joined 

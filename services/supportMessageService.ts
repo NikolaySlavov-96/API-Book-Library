@@ -13,6 +13,7 @@ interface IUserData {
 }
 
 const supports = new Set<IUserData>();
+const userQueue: IUserData[] = [];
 
 // Initialize user data to set up a support chat session
 export const validateConnectionId = async (data) => {
@@ -58,6 +59,20 @@ export const createConnectionId = async (data) => {
     return userData;
 };
 
+const leaveSupportChat = async (connectId) => {
+    for (const support of supports) {
+        if (support.connectId === connectId) {
+            supports.delete(support);
+            return;
+        }
+    }
+};
+
+const leaveUserChat = async (connectId) => {
+    const index = userQueue.findIndex(u => u.connectId === connectId);
+    userQueue.splice(index, 1);
+};
+
 interface IChangeUserStatus {
     socketId: string | undefined;
     userSessionId?: string;
@@ -65,11 +80,27 @@ interface IChangeUserStatus {
     newSocketId?: string;
 }
 export const changeUserStatus = async ({ socketId, userSessionId, status, newSocketId, }: IChangeUserStatus) => {
-    const query = { where: {}, };
+    const query = {
+        where: {},
+        include: [{
+            model: db.User,
+            require: false,
+            attributes: ['id', 'role'],
+        }],
+        raw: true,
+        nest: true,
+    };
+
     socketId ? query.where = { currentSocketId: socketId, } : query.where = { id: userSessionId, };
 
     const updateUserStatus = await db.UserSessionData.findOne(query);
+
     if (updateUserStatus) {
+
+        updateUserStatus?.User?.role === 'support' ?
+            leaveSupportChat(updateUserStatus?.connectId) :
+            leaveUserChat(updateUserStatus?.connectId);
+
         newSocketId ? updateUserStatus.currentSocketId = newSocketId : null;
         updateUserStatus.userStatus = status;
         await db.UserSessionData.update(updateUserStatus.dataValues, query);
@@ -90,17 +121,21 @@ export const joinUserToSupportChat = async (data, socketId) => {
     return;
 };
 
-export const leaveSupportChat = async () => {
+export const joinUserToUserQueue = async (data, socketId) => {
+    const newSupport: IUserData = {
+        connectId: data.connectId,
+        currentSocketId: socketId,
+        userStatus: 'active',
+    };
 
+    userQueue.push(newSupport);
+    return;
 };
 
 export const getAllConnectedSupports = async () => {
     return supports;
 };
 
-
-
-// Send or receive messages within the support chat
-
-
-// Track and update the status of a message (e.g., sent, delivered, read) in the support chat
+export const getQueuedUsers = async () => {
+    return userQueue;
+};
