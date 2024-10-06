@@ -3,6 +3,7 @@ export interface IPayload {
     email: string;
     year: number;
     isVerify: boolean;
+    connectId?: string;
 }
 
 export interface ICondition {

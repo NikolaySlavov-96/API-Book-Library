@@ -16,12 +16,13 @@ export const _verifyToken = (token: string): IVerifyToken => {
     return jwtVerify(token);
 };
 
-export const _createToken = (data: any, expire?: string): ICreateToken => {
+export const _createToken = (data: any, expire?: string) => {
     const payload: IPayload = {
         _id: data.id,
         email: data.email,
         year: data.year,
         isVerify: data.isVerify,
+        connectId: data?.UserSessionDatum?.connectId,
     };
 
     const accessToken = jwtSign(payload, expire);

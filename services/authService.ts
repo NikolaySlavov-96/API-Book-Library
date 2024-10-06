@@ -38,7 +38,16 @@ export async function register(query) {
 }
 
 export async function login(body) {
-    const existingEmail = (await db.User.findOne({ where: { email: body.email, }, }))?.dataValues;
+    const existingEmail = await db.User.findOne({
+        where: { email: body.email, },
+        include: [{
+            model: db.UserSessionData,
+            require: false,
+            attributes: ['id', 'connectId'],
+        }],
+        raw: true,
+        nest: true,
+    });
 
     if (!existingEmail) {
         return updateMessage(MESSAGES.WRONG_EMAIL_OR_PASSWORD, 400);
