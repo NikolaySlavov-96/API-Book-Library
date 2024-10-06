@@ -1,7 +1,7 @@
 export enum _EReceiveEvents {
     USER_JOINED = 'user_joined',
     SUPPORT_CHAT_USER_JOIN = 'support_chat_join',
-    DELIVER_SUPPORT_MESSAGE = 'deliver_support_message',
+    RECEIVE_SUPPORT_MESSAGE = 'receive_support_message',
 }
 
 export enum _ESendEvents {
