@@ -11,7 +11,7 @@ import {
     joinUserToSupportChat,
     joinUserToUserQueue,
     validateConnectionId,
-} from '../services/supportMessageService';
+} from '../services/support/connectManagerService';
 
 interface ISupportChat {
     connectId?: string,
@@ -68,7 +68,7 @@ export default (io) => {
                         messageResponseJoinToChat.message = WELCOME_ADMIN_TEXT;
                         await joinUserToSupportChat(result, socketId);
                     } else {
-                        // add user to userQueue
+                        // Add a user to the userQueue for managing chat requests or support sessions
                         await joinUserToUserQueue(data, socketId);
                     }
                 }

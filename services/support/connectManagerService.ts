@@ -1,5 +1,5 @@
-import db from '../Model';
-import { updateMessage, UUID, } from '../util';
+import db from '../../Model';
+import { updateMessage, UUID, } from '../../util';
 
 type TUserStatus = 'active' | 'inactive';
 
@@ -8,8 +8,9 @@ type TUserStatus = 'active' | 'inactive';
 interface IUserData {
     connectId: string;
     currentSocketId: string;
-    userStatus: TUserStatus;
+    userStatus?: TUserStatus;
     role?: string;
+    userId?: number;
 }
 
 const supports = new Set<IUserData>();
@@ -47,15 +48,15 @@ export const createConnectionId = async (data) => {
     }
     const newConnectionId = UUID();
 
-    const userData = {
+    const userData: IUserData = {
         connectId: newConnectionId,
         currentSocketId: socketId,
-        userStatus: 'active',
         userId: result ? result.User.id : null,
     };
 
     await db.UserSessionData.create(userData);
 
+    userData.userStatus = 'active';
     return userData;
 };
 
@@ -96,14 +97,17 @@ export const changeUserStatus = async ({ socketId, userSessionId, status, newSoc
     const updateUserStatus = await db.UserSessionData.findOne(query);
 
     if (updateUserStatus) {
-
         updateUserStatus?.User?.role === 'support' ?
             leaveSupportChat(updateUserStatus?.connectId) :
             leaveUserChat(updateUserStatus?.connectId);
 
-        newSocketId ? updateUserStatus.currentSocketId = newSocketId : null;
+
+        if (newSocketId) {
+            updateUserStatus.currentSocketId = newSocketId;
+            await db.UserSessionData.update(updateUserStatus, query);
+        }
+
         updateUserStatus.userStatus = status;
-        await db.UserSessionData.update(updateUserStatus.dataValues, query);
 
         return updateUserStatus;
     }

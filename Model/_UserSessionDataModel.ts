@@ -6,7 +6,6 @@ interface IUserSessionDataAttributes {
     id: number;
     connectId: string;
     currentSocketId: string;
-    userStatus: string;
     userId: number;
 }
 
@@ -18,7 +17,6 @@ export class UserSessionData extends Model<IUserSessionDataAttributes, IUserSess
     declare id: number;
     declare connectId: string;
     declare currentSocketId: string;
-    declare userStatus: string;
     declare userId: number;
 }
 
@@ -35,9 +33,6 @@ export const UserSessionDataFactory = (sequelize: Sequelize): typeof UserSession
         currentSocketId: {
             type: DataTypes.STRING(20),
         },
-        userStatus: {
-            type: DataTypes.STRING(12),
-        },
         userId: {
             type: DataTypes.INTEGER,
             allowNull: true,
@@ -45,7 +40,7 @@ export const UserSessionDataFactory = (sequelize: Sequelize): typeof UserSession
     }, {
         sequelize,
         tableName: ModelName.USER_SESSION_DATA,
-        timestamps: true,
+        timestamps: false,
     });
 
     return UserSessionData;

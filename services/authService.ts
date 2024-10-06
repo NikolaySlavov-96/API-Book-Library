@@ -30,7 +30,6 @@ export async function register(query) {
     await db.UserSessionData.create({
         connectId: newConnectionId,
         currentSocketId: query?.currentSocketId || '',
-        userStatus: 'active',
         userId: userData.id,
     });
 
