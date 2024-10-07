@@ -1,5 +1,6 @@
 export { _addTokenResponse as addTokenResponse, } from './tokenHelpers';
 export { _globalErrorHandling as globalErrorHandling, } from './_errorHandling';
+export { _mappedSingleObject as mappedSingleObject, } from './_responseMapper';
 export { calculateRelativeDate, } from './_Date';
 export { default as checkUserProfileVerification, } from './_checkUserProfileVerification';
 export { default as queryParser, } from './_queryParser';

@@ -1,3 +1,11 @@
+import 'dotenv/config';
+
+import { SYSTEM_FILE_DIRECTORY, } from '../constants';
+
+const { BE_URL, } = process.env;
+
+const FILE_PATH = BE_URL + SYSTEM_FILE_DIRECTORY.UPLOAD + '/';
+
 export enum _EMappedType {
     BOOK = 0,
     BOOK_STATE,
@@ -15,7 +23,7 @@ const userModel = (data) => {
 
 const fileModel = (data) => {
     return {
-        imageUrl: data.uniqueName || data.image,
+        imageUrl: FILE_PATH + data?.uniqueName,
         bookSrc: data?.src,
         imageId: data?.id,
     };
@@ -23,7 +31,7 @@ const fileModel = (data) => {
 
 const bookModel = (data) => {
     const author = data.Author;
-    const updatedFile = fileModel(data?.File || data);
+    const updatedFile = fileModel(data?.Files);
 
     return {
         bookId: data.id,
@@ -60,6 +68,22 @@ const bookSearchModel = (data) => {
         ...updateBook,
         stateId: data.id, // TODO
     };
+};
+
+export const _mappedSingleObject = (result, type: _EMappedType) => {
+    if (type === _EMappedType.BOOK) {
+        return bookModel(result);
+    }
+
+    if (type === _EMappedType.BOOK_SEARCH) {
+        return bookSearchModel(result);
+    }
+
+    if (type === _EMappedType.BOOK_STATE) {
+        return bookStateModel(result);
+    }
+
+    return result;
 };
 
 const _responseMapper = (result, type: _EMappedType) => {

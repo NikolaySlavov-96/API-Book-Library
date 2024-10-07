@@ -4,8 +4,8 @@ const ModelName = {
     BOOK: 'book',
     FILE: 'file',
     STATE: 'state',
-    USER: 'user',
     USER_DATA: 'userData',
+    USER: 'user',
 };
 
 export default ModelName;

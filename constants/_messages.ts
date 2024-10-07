@@ -33,7 +33,7 @@ const messages: IMessageType = {
 
     // Book
     BOOK_ALREADY_EXIST: { message: 'The book has already been added', messageCode: 'book-0001', },
-    SUCCESSFULLY_ADDED_BOOK: { message: 'Successfully added book', messageCode: 'book-0002', },
+    // SUCCESSFULLY_ADDED_BOOK: { message: 'Successfully added book', messageCode: 'book-0002', },
     SUCCESSFULLY_ADDED_BOOK_IN_COLLECTION: {
         message: 'Successfully added book in your collection', messageCode: 'book-0003',
     },

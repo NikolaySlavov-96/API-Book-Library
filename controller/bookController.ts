@@ -46,7 +46,7 @@ export const createBook = async (req, res, next) => {
             res.SocketIo.emit(ESendEvents.NEW_BOOK_ADDED, result);
         }
 
-        const requestRespond = result?.user ? result?.user : updateMessage(MESSAGES.SUCCESSFULLY_ADDED_BOOK).user;
+        const requestRespond = result?.user ? result?.user : { bookId: result.id, };
         res.status(result?.statusCode ? result?.statusCode : 201).json(requestRespond);
     } catch (err) {
         next(err);
@@ -59,9 +59,7 @@ export const addedImageOnBook = async (req, res, next) => {
             return res.status(400).json(updateMessage(MESSAGES.PLEASE_ADDED_FILE).user);
         }
         const { deliverFile, } = req.files;
-        const src = req.body?.src;
-        // Writes to the Local device and also writes to the DB in a table "File"
-        const fileData = await fileService.addingFile(deliverFile, src);
+        const fileData = await fileService.addingFile(deliverFile, req.body);
 
         res.status(200).json(fileData);
     } catch (err) {

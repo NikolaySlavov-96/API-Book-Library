@@ -8,15 +8,22 @@ export const getAllDate = async ({ state, userId, offset, limit, filterOperator,
     const hasSearchContent = !!searchContent;
 
     const query = {
+        where: { stateId: state, userId, },
         include: [
             {
-                model: db.Book as 'book',
+                model: db.Book,
                 required: true,
-                attributes: ['id', 'bookTitle', 'image', 'genre', 'isVerify'],
-                include: {
-                    model: db.Author as 'author',
-                    attributes: ['name', 'image', 'isVerify', 'genre'],
-                },
+                attributes: ['id', 'bookTitle', 'genre', 'isVerify'],
+                include: [
+                    // {
+                    //     model: db.File,
+                    //     attributes: ['id', 'src', 'uniqueName'],
+                    // },
+                    {
+                        model: db.Author,
+                        attributes: ['name', 'image', 'isVerify', 'genre'],
+                    }
+                ],
                 where: hasSearchContent ? {
                     [Op.or]: [
                         {
@@ -25,10 +32,6 @@ export const getAllDate = async ({ state, userId, offset, limit, filterOperator,
                         {
                             genre: { [queryOperator]: searchContent, },
                         }
-                        // TODO resolve problem
-                        // , {
-                        // '$Author.name$': { [queryOperator]: searchContent, },
-                        // }
                     ],
                 } : {},
             },
@@ -43,7 +46,6 @@ export const getAllDate = async ({ state, userId, offset, limit, filterOperator,
                 attributes: ['stateName'],
             }
         ],
-        where: { stateId: state, userId, },
         attributes: ['id', 'stateId', 'isDelete'],
         order: [['id', 'ASC']],
         offset,
