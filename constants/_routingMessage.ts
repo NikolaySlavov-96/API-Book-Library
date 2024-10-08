@@ -12,7 +12,6 @@ const routing = {
     BOOK_FIELD_OR_URL_IS_REQUIRED: 'Either url or both fileId and resourcePath must be provided',
     BOOK_GENRE: 'Genre is required filed',
     BOOK_ID_IS_REQUIRED: 'Book ID is required',
-    BOOK_RESOURCE_PATH: 'Resource path must be a required',
     BOOK_TITLE_REQUIRED: 'Book title is required',
     BOOK_URL: 'URL must be a required filed',
     CURRENT_SOCKET_ID: 'Please insert socket Id',

@@ -1,5 +1,5 @@
 import { MESSAGES, } from '../constants';
-import { responseMapper, EMappedType, } from '../Helpers';
+import { responseMapper, EMappedType, mappedSingleObject, } from '../Helpers';
 
 import db from '../Model';
 const Op = db?.Sequelize?.Op;
@@ -9,14 +9,23 @@ import { updateMessage, } from '../util';
 const ATTRIBUTES = ['name', 'image', 'genre', 'isVerify'];
 
 export const getAllData = async ({ offset, limit, filterOperator, searchContent, }) => {
+    const queryOperator = Op[filterOperator];
+
     const query = {
         include: [{
             model: db.Author,
             required: false,
             attributes: ATTRIBUTES,
+            // where: searchContent ? {
+            //     name: { [queryOperator]: searchContent, },
+            // } : {},
+        },
+        {
+            model: db.File,
+            attributes: ['id', 'src', 'uniqueName'],
         }],
         order: [['id', 'ASC']],
-        attributes: ['id', 'bookTitle', 'image', 'genre', 'isVerify'],
+        attributes: ['id', 'bookTitle', 'genre', 'isVerify'],
         offset,
         limit,
         raw: true,
@@ -24,7 +33,6 @@ export const getAllData = async ({ offset, limit, filterOperator, searchContent,
         where: {},
     };
 
-    const queryOperator = Op[filterOperator];
 
     !!searchContent && (query.where = {
         [Op.or]: [
@@ -33,9 +41,6 @@ export const getAllData = async ({ offset, limit, filterOperator, searchContent,
             },
             {
                 genre: { [queryOperator]: searchContent, },
-            },
-            {
-                '$Author.name$': { [queryOperator]: searchContent, },
             }
         ],
     });
@@ -48,21 +53,32 @@ export const getAllData = async ({ offset, limit, filterOperator, searchContent,
 };
 
 export const getDataById = async (id) => {
-    return db.Book.findByPk(id, {
+    const result = await db.Book.findByPk(id, {
         include: [
             {
                 model: db.Author,
                 attributes: ATTRIBUTES,
                 required: false,
+            },
+            {
+                model: db.File,
+                required: false,
+                attributes: ['id', 'src', 'uniqueName'],
             }
         ],
+        raw: true,
+        nest: true,
     });
+
+    const mappedResponse = mappedSingleObject(result, EMappedType.BOOK);
+
+    return mappedResponse;
 };
 
-export const create = async ({ author, bookTitle, }) => {
+export const create = async ({ author, bookTitle, genre, }) => {
     const existingBook = (await db.Book.findOne({ where: { bookTitle, }, }))?.dataValues;
     if (existingBook) {
-        return updateMessage(MESSAGES.BOOK_ALREADY_EXIST);
+        return updateMessage(MESSAGES.BOOK_ALREADY_EXIST, 403);
     }
 
     if (!existingBook) {
@@ -75,7 +91,7 @@ export const create = async ({ author, bookTitle, }) => {
         isAuthor && (author = isAuthor.id);
     }
 
-    const create = (await db.Book.create({ bookTitle, authorId: author, }))?.dataValues;
+    const create = (await db.Book.create({ bookTitle, authorId: author, genre, }))?.dataValues;
     return create;
 };
 

@@ -39,6 +39,13 @@ db.UserSessionData.belongsTo(db.User, {
     // constraints: false,
 });
 
+db.Book.hasMany(db.File, {
+    foreignKey: 'bookId',
+});
+db.File.belongsTo(db.Book, {
+    foreignKey: 'bookId',
+});
+
 db.BookState.belongsTo(db.State, { foreignKey: 'stateId', });
 
 db.Book.belongsTo(db.Author, { foreignKey: 'authorId', });

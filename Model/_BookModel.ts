@@ -6,7 +6,6 @@ interface IBookAttributes {
     id: number;
     authorId: number;
     bookTitle: string;
-    image: string;
     genre: string;
     isVerify: string;
 }
@@ -17,7 +16,6 @@ export class Book extends Model<IBookAttributes, IBookCreationAttributes> implem
     declare id: number;
     authorId: number;
     bookTitle: string;
-    image: string;
     genre: string;
     declare isVerify: string;
 }
@@ -35,9 +33,6 @@ export const BookFactory = (sequelize: Sequelize): typeof Book => {
         },
         bookTitle: {
             type: DataTypes.STRING(140),
-        },
-        image: {
-            type: DataTypes.STRING(145),
         },
         genre: {
             type: DataTypes.STRING(45),
