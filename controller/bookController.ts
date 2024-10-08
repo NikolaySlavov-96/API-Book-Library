@@ -70,9 +70,6 @@ export const addedImageOnBook = async (req, res, next) => {
 export const removeImageOnBook = async (req, res, next) => {
     try {
         const fileId = req.params.id;
-        // Remove relation between Table book and Table file
-
-        // Remove from Local device and also remove from DB a table "File" ( Maybe )
         const resultFromUnlink = await fileService.removeFile(fileId);
         res.status(resultFromUnlink.statusCode).json(resultFromUnlink.user);
     } catch (err) {

@@ -8,7 +8,7 @@ import { createDirectoryPath, unlinkFileFromSystem, updateMessage, UUID, } from 
 const UPLOAD_DIRECTORY = SYSTEM_FILE_DIRECTORY.UPLOAD;
 
 export const addingFile = async (deliverFile, body) => {
-    const { src, fileId } = body;
+    const { src, fileId, } = body;
     const { name: realFileName, mimetype, } = deliverFile;
 
     const uniqueFileName = UUID();
@@ -37,6 +37,12 @@ export const removeFile = async (fileId) => {
     if (!imageData) {
         return updateMessage(messages.FILE_DOES_NOT_EXIT, 400);
     }
+
+    await db.File.destroy({
+        where: {
+            id: fileId,
+        },
+    });
 
     const result = await unlinkFileFromSystem(UPLOAD_DIRECTORY, imageData?.dataValues?.uniqueName);
     if (!result) {
