@@ -13,12 +13,12 @@ export const getAllDate = async ({ state, userId, offset, limit, filterOperator,
             {
                 model: db.Book,
                 required: true,
-                attributes: ['id', 'bookTitle', 'genre', 'isVerify'],
+                attributes: ['id', 'bookTitle', 'genre', 'isVerify', 'authorId'],
                 include: [
-                    // {
-                    //     model: db.File,
-                    //     attributes: ['id', 'src', 'uniqueName'],
-                    // },
+                    {
+                        model: db.File,
+                        attributes: ['id', 'src', 'uniqueName'],
+                    },
                     {
                         model: db.Author,
                         attributes: ['name', 'image', 'isVerify', 'genre'],
