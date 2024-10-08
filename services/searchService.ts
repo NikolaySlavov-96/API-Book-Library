@@ -11,12 +11,16 @@ export const getBookByEmail = async ({ email, offset, limit, }) => {
                 include: [
                     {
                         model: db.Book,
-                        attributes: ['id', 'bookTitle', 'image', 'genre', 'isVerify'],
+                        attributes: ['id', 'bookTitle', 'image', 'genre', 'isVerify', 'authorId'],
                         include: [
                             {
                                 model: db.Author,
                                 attributes: ['name', 'image', 'genre', 'isVerify'],
-                            }
+                            },
+                            {
+                                model: db.File,
+                                attributes: ['id', 'src', 'uniqueName'],
+                            },
                         ],
                     }
                 ],
