@@ -1,10 +1,8 @@
 import db from '../../Model';
 import { updateMessage, UUID, } from '../../util';
 
-type TUserStatus = 'active' | 'inactive';
+type TUserStatus = 'active' | 'inactive' | 'free' | 'busy';
 
-// IN DB with messages save all messages by connectionId
-// Auth and UserSessionData tables have the relation 
 interface IUserData {
     connectId: string;
     currentSocketId: string;
@@ -16,7 +14,6 @@ interface IUserData {
 const supports = new Set<IUserData>();
 const userQueue: IUserData[] = [];
 
-// Initialize user data to set up a support chat session
 export const validateConnectionId = async (data) => {
     const result = await db.UserSessionData.findOne({
         where: { connectId: data.connectId, },
@@ -69,7 +66,7 @@ const leaveSupportChat = async (connectId) => {
     }
 };
 
-const leaveUserChat = async (connectId) => {
+export const leaveUserChat = async (connectId) => {
     const index = userQueue.findIndex(u => u.connectId === connectId);
     userQueue.splice(index, 1);
 };
@@ -80,6 +77,8 @@ interface IChangeUserStatus {
     status: TUserStatus;
     newSocketId?: string;
 }
+
+// TODO: Consider renaming this element to reflect its purpose more accurately
 export const changeUserStatus = async ({ socketId, userSessionId, status, newSocketId, }: IChangeUserStatus) => {
     const query = {
         where: {},
@@ -142,4 +141,21 @@ export const getAllConnectedSupports = async () => {
 
 export const getQueuedUsers = async () => {
     return userQueue;
+};
+
+export const isUserInQueue = async (data: { connectId: string }) => {
+    return userQueue.find(u => u.connectId === data.connectId);
+};
+
+export const setSupportStatus = async (data: { connectId: string }, status: TUserStatus) => {
+    for (const support of supports) {
+        if (support.connectId === data.connectId) {
+            supports.delete(support);
+
+            support.userStatus = status;
+
+            supports.add(support);
+            return;
+        }
+    }
 };
