@@ -8,10 +8,17 @@ import {
     createConnectionId,
     getAllConnectedSupports,
     getQueuedUsers,
+    isUserInQueue,
     joinUserToSupportChat,
     joinUserToUserQueue,
+    leaveUserChat,
+    setSupportStatus,
     validateConnectionId,
 } from '../services/support/connectManagerService';
+import {
+    initializeRoom,
+    isRoomExist,
+} from '../services/support/chatRoomService';
 
 interface ISupportChat {
     connectId?: string,
@@ -101,6 +108,69 @@ export default (io) => {
                 // socket.emit('error')
                 console.log('SocketRoute @Support Chat', err);
             }
+        });
+
+        socket.on(EReceiveEvents.SUPPORT_ACCEPT_USER, async (data: { supportId: string, acceptUserId: string }) => {
+            try {
+                const resultFromCheck = await validateConnectionId({ connectId: data.supportId, });
+                if (resultFromCheck?.User?.role !== 'support') {
+                    // Trigger an event when a user is not authorized to accept a support chat request
+                    return;
+                }
+
+                const isUserExist = await isUserInQueue({ connectId: data.acceptUserId, });
+                if (!isUserExist) {
+                    // Trigger an event when the specified user is not found in the queue
+                    return;
+                }
+
+                // Create a new chat room for users to join and interact within
+                const roomInfo = await initializeRoom(resultFromCheck, isUserExist);
+                socket.join(roomInfo.roomName);
+
+                // Update the status of the support agent to "busy" 
+                await setSupportStatus({ connectId: data.supportId, }, 'busy');
+
+                // Remove a user from the queue
+                await leaveUserChat(data.acceptUserId);
+
+                // Automatically send a message to the user that includes the support agent's name
+                const supportSocketId = resultFromCheck.currentSocketId;
+                const userSocketId = isUserExist.currentSocketId;
+                io.to(userSocketId).emit(ESendEvents.SEND_SUPPORT_MESSAGE, {
+                    roomName: roomInfo.roomName, message: 'user',
+                });
+                io.to(supportSocketId).emit(ESendEvents.SEND_SUPPORT_MESSAGE, {
+                    roomName: roomInfo.roomName, message: 'support',
+                });
+
+                // To all the "supports" who have joined
+                const supports = await getAllConnectedSupports();
+                const usersInQueue = await getQueuedUsers();
+                supports.forEach(support => {
+                    io.to(support.currentSocketId).emit(ESendEvents.NOTIFY_ADMINS_OF_NEW_USER,
+                        {
+                            newUserSocketId: socketId,
+                            userQueue: usersInQueue,
+                        }
+                    );
+                });
+            } catch (err) {
+                console.log('error: SUPPORT_ACCEPT_USER: ', err);
+            }
+        });
+
+        socket.on(EReceiveEvents.SUPPORT_CHAT_USER_LEAVE, async (data: { roomName: string }) => {
+            const resultFromRoom = await isRoomExist({ roomName: data?.roomName, });
+            if (!resultFromRoom) {
+                // room is not exist
+                return;
+            }
+
+            socket.leave(resultFromRoom.roomName);
+
+            // Update the status of the support agent to "free"
+            await setSupportStatus({ connectId: resultFromRoom.supportConnectId, }, 'free');
         });
 
         // When user disconnects - to all others 
