@@ -4,15 +4,15 @@ import { EReceiveEvents, ESendEvents, } from '../constants';
 
 import { storeVisitorInfo, } from '../services/visitorService';
 import {
-    changeUserStatus,
+    appendVisitorToList,
+    assignRoleAndStatusToUser,
     createConnectionId,
     getAllConnectedSupports,
-    getQueuedUsers,
+    getAllConnectedUsers,
     isUserInQueue,
-    joinUserToSupportChat,
-    joinUserToUserQueue,
-    leaveUserChat,
-    setSupportStatus,
+    removeVisitorFromList,
+    setStatus,
+    updateSocketId,
     validateConnectionId,
 } from '../services/support/connectManagerService';
 import {
@@ -32,10 +32,11 @@ interface IMessageResponseJoinToChat {
 const WELCOME_USER_TEXT = 'Welcome to Support Chat!';
 const WELCOME_ADMIN_TEXT = 'Welcome to Support Chat Admin!';
 export default (io) => {
-    io.on('connection', (socket) => {
+    io.on('connection', async (socket) => {
         const socketId = socket.id;
 
         console.log(`User ${socketId} connected`);
+        await appendVisitorToList(socketId);
 
         // Upon connection - to all others (Skip sender)
         // socket.broadcast.emit('message', `User ${socketId.substring(0, 5)}} connected`);
@@ -61,22 +62,24 @@ export default (io) => {
                 if (data?.connectId) {
                     const result = await validateConnectionId(data);
 
+                    messageResponseJoinToChat.connectId = result.connectId;
                     if (result.connectId) {
-                        messageResponseJoinToChat.connectId = result.connectId;
-                        await changeUserStatus({
+                        await updateSocketId({
                             socketId: result.currentSocketId,
-                            userSessionId: result.id,
-                            status: 'active',
                             newSocketId: socketId,
                         });
                     }
 
                     if (result?.User?.role === 'support') {
                         messageResponseJoinToChat.message = WELCOME_ADMIN_TEXT;
-                        await joinUserToSupportChat(result, socketId);
+                        await assignRoleAndStatusToUser({
+                            connectId: result.connectId, role: 'support', status: 'free',
+                        });
                     } else {
                         // Add a user to the userQueue for managing chat requests or support sessions
-                        await joinUserToUserQueue(data, socketId);
+                        await assignRoleAndStatusToUser({
+                            connectId: data.connectId, role: 'user', status: 'free',
+                        });
                     }
                 }
 
@@ -84,7 +87,9 @@ export default (io) => {
                     const newConnectionId = await createConnectionId({ socketId, });
                     if ('connectId' in newConnectionId) {
                         messageResponseJoinToChat.connectId = newConnectionId.connectId;
-                        await joinUserToUserQueue({ connectId: newConnectionId.connectId, }, socketId);
+                        await assignRoleAndStatusToUser({
+                            connectId: newConnectionId.connectId, role: 'user', status: 'free',
+                        });
                     } else {
                         throw newConnectionId;
                     }
@@ -92,7 +97,7 @@ export default (io) => {
 
                 // To all the "supports" who have joined
                 const supports = await getAllConnectedSupports();
-                const usersInQueue = await getQueuedUsers();
+                const usersInQueue = await getAllConnectedUsers();
                 supports.forEach(support => {
                     io.to(support.currentSocketId).emit(ESendEvents.NOTIFY_ADMINS_OF_NEW_USER,
                         {
@@ -129,10 +134,10 @@ export default (io) => {
                 socket.join(roomInfo.roomName);
 
                 // Update the status of the support agent to "busy" 
-                await setSupportStatus({ connectId: data.supportId, }, 'busy');
+                await setStatus({ connectId: data.supportId, }, 'busy');
 
                 // Remove a user from the queue
-                await leaveUserChat(data.acceptUserId);
+                await setStatus({ connectId: data.acceptUserId, }, 'busy');
 
                 // Automatically send a message to the user that includes the support agent's name
                 const supportSocketId = resultFromCheck.currentSocketId;
@@ -146,7 +151,7 @@ export default (io) => {
 
                 // To all the "supports" who have joined
                 const supports = await getAllConnectedSupports();
-                const usersInQueue = await getQueuedUsers();
+                const usersInQueue = await getAllConnectedUsers();
                 supports.forEach(support => {
                     io.to(support.currentSocketId).emit(ESendEvents.NOTIFY_ADMINS_OF_NEW_USER,
                         {
@@ -170,15 +175,15 @@ export default (io) => {
             socket.leave(resultFromRoom.roomName);
 
             // Update the status of the support agent to "free"
-            await setSupportStatus({ connectId: resultFromRoom.supportConnectId, }, 'free');
+            await setStatus({ connectId: resultFromRoom.supportConnectId, }, 'free');
+            await setStatus({ connectId: resultFromRoom.userConnectId, }, 'active');
         });
 
         // When user disconnects - to all others 
         socket.on('disconnect', async () => {
             console.log(`User ${socketId} disconnected`);
 
-            // Update user status on Offline
-            await changeUserStatus({ socketId, status: 'inactive', });
+            await removeVisitorFromList(socketId);
 
             // At disconnect on user send event to everyone else 
             // socket.broadcast.emit('message', `User ${socket.id.substring(0, 5)}} disconnected`);

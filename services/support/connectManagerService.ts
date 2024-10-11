@@ -2,17 +2,35 @@ import db from '../../Model';
 import { updateMessage, UUID, } from '../../util';
 
 type TUserStatus = 'active' | 'inactive' | 'free' | 'busy';
+type TUserRole = 'user' | 'support';
 
-interface IUserData {
-    connectId: string;
+interface IAllConnectedUsers {
+    role: TUserRole;
+    connectId?: string;
     currentSocketId: string;
-    userStatus?: TUserStatus;
-    role?: string;
-    userId?: number;
+    status: TUserStatus;
 }
 
-const supports = new Set<IUserData>();
-const userQueue: IUserData[] = [];
+const allConnectedUsers: IAllConnectedUsers[] = [];
+
+export const appendVisitorToList = async (socketId: string) => {
+    const newVisitor: IAllConnectedUsers = {
+        currentSocketId: socketId,
+        role: 'user',
+        status: 'active',
+    };
+
+    allConnectedUsers.push(newVisitor);
+};
+
+export const removeVisitorFromList = async (socketId) => {
+    const currentUser = allConnectedUsers.find(u => u.currentSocketId === socketId);
+    if (currentUser?.connectId) {
+        // await changeStatus({ socketId, status: 'inactive', });
+    }
+    // Remove a user from the system or chat room when they disconnect
+    allConnectedUsers.filter(u => u.currentSocketId !== socketId ? u.status === 'inactive' : u);
+};
 
 export const validateConnectionId = async (data) => {
     const result = await db.UserSessionData.findOne({
@@ -28,6 +46,7 @@ export const validateConnectionId = async (data) => {
 
     return result;
 };
+
 export const createConnectionId = async (data) => {
     const socketId = data.socketId.toString() as string;
 
@@ -40,12 +59,13 @@ export const createConnectionId = async (data) => {
         }],
     });
 
+    // TODO: Verify the logic within the IF condition to ensure it behaves as expected
     if (result) {
         return updateMessage({ message: 'connectId is exist', messageCode: 'support-0001', }, 600);
     }
-    const newConnectionId = UUID();
 
-    const userData: IUserData = {
+    const newConnectionId = UUID();
+    const userData = {
         connectId: newConnectionId,
         currentSocketId: socketId,
         userId: result ? result.User.id : null,
@@ -53,35 +73,19 @@ export const createConnectionId = async (data) => {
 
     await db.UserSessionData.create(userData);
 
-    userData.userStatus = 'active';
     return userData;
-};
-
-const leaveSupportChat = async (connectId) => {
-    for (const support of supports) {
-        if (support.connectId === connectId) {
-            supports.delete(support);
-            return;
-        }
-    }
-};
-
-export const leaveUserChat = async (connectId) => {
-    const index = userQueue.findIndex(u => u.connectId === connectId);
-    userQueue.splice(index, 1);
 };
 
 interface IChangeUserStatus {
     socketId: string | undefined;
-    userSessionId?: string;
-    status: TUserStatus;
     newSocketId?: string;
 }
 
-// TODO: Consider renaming this element to reflect its purpose more accurately
-export const changeUserStatus = async ({ socketId, userSessionId, status, newSocketId, }: IChangeUserStatus) => {
+export const updateSocketId = async ({ socketId, newSocketId, }: IChangeUserStatus) => {
     const query = {
-        where: {},
+        where: {
+            currentSocketId: socketId,
+        },
         include: [{
             model: db.User,
             require: false,
@@ -91,71 +95,31 @@ export const changeUserStatus = async ({ socketId, userSessionId, status, newSoc
         nest: true,
     };
 
-    socketId ? query.where = { currentSocketId: socketId, } : query.where = { id: userSessionId, };
-
-    const updateUserStatus = await db.UserSessionData.findOne(query);
-
-    if (updateUserStatus) {
-        updateUserStatus?.User?.role === 'support' ?
-            leaveSupportChat(updateUserStatus?.connectId) :
-            leaveUserChat(updateUserStatus?.connectId);
-
-
-        if (newSocketId) {
-            updateUserStatus.currentSocketId = newSocketId;
-            await db.UserSessionData.update(updateUserStatus, query);
-        }
-
-        updateUserStatus.userStatus = status;
-
-        return updateUserStatus;
-    }
-    return updateUserStatus;
-};
-
-export const joinUserToSupportChat = async (data, socketId) => {
-    const newSupport: IUserData = {
-        connectId: data.connectId,
-        currentSocketId: socketId,
-        userStatus: 'active',
+    const updateUserStatus = {
+        currentSocketId: newSocketId,
     };
 
-    supports.add(newSupport);
-    return;
+    return await db.UserSessionData.update(updateUserStatus, query);
 };
 
-export const joinUserToUserQueue = async (data, socketId) => {
-    const newSupport: IUserData = {
-        connectId: data.connectId,
-        currentSocketId: socketId,
-        userStatus: 'active',
-    };
-
-    userQueue.push(newSupport);
-    return;
+export const assignRoleAndStatusToUser = async (data: { connectId: string, role: TUserRole, status: TUserStatus }) => {
+    allConnectedUsers.filter(u =>
+        u.connectId === data.connectId ?
+            (u.role = data.role, u.status = data.status) : u);
 };
 
 export const getAllConnectedSupports = async () => {
-    return supports;
+    return allConnectedUsers.filter(s => s.role === 'support' && s.status === 'free');
 };
 
-export const getQueuedUsers = async () => {
-    return userQueue;
+export const getAllConnectedUsers = async () => {
+    return allConnectedUsers.filter(u => u.role === 'user' && u.status === 'free');
 };
 
 export const isUserInQueue = async (data: { connectId: string }) => {
-    return userQueue.find(u => u.connectId === data.connectId);
+    return allConnectedUsers.find(u => u.connectId === data.connectId && u.role === 'user');
 };
 
-export const setSupportStatus = async (data: { connectId: string }, status: TUserStatus) => {
-    for (const support of supports) {
-        if (support.connectId === data.connectId) {
-            supports.delete(support);
-
-            support.userStatus = status;
-
-            supports.add(support);
-            return;
-        }
-    }
+export const setStatus = async (data: { connectId: string }, status: TUserStatus) => {
+    allConnectedUsers.filter(s => s.connectId === data.connectId ? s.status = status : s);
 };
