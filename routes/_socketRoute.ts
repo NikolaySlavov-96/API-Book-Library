@@ -16,6 +16,7 @@ import {
     validateConnectionId,
 } from '../services/support/connectManagerService';
 import {
+    deleteRoom,
     initializeRoom,
     isRoomExist,
 } from '../services/support/chatRoomService';
@@ -176,6 +177,8 @@ export default (io) => {
             }
 
             socket.leave(resultFromRoom.roomName);
+
+            await deleteRoom({ roomName: resultFromRoom.roomName, });
 
             // Update the status of the support agent to "free"
             await setStatus({ connectId: resultFromRoom.supportConnectId, }, 'free');

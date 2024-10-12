@@ -34,3 +34,7 @@ export const initializeRoom = async (supportData, userData) => {
 export const isRoomExist = async (data: { roomName: string }) => {
     return activeRooms.find(r => r.roomName === data.roomName);
 };
+
+export const deleteRoom = async (data: { roomName: string }) => {
+    activeRooms.filter(r => r.roomName !== data.roomName);
+};
