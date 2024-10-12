@@ -38,7 +38,7 @@ export const validateConnectionId = async (data) => {
         include: [{
             model: db.User,
             require: false,
-            attributes: ['id'],
+            attributes: ['id', 'role'],
         }],
         raw: true,
         nest: true,
