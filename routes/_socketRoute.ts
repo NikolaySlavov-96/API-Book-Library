@@ -10,9 +10,9 @@ import {
     getAllConnectedSupports,
     getAllConnectedUsers,
     isUserInQueue,
+    linkSocketIdToConnectionId,
     removeVisitorFromList,
     setStatus,
-    updateSocketId,
     validateConnectionId,
 } from '../services/support/connectManagerService';
 import {
@@ -62,15 +62,17 @@ export default (io) => {
                 if (data?.connectId) {
                     const result = await validateConnectionId(data);
 
-                    messageResponseJoinToChat.connectId = result.connectId;
-                    if (result.connectId) {
-                        await updateSocketId({
-                            socketId: result.currentSocketId,
-                            newSocketId: socketId,
-                        });
+                    if (!result) {
+                        console.log({ message: 'User Not fount', });
+                        return;
                     }
 
-                    if (result?.User?.role === 'support') {
+                    messageResponseJoinToChat.connectId = result.connectId;
+                    await linkSocketIdToConnectionId({
+                        currentSocketId: socketId, connectId: result.connectId,
+                    });
+
+                    if (result.User.role === 'support') {
                         messageResponseJoinToChat.message = WELCOME_ADMIN_TEXT;
                         await assignRoleAndStatusToUser({
                             connectId: result.connectId, role: 'support', status: 'free',
@@ -78,7 +80,7 @@ export default (io) => {
                     } else {
                         // Add a user to the userQueue for managing chat requests or support sessions
                         await assignRoleAndStatusToUser({
-                            connectId: data.connectId, role: 'user', status: 'free',
+                            connectId: result.connectId, role: 'user', status: 'waiting',
                         });
                     }
                 }
@@ -86,9 +88,12 @@ export default (io) => {
                 if (!data?.connectId) {
                     const newConnectionId = await createConnectionId({ socketId, });
                     if ('connectId' in newConnectionId) {
+                        await linkSocketIdToConnectionId({
+                            currentSocketId: socketId, connectId: newConnectionId.connectId,
+                        });
                         messageResponseJoinToChat.connectId = newConnectionId.connectId;
                         await assignRoleAndStatusToUser({
-                            connectId: newConnectionId.connectId, role: 'user', status: 'free',
+                            connectId: newConnectionId.connectId, role: 'user', status: 'waiting',
                         });
                     } else {
                         throw newConnectionId;
@@ -133,10 +138,8 @@ export default (io) => {
                 const roomInfo = await initializeRoom(resultFromCheck, isUserExist);
                 socket.join(roomInfo.roomName);
 
-                // Update the status of the support agent to "busy" 
                 await setStatus({ connectId: data.supportId, }, 'busy');
 
-                // Remove a user from the queue
                 await setStatus({ connectId: data.acceptUserId, }, 'busy');
 
                 // Automatically send a message to the user that includes the support agent's name
@@ -176,6 +179,7 @@ export default (io) => {
 
             // Update the status of the support agent to "free"
             await setStatus({ connectId: resultFromRoom.supportConnectId, }, 'free');
+            // Update the status of the user to "active"
             await setStatus({ connectId: resultFromRoom.userConnectId, }, 'active');
         });
 
