@@ -63,7 +63,7 @@ export const createConnectionId = async (data) => {
     const userData = {
         connectId: newConnectionId,
         currentSocketId: socketId,
-        userId: result ? result.User.id : null,
+        userId: result?.User ? result.User.id : null,
     };
 
     await db.UserSessionData.create(userData);
@@ -108,7 +108,7 @@ export const getAllConnectedSupports = async () => {
 };
 
 export const getAllConnectedUsers = async () => {
-    return allConnectedUsers.filter(u => u.role === 'user' && u.status === 'free');
+    return allConnectedUsers.filter(u => u.role === 'user' && u.status === 'waiting');
 };
 
 export const isUserInQueue = async (data: { connectId: string }) => {

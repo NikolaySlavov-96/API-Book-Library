@@ -1,4 +1,4 @@
-import { isEmpty, } from 'lodash';
+import { isEmpty, isString, } from 'lodash';
 
 import { EReceiveEvents, ESendEvents, } from '../constants';
 
@@ -59,8 +59,7 @@ export default (io) => {
                     message: WELCOME_USER_TEXT,
                     connectId: '',
                 };
-
-                if (data?.connectId) {
+                if (isString(data.connectId)) {
                     const result = await validateConnectionId(data);
 
                     if (!result) {
@@ -84,9 +83,7 @@ export default (io) => {
                             connectId: result.connectId, role: 'user', status: 'waiting',
                         });
                     }
-                }
-
-                if (!data?.connectId) {
+                } else {
                     const newConnectionId = await createConnectionId({ socketId, });
                     if ('connectId' in newConnectionId) {
                         await linkSocketIdToConnectionId({
@@ -117,7 +114,7 @@ export default (io) => {
                 socket.emit(ESendEvents.SUPPORT_CHAT_USER_JOIN_ACKNOWLEDGMENT, messageResponseJoinToChat);
             } catch (err) {
                 // socket.emit('error')
-                console.log('SocketRoute @Support Chat', err);
+                console.log('SocketRoute Event ∞ SUPPORT_CHAT_USER_JOIN', err);
             }
         });
 
@@ -165,7 +162,7 @@ export default (io) => {
                     );
                 });
             } catch (err) {
-                console.log('error: SUPPORT_ACCEPT_USER: ', err);
+                console.log('SocketRoute Event ∞ SUPPORT_ACCEPT_USER', err);
             }
         });
 
