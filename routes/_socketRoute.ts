@@ -1,4 +1,4 @@
-import { isEmpty, isString, } from 'lodash';
+import { isEmpty, isString, isUndefined, } from 'lodash';
 
 import { EReceiveEvents, ESendEvents, } from '../constants';
 
@@ -59,7 +59,7 @@ export default (io) => {
                     message: WELCOME_USER_TEXT,
                     connectId: '',
                 };
-                if (isString(data.connectId)) {
+                if (!isUndefined(data) && isString(data.connectId)) {
                     const result = await validateConnectionId(data);
 
                     if (!result) {
@@ -143,10 +143,10 @@ export default (io) => {
                 // Automatically send a message to the user that includes the support agent's name
                 const supportSocketId = resultFromCheck.currentSocketId;
                 const userSocketId = isUserExist.currentSocketId;
-                io.to(userSocketId).emit(ESendEvents.SEND_SUPPORT_MESSAGE, {
+                io.to(userSocketId).emit(ESendEvents.SUPPORT_MESSAGE, {
                     roomName: roomInfo.roomName, message: 'user',
                 });
-                io.to(supportSocketId).emit(ESendEvents.SEND_SUPPORT_MESSAGE, {
+                io.to(supportSocketId).emit(ESendEvents.SUPPORT_MESSAGE, {
                     roomName: roomInfo.roomName, message: 'support',
                 });
 

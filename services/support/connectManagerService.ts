@@ -29,7 +29,7 @@ export const appendVisitorToList = async (socketId: string) => {
 };
 
 export const removeVisitorFromList = async (socketId) => {
-    allConnectedUsers.filter(u => u.currentSocketId !== socketId ? u.status === 'inactive' : u);
+    allConnectedUsers.filter(u => u.currentSocketId === socketId ? u.status === 'inactive' : u);
 };
 
 export const validateConnectionId = async (data) => {
