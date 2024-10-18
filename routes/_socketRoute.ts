@@ -99,8 +99,8 @@ export default (io) => {
                 }
 
                 // To all the "supports" who have joined
-                const supports = await getAllConnectedSupports();
-                const usersInQueue = await getAllConnectedUsers();
+                const supports = await getAllConnectedSupports({ status: 'free', });
+                const usersInQueue = await getAllConnectedUsers({ status: 'waiting', });
                 supports.forEach(support => {
                     io.to(support.currentSocketId).emit(ESendEvents.NOTIFY_ADMINS_OF_NEW_USER,
                         {
@@ -131,10 +131,12 @@ export default (io) => {
                     // Trigger an event when the specified user is not found in the queue
                     return;
                 }
-
                 // Create a new chat room for users to join and interact within
                 const roomInfo = await initializeRoom(resultFromCheck, isUserExist);
                 socket.join(roomInfo.roomName);
+
+                // console.log('Rooms:', io.sockets.adapter.rooms);
+                // console.log('Room details:', io.sockets.adapter.rooms.get(roomInfo.roomName));
 
                 await setStatus({ connectId: data.supportId, }, 'busy');
 
@@ -143,16 +145,16 @@ export default (io) => {
                 // Automatically send a message to the user that includes the support agent's name
                 const supportSocketId = resultFromCheck.currentSocketId;
                 const userSocketId = isUserExist.currentSocketId;
-                io.to(userSocketId).emit(ESendEvents.SUPPORT_MESSAGE, {
+                io.to(userSocketId).emit(ESendEvents.NOTIFY_FOR_CREATE_ROOM, {
                     roomName: roomInfo.roomName, message: 'user',
                 });
-                io.to(supportSocketId).emit(ESendEvents.SUPPORT_MESSAGE, {
+                io.to(supportSocketId).emit(ESendEvents.NOTIFY_FOR_CREATE_ROOM, {
                     roomName: roomInfo.roomName, message: 'support',
                 });
 
                 // To all the "supports" who have joined
-                const supports = await getAllConnectedSupports();
-                const usersInQueue = await getAllConnectedUsers();
+                const supports = await getAllConnectedSupports({ status: 'free', });
+                const usersInQueue = await getAllConnectedUsers({ status: 'waiting', });
                 supports.forEach(support => {
                     io.to(support.currentSocketId).emit(ESendEvents.NOTIFY_ADMINS_OF_NEW_USER,
                         {
@@ -166,9 +168,47 @@ export default (io) => {
             }
         });
 
-        socket.on(EReceiveEvents.SUPPORT_CHAT_USER_LEAVE, async (data: { roomName: string }) => {
+        socket.on(EReceiveEvents.USER_ACCEPT_JOIN_TO_ROOM,
+            async (data: { roomName: string }) => {
+                try {
+                    if (!data?.roomName) {
+                        return;
+                    }
+
+                    const resultFromRoom = await isRoomExist({ roomName: data?.roomName, });
+                    if (!resultFromRoom?.roomName) {
+                        console.log('room doesn\'t not exist');
+                        return;
+                    }
+                    socket.join(resultFromRoom.roomName);
+
+                    // console.log('Rooms:', io.sockets.adapter.rooms);
+                    // console.log('Room details:', io.sockets.adapter.rooms.get(resultFromRoom.roomName));
+
+                } catch (err) {
+                    console.log('SocketRoute Event ∞ SUPPORT_ACCEPT_USER', err);
+                }
+            });
+
+        socket.on(EReceiveEvents.SUPPORT_CHAT_USER_LEAVE, async (data: { roomName: string, connectId: string }) => {
             const resultFromRoom = await isRoomExist({ roomName: data?.roomName, });
             if (!resultFromRoom) {
+                const isUserExist = await isUserInQueue(data);
+                if (isUserExist) {
+                    await setStatus({ connectId: isUserExist.connectId, }, 'free');
+
+                    const supports = await getAllConnectedSupports({ status: 'free', });
+                    const usersInQueue = await getAllConnectedUsers({ status: 'waiting', });
+                    supports.forEach(support => {
+                        io.to(support.currentSocketId).emit(ESendEvents.NOTIFY_ADMINS_OF_NEW_USER,
+                            {
+                                newUserSocketId: socketId,
+                                userQueue: usersInQueue,
+                            }
+                        );
+                    });
+                    return;
+                }
                 // room is not exist
                 return;
             }
@@ -181,6 +221,35 @@ export default (io) => {
             await setStatus({ connectId: resultFromRoom.supportConnectId, }, 'free');
             // Update the status of the user to "active"
             await setStatus({ connectId: resultFromRoom.userConnectId, }, 'active');
+
+            const supports = await getAllConnectedSupports({ status: 'free', });
+            const usersInQueue = await getAllConnectedUsers({ status: 'waiting', });
+            supports.forEach(support => {
+                io.to(support.currentSocketId).emit(ESendEvents.NOTIFY_ADMINS_OF_NEW_USER,
+                    {
+                        newUserSocketId: socketId,
+                        userQueue: usersInQueue,
+                    }
+                );
+            });
+        });
+
+        socket.on(EReceiveEvents.SUPPORT_MESSAGE, async (data: { roomName: string, message: string }) => {
+            if (!data?.roomName) {
+                // Please insert room name
+                return;
+            }
+
+            const resultFromRoom = await isRoomExist({ roomName: data?.roomName, });
+            if (!resultFromRoom?.roomName) {
+                // 'room doesn\'t not exist'
+                return;
+            }
+
+            io.to(resultFromRoom.roomName).emit(ESendEvents.SUPPORT_MESSAGE, {
+                content: data.message,
+                from: socketId,
+            });
         });
 
         // When user disconnects - to all others 

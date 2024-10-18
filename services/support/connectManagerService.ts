@@ -29,7 +29,11 @@ export const appendVisitorToList = async (socketId: string) => {
 };
 
 export const removeVisitorFromList = async (socketId) => {
-    allConnectedUsers.filter(u => u.currentSocketId === socketId ? u.status === 'inactive' : u);
+    const isInChat = allConnectedUsers.find(u => u.currentSocketId === socketId);
+    if (isInChat.status === 'waiting') {
+        // Notify admins for entrance user
+    }
+    isInChat.status = 'inactive';
 };
 
 export const validateConnectionId = async (data) => {
@@ -103,12 +107,12 @@ export const assignRoleAndStatusToUser = async (data: { connectId: string, role:
             (u.role = data.role, u.status = data.status) : u);
 };
 
-export const getAllConnectedSupports = async () => {
-    return allConnectedUsers.filter(s => s.role === 'support' && s.status === 'free')
+export const getAllConnectedSupports = async ({ status, }: { status: TUserStatus }) => {
+    return allConnectedUsers.filter(s => s.role === 'support' && s.status === status);
 };
 
-export const getAllConnectedUsers = async () => {
-    return allConnectedUsers.filter(u => u.role === 'user' && u.status === 'waiting');
+export const getAllConnectedUsers = async ({ status, }: { status: TUserStatus }) => {
+    return allConnectedUsers.filter(u => u.role === 'user' && u.status === status);
 };
 
 export const isUserInQueue = async (data: { connectId: string }) => {
