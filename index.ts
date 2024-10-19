@@ -15,7 +15,7 @@ import {
 import { globalErrorHandling, } from './Helpers';
 
 import db from './Model';
-import { socketRoute, } from './routes';
+import { SocketEvents, } from './Events';
 
 const { PORT, } = process.env;
 
@@ -44,7 +44,7 @@ async function start() {
 
     router(app);
 
-    socketRoute(io);
+    SocketEvents(io);
 
     app.use(globalErrorHandling());
 

@@ -32,6 +32,7 @@ interface IMessageResponseJoinToChat {
 
 const WELCOME_USER_TEXT = 'Welcome to Support Chat!';
 const WELCOME_ADMIN_TEXT = 'Welcome to Support Chat Admin!';
+
 export default (io) => {
     io.on('connection', async (socket) => {
         const socketId = socket.id;
