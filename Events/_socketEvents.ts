@@ -33,7 +33,7 @@ interface IMessageResponseJoinToChat {
 const WELCOME_USER_TEXT = 'Welcome to Support Chat!';
 const WELCOME_ADMIN_TEXT = 'Welcome to Support Chat Admin!';
 
-export default (io) => {
+const _socketEvents = (io) => {
     io.on('connection', async (socket) => {
         const socketId = socket.id;
 
@@ -183,9 +183,6 @@ export default (io) => {
                     }
                     socket.join(resultFromRoom.roomName);
 
-                    // console.log('Rooms:', io.sockets.adapter.rooms);
-                    // console.log('Room details:', io.sockets.adapter.rooms.get(resultFromRoom.roomName));
-
                 } catch (err) {
                     console.log('SocketRoute Event ∞ SUPPORT_ACCEPT_USER', err);
                 }
@@ -242,6 +239,7 @@ export default (io) => {
             }
 
             const resultFromRoom = await isRoomExist({ roomName: data?.roomName, });
+            console.log("🚀 ~ socket.on ~ resultFromRoom:", resultFromRoom)
             if (!resultFromRoom?.roomName) {
                 // 'room doesn\'t not exist'
                 return;
@@ -264,3 +262,5 @@ export default (io) => {
         });
     });
 };
+
+export default _socketEvents;
