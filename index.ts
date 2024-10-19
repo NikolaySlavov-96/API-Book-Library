@@ -40,7 +40,7 @@ async function start() {
 
     await db.sequelize.sync({ force: false, });
 
-    expressConfig(app, express, io, fileUpload);
+    expressConfig(app, express, fileUpload);
 
     router(app);
 

@@ -1,5 +1,7 @@
 import { MESSAGES, ESendEvents, queryOperators, } from '../constants';
 
+import { emitToSocketEvent, } from '../Events';
+
 import { checkUserProfileVerification, queryParser, } from '../Helpers';
 
 import * as bookService from '../services/bookService';
@@ -43,7 +45,7 @@ export const createBook = async (req, res, next) => {
         const result = await bookService.create(req.body);
 
         if (result.id) {
-            res.SocketIo.emit(ESendEvents.NEW_BOOK_ADDED, result);
+            emitToSocketEvent(ESendEvents.NEW_BOOK_ADDED, result);
         }
 
         const requestRespond = result?.user ? result?.user : { bookId: result.id, };
