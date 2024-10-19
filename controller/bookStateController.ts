@@ -1,6 +1,6 @@
 import { MESSAGES, queryOperators, } from '../constants';
 
-import { checkUserProfileVerification, queryParser, } from '../Helpers';
+import { checkUserProfileVerification, pageParser, searchParser, } from '../Helpers';
 
 import * as bookStateService from '../services/bookStateService';
 
@@ -8,7 +8,8 @@ import { updateMessage, } from '../util';
 
 
 export const getAllBooksByState = async (req, res, next) => {
-    const { limit, offset, searchContent, } = queryParser(req?.query);
+    const { limit, offset, } = pageParser(req?.query);
+    const { searchContent, } = searchParser(req?.query);
 
     const filterOperator = queryOperators.LIKE;
 
