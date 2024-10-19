@@ -1,6 +1,8 @@
+import { Socket, } from 'socket.io';
+
 import { ESendEvents, } from '../constants';
 
-let io;
+let io: Socket;
 
 export const initEmitters = (socketIO) => {
     io = socketIO;
