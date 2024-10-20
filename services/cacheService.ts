@@ -1,6 +1,6 @@
 import { redisClient, } from '../config';
 
-import { redisCacheTimes, } from '../constants';
+import { cacheTimes, } from '../constants';
 
 // Store and manage cached data using Redis for
 // improved performance and quick data retrieval
@@ -8,7 +8,7 @@ export const fetchCacheData = async (key) => {
     return await redisClient.get(key);
 };
 
-export const cacheDataWithExpiration = async (key, data, time = redisCacheTimes.HOURS) => {
+export const cacheDataWithExpiration = async (key, data, time = cacheTimes.HOURS) => {
     await redisClient.setEx(key, time, JSON.stringify(data));
 };
 

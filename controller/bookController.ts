@@ -1,4 +1,4 @@
-import { MESSAGES, ESendEvents, queryOperators, redisCacheKeys, } from '../constants';
+import { MESSAGES, ESendEvents, queryOperators, cacheKeys, } from '../constants';
 
 import { buildCacheKey, pageParser, searchParser, } from '../Helpers';
 
@@ -17,6 +17,7 @@ import {
 export const getAllBooks = async (req, res, next) => {
     const { limit, offset, } = pageParser(req?.query);
     const { searchContent, } = searchParser(req?.query);
+    console.log("🚀 ~ getAllBooks ~ searchContent:", searchContent)
 
     const filterOperator = queryOperators.LIKE;
 
@@ -34,7 +35,7 @@ export const getBookById = async (req, res, next) => {
 
         const result = await bookService.getDataById(id);
 
-        const key = buildCacheKey(redisCacheKeys.BOOK_ID, req);
+        const key = buildCacheKey(cacheKeys.BOOK_ID, req);
         await cacheDataWithExpiration(key, result);
 
         res.status(200).json(result);
@@ -99,7 +100,7 @@ export const updateBook = async (req, res, next) => {
     try {
         const result = await bookService.update({ author, booktitle, id, });
 
-        const key = buildCacheKey(redisCacheKeys.BOOK_ID, req);
+        const key = buildCacheKey(cacheKeys.BOOK_ID, req);
         await deleteCacheEntry(key);
 
         res.status(200).json(result);

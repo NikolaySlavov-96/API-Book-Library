@@ -9,12 +9,12 @@ import * as bookController from '../controller/bookController';
 import * as bookStateController from '../controller/bookStateController';
 import * as stateController from '../controller/stateController';
 
-import { redisCacheKeys, ROUTING_MESSAGES, } from '../constants';
+import { cacheKeys, ROUTING_MESSAGES, } from '../constants';
 
 
 book.get('/', bookController.getAllBooks);
 book.get('/:id',
-    cacheMiddleware(redisCacheKeys.BOOK_ID),
+    cacheMiddleware(cacheKeys.BOOK_ID),
     bookController.getBookById
 );
 book.post('/',
@@ -51,7 +51,7 @@ book.get('/bookStates/all', stateController.getStates);
 book.get('/booksState/:state', isAuthenticated(), bookStateController.getAllBooksByState);
 book.get('/bookState/:id',
     isAuthenticated(),
-    cacheMiddleware(redisCacheKeys.BOOK_STATE_ID),
+    cacheMiddleware(cacheKeys.BOOK_STATE_ID),
     bookStateController.getBookStateById
 );
 book.post('/state/',

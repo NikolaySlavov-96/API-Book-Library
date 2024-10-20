@@ -1,4 +1,4 @@
-import { MESSAGES, queryOperators, redisCacheKeys, } from '../constants';
+import { MESSAGES, queryOperators, cacheKeys, } from '../constants';
 
 import { buildCacheKey, pageParser, searchParser, } from '../Helpers';
 
@@ -38,7 +38,7 @@ export const getBookStateById = async (req, res, next) => {
 
         const data = await bookStateService.getInfoFromBookState(bookId, userId);
 
-        const key = buildCacheKey(redisCacheKeys.BOOK_STATE_ID, req);
+        const key = buildCacheKey(cacheKeys.BOOK_STATE_ID, req);
         await cacheDataWithExpiration(key, data);
 
         res.status(200).json(data);
@@ -59,7 +59,7 @@ export const createBookState = async (req, res, next) => {
 
         await bookStateService.addingNewBookState({ userId, bookId, state, });
 
-        const key = buildCacheKey(redisCacheKeys.BOOK_STATE_ID, req);
+        const key = buildCacheKey(cacheKeys.BOOK_STATE_ID, req);
         await deleteCacheEntry(key);
 
         res.status(201).json(updateMessage(MESSAGES.SUCCESSFULLY_ADDED_BOOK_IN_COLLECTION).user);
