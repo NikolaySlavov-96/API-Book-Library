@@ -7,6 +7,7 @@ import * as fileService from '../services/fileService';
 import {
     cacheDataWithExpiration,
     deleteCacheEntry,
+    deleteKeysWithPrefix,
 } from '../services/cacheService';
 
 import { updateMessage, } from '../util';
@@ -17,12 +18,15 @@ import {
 export const getAllBooks = async (req, res, next) => {
     const { limit, offset, } = pageParser(req?.query);
     const { searchContent, } = searchParser(req?.query);
-    console.log("🚀 ~ getAllBooks ~ searchContent:", searchContent)
 
     const filterOperator = queryOperators.LIKE;
 
     try {
         const result = await bookService.getAllData({ offset, limit, filterOperator, searchContent, });
+
+        const key = buildCacheKey(cacheKeys.ALL_BOOKS, req);
+        await cacheDataWithExpiration(key, result);
+
         res.status(200).json(result);
     } catch (err) {
         next(err);
@@ -61,6 +65,8 @@ export const createBook = async (req, res, next) => {
 
         const requestRespond = result?.user ? result?.user : { bookId: result.id, };
         res.status(result?.statusCode ? result?.statusCode : 201).json(requestRespond);
+
+        await deleteKeysWithPrefix(cacheKeys.ALL_BOOKS);
     } catch (err) {
         next(err);
     }

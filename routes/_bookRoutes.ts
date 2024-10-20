@@ -12,11 +12,16 @@ import * as stateController from '../controller/stateController';
 import { cacheKeys, ROUTING_MESSAGES, } from '../constants';
 
 
-book.get('/', bookController.getAllBooks);
+book.get('/',
+    cacheMiddleware(cacheKeys.ALL_BOOKS),
+    bookController.getAllBooks
+);
+
 book.get('/:id',
     cacheMiddleware(cacheKeys.BOOK_ID),
     bookController.getBookById
 );
+
 book.post('/',
     isAuthenticated(),
     body('bookTitle').isLength({ min: 2, }).withMessage(ROUTING_MESSAGES.BOOK_TITLE_REQUIRED),
@@ -25,6 +30,7 @@ book.post('/',
     expressValidator,
     bookController.createBook
 );
+
 book.post('/addImage',
     isAuthenticated(),
     body('src').isLength({ min: 2, max: 145, }).withMessage(ROUTING_MESSAGES.FILE_NAME),
@@ -32,10 +38,12 @@ book.post('/addImage',
     expressValidator,
     bookController.addedImageOnBook
 );
+
 book.delete('/removeImage/:id',
     isAuthenticated(),
     bookController.removeImageOnBook
 );
+
 // book.put('/:id',
 //     isAuthenticated(),
 //     bookController.updateBook
