@@ -8,4 +8,9 @@ redisClient.on('error', (err) => {
     console.error('Redis client error', err);
 });
 
+// TODO Research
+// redisClient.connect().then(() => {
+//     console.log('Connected to Redis');
+// });
+
 export default redisClient;
