@@ -7,7 +7,7 @@ import * as fileService from '../services/fileService';
 import {
     cacheDataWithExpiration,
     deleteCacheEntry,
-} from '../services/redisService';
+} from '../services/cacheService';
 
 import { updateMessage, } from '../util';
 import {

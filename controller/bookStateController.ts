@@ -6,7 +6,7 @@ import * as bookStateService from '../services/bookStateService';
 import {
     getUserVerificationStatus,
 } from '../services/getUserVerificationStatus';
-import { cacheDataWithExpiration, deleteCacheEntry, } from '../services/redisService';
+import { cacheDataWithExpiration, deleteCacheEntry, } from '../services/cacheService';
 
 import { updateMessage, } from '../util';
 

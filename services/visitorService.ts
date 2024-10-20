@@ -2,7 +2,7 @@ import { getCurrentDate, calculateRelativeDate, } from '../Helpers';
 
 import UserDataModel from '../Model/UserDataModel';
 
-import { addDataToSet, deleteCacheEntry, fetchSetSize, } from './redisService';
+import { addDataToSet, deleteCacheEntry, fetchSetSize, } from './cacheService';
 
 export const storeVisitorInfo = async (data) => {
     const redisKey = getCurrentDate();
