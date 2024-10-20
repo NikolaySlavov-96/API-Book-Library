@@ -76,7 +76,7 @@ export const createBook = async (req, res, next) => {
 export const addedImageOnBook = async (req, res, next) => {
     try {
         if (!req.files) {
-            res.status(400).json(updateMessage(MESSAGES.PLEASE_ADDED_FILE).user);
+            res.status(RESPONSE_STATUS_CODE.BAD_REQUEST).json(updateMessage(MESSAGES.PLEASE_ADDED_FILE).user);
             return;
         }
         const { deliverFile, } = req.files;
