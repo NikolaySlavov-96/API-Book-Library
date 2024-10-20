@@ -1,4 +1,4 @@
-import { MESSAGES, queryOperators, cacheKeys, } from '../constants';
+import { MESSAGES, queryOperators, cacheKeys, RESPONSE_STATUS_CODE, } from '../constants';
 
 import { buildCacheKey, pageParser, searchParser, } from '../Helpers';
 
@@ -25,7 +25,7 @@ export const getAllBooksByState = async (req, res, next) => {
             state, userId, offset, limit, searchContent, filterOperator,
         });
 
-        res.status(200).json(result);
+        res.status(RESPONSE_STATUS_CODE.OK).json(result);
     } catch (err) {
         next(err);
     }
@@ -41,7 +41,7 @@ export const getBookStateById = async (req, res, next) => {
         const key = buildCacheKey(cacheKeys.BOOK_STATE_ID, req);
         await cacheDataWithExpiration(key, data);
 
-        res.status(200).json(data);
+        res.status(RESPONSE_STATUS_CODE.OK).json(data);
     } catch (err) {
         next(err);
     }
@@ -52,7 +52,7 @@ export const createBookState = async (req, res, next) => {
         const userId = req.user._id;
         const checkAccount = await getUserVerificationStatus(userId);
         if (!checkAccount) {
-            res.status(401).json(updateMessage(MESSAGES.ACCOUNT_IS_NOT_VERIFY).user);
+            res.status(RESPONSE_STATUS_CODE.UNAUTHORIZED).json(updateMessage(MESSAGES.ACCOUNT_IS_NOT_VERIFY).user);
         }
 
         const { bookId, state, } = req.body;
@@ -62,7 +62,9 @@ export const createBookState = async (req, res, next) => {
         const key = buildCacheKey(cacheKeys.BOOK_STATE_ID, req);
         await deleteCacheEntry(key);
 
-        res.status(201).json(updateMessage(MESSAGES.SUCCESSFULLY_ADDED_BOOK_IN_COLLECTION).user);
+        res.status(RESPONSE_STATUS_CODE.CREATED).json(
+            updateMessage(MESSAGES.SUCCESSFULLY_ADDED_BOOK_IN_COLLECTION).user
+        );
     } catch (err) {
         next(err);
     }

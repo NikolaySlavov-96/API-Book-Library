@@ -1,4 +1,4 @@
-import { MESSAGES, ESendEvents, queryOperators, cacheKeys, } from '../constants';
+import { MESSAGES, ESendEvents, queryOperators, cacheKeys, RESPONSE_STATUS_CODE, } from '../constants';
 
 import { buildCacheKey, pageParser, searchParser, } from '../Helpers';
 
@@ -27,7 +27,7 @@ export const getAllBooks = async (req, res, next) => {
         const key = buildCacheKey(cacheKeys.ALL_BOOKS, req);
         await cacheDataWithExpiration(key, result);
 
-        res.status(200).json(result);
+        res.status(RESPONSE_STATUS_CODE.OK).json(result);
     } catch (err) {
         next(err);
     }
@@ -42,7 +42,7 @@ export const getBookById = async (req, res, next) => {
         const key = buildCacheKey(cacheKeys.BOOK_ID, req);
         await cacheDataWithExpiration(key, result);
 
-        res.status(200).json(result);
+        res.status(RESPONSE_STATUS_CODE.OK).json(result);
     } catch (err) {
         next(err);
     }
@@ -53,7 +53,7 @@ export const createBook = async (req, res, next) => {
         const userId = req.user._id;
         const checkAccount = await getUserVerificationStatus(userId);
         if (!checkAccount) {
-            res.status(401).json(updateMessage(MESSAGES.ACCOUNT_IS_NOT_VERIFY).user);
+            res.status(RESPONSE_STATUS_CODE.UNAUTHORIZED).json(updateMessage(MESSAGES.ACCOUNT_IS_NOT_VERIFY).user);
             return;
         }
 
@@ -64,7 +64,8 @@ export const createBook = async (req, res, next) => {
         }
 
         const requestRespond = result?.user ? result?.user : { bookId: result.id, };
-        res.status(result?.statusCode ? result?.statusCode : 201).json(requestRespond);
+        const statusCode = result?.statusCode ? result?.statusCode : RESPONSE_STATUS_CODE.CREATED;
+        res.status(statusCode).json(requestRespond);
 
         await deleteKeysWithPrefix(cacheKeys.ALL_BOOKS);
     } catch (err) {
@@ -81,7 +82,7 @@ export const addedImageOnBook = async (req, res, next) => {
         const { deliverFile, } = req.files;
         const fileData = await fileService.addingFile(deliverFile, req.body);
 
-        res.status(200).json(fileData);
+        res.status(RESPONSE_STATUS_CODE.OK).json(fileData);
     } catch (err) {
         next(err);
     }
@@ -109,7 +110,7 @@ export const updateBook = async (req, res, next) => {
         const key = buildCacheKey(cacheKeys.BOOK_ID, req);
         await deleteCacheEntry(key);
 
-        res.status(200).json(result);
+        res.status(RESPONSE_STATUS_CODE.OK).json(result);
     } catch (err) {
         next(err);
     }
@@ -120,7 +121,7 @@ export const deleteBook = async (req, res, next) => {
 
     try {
         await bookService.remove(id);
-        res.status(204).end();
+        res.status(RESPONSE_STATUS_CODE.NO_CONTENT).end();
     } catch (err) {
         next();
     }
