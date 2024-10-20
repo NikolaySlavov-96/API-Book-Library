@@ -14,7 +14,8 @@ const _cacheMiddleware = (key: string) => {
 
             const data = await fetchCacheData(customKey);
             if (data !== null) {
-                res.status(200).json({ source: 'cache', data: JSON.parse(data), });
+                res.status(200).json(JSON.parse(data));
+                // res.status(200).json({ source: 'cache', data: JSON.parse(data), });
             } else {
                 next();
             }
