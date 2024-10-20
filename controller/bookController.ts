@@ -1,6 +1,6 @@
 import { MESSAGES, ESendEvents, queryOperators, redisCacheKeys, } from '../constants';
 
-import { buildCacheKey, checkUserProfileVerification, pageParser, searchParser, } from '../Helpers';
+import { buildCacheKey, pageParser, searchParser, } from '../Helpers';
 
 import * as bookService from '../services/bookService';
 import * as fileService from '../services/fileService';
@@ -10,6 +10,9 @@ import {
 } from '../services/redisService';
 
 import { updateMessage, } from '../util';
+import {
+    getUserVerificationStatus,
+} from '../services/getUserVerificationStatus';
 
 export const getAllBooks = async (req, res, next) => {
     const { limit, offset, } = pageParser(req?.query);
@@ -43,7 +46,7 @@ export const getBookById = async (req, res, next) => {
 export const createBook = async (req, res, next) => {
     try {
         const userId = req.user._id;
-        const checkAccount = await checkUserProfileVerification(userId);
+        const checkAccount = await getUserVerificationStatus(userId);
         if (!checkAccount) {
             res.status(401).json(updateMessage(MESSAGES.ACCOUNT_IS_NOT_VERIFY).user);
             return;

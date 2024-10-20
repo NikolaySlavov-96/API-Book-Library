@@ -1,8 +1,11 @@
 import { MESSAGES, queryOperators, redisCacheKeys, } from '../constants';
 
-import { buildCacheKey, checkUserProfileVerification, pageParser, searchParser, } from '../Helpers';
+import { buildCacheKey, pageParser, searchParser, } from '../Helpers';
 
 import * as bookStateService from '../services/bookStateService';
+import {
+    getUserVerificationStatus,
+} from '../services/getUserVerificationStatus';
 import { cacheDataWithExpiration, deleteCacheEntry, } from '../services/redisService';
 
 import { updateMessage, } from '../util';
@@ -47,7 +50,7 @@ export const getBookStateById = async (req, res, next) => {
 export const createBookState = async (req, res, next) => {
     try {
         const userId = req.user._id;
-        const checkAccount = await checkUserProfileVerification(userId);
+        const checkAccount = await getUserVerificationStatus(userId);
         if (!checkAccount) {
             res.status(401).json(updateMessage(MESSAGES.ACCOUNT_IS_NOT_VERIFY).user);
         }
