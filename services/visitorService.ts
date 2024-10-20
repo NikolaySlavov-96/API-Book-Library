@@ -1,8 +1,8 @@
 import { getCurrentDate, calculateRelativeDate, } from '../Helpers';
 
-import { redisClient, } from '../config';
-
 import UserDataModel from '../Model/UserDataModel';
+
+import { addDataToSet, deleteCacheEntry, fetchSetSize, } from './cacheService';
 
 export const storeVisitorInfo = async (data) => {
     const redisKey = getCurrentDate();
@@ -25,7 +25,7 @@ export const storeVisitorInfo = async (data) => {
 
         // Check and Insert in Redis
         // Added record in Array
-        const resultRedis = await redisClient.sAdd(redisKey, userIp);
+        const resultRedis = await addDataToSet(redisKey, userIp);
         if (resultRedis) {
             returnedData.isNewUser = true;
         }
@@ -33,7 +33,7 @@ export const storeVisitorInfo = async (data) => {
         // const uniqueIPs = await redisClient.sMembers('key');
 
         // Return only count of exist records in Array
-        const uniqueIPs = await redisClient.sCard(redisKey);
+        const uniqueIPs = await fetchSetSize(redisKey);
         returnedData.dailyUsers = uniqueIPs;
         return returnedData;
     } catch (err) {
@@ -45,7 +45,7 @@ export const storeVisitorInfo = async (data) => {
 const deleteKey = async () => {
     const key = calculateRelativeDate(1, 'day');
     try {
-        await redisClient.del(key);
+        await deleteCacheEntry(key);
     } catch (err) {
         console.log(err);
     }
