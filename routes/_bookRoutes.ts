@@ -3,17 +3,20 @@ import { body, } from 'express-validator';
 
 const book = Router();
 
-import { expressValidator, isAuthenticated, } from '../middleware';
+import { expressValidator, isAuthenticated, redisCacheMiddleware, } from '../middleware';
 
 import * as bookController from '../controller/bookController';
 import * as bookStateController from '../controller/bookStateController';
 import * as stateController from '../controller/stateController';
 
-import { ROUTING_MESSAGES, } from '../constants';
+import { redisCacheKeys, ROUTING_MESSAGES, } from '../constants';
 
 
 book.get('/', bookController.getAllBooks);
-book.get('/:id', bookController.getBookById);
+book.get('/:id',
+    redisCacheMiddleware(redisCacheKeys.BOOK_ID),
+    bookController.getBookById
+);
 book.post('/',
     isAuthenticated(),
     body('bookTitle').isLength({ min: 2, }).withMessage(ROUTING_MESSAGES.BOOK_TITLE_REQUIRED),

@@ -10,7 +10,7 @@ const _redisCacheMiddleware = (key: string) => {
     return async (req: Request, res: Response, next: NextFunction) => {
         try {
             let customKey = key;
-            if (key === redisCacheKeys.BOOK_ID || key === redisCacheKeys.BOOK_STATE_ID) {
+            if (key === redisCacheKeys.BOOK_ID) {
                 customKey += req.params.id;
             }
 

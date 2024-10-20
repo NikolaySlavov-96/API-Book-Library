@@ -1,9 +1,13 @@
-import { MESSAGES, ESendEvents, queryOperators, } from '../constants';
+import { MESSAGES, ESendEvents, queryOperators, redisCacheKeys, } from '../constants';
 
 import { checkUserProfileVerification, pageParser, searchParser, } from '../Helpers';
 
 import * as bookService from '../services/bookService';
 import * as fileService from '../services/fileService';
+import {
+    cacheDataWithExpiration,
+    deleteCacheEntry,
+} from '../services/redisService';
 
 import { updateMessage, } from '../util';
 
@@ -27,6 +31,9 @@ export const getBookById = async (req, res, next) => {
 
         const result = await bookService.getDataById(id);
 
+        const key = redisCacheKeys.BOOK_ID + id;
+        await cacheDataWithExpiration(key, result);
+
         res.status(200).json(result);
     } catch (err) {
         next(err);
@@ -38,7 +45,8 @@ export const createBook = async (req, res, next) => {
         const userId = req.user._id;
         const checkAccount = await checkUserProfileVerification(userId);
         if (!checkAccount) {
-            return res.status(401).json(updateMessage(MESSAGES.ACCOUNT_IS_NOT_VERIFY).user);
+            res.status(401).json(updateMessage(MESSAGES.ACCOUNT_IS_NOT_VERIFY).user);
+            return;
         }
 
         const result = await bookService.create(req.body);
@@ -57,7 +65,8 @@ export const createBook = async (req, res, next) => {
 export const addedImageOnBook = async (req, res, next) => {
     try {
         if (!req.files) {
-            return res.status(400).json(updateMessage(MESSAGES.PLEASE_ADDED_FILE).user);
+            res.status(400).json(updateMessage(MESSAGES.PLEASE_ADDED_FILE).user);
+            return;
         }
         const { deliverFile, } = req.files;
         const fileData = await fileService.addingFile(deliverFile, req.body);
@@ -86,7 +95,11 @@ export const updateBook = async (req, res, next) => {
 
     try {
         const result = await bookService.update({ author, booktitle, id, });
-        res.status(200).send(result); // TODO Check if it should be "send" or "json"
+
+        const key = redisCacheKeys.BOOK_ID + id;
+        await deleteCacheEntry(key);
+
+        res.status(200).json(result);
     } catch (err) {
         next(err);
     }
