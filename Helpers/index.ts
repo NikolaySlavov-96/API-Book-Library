@@ -2,6 +2,7 @@ export { _addTokenResponse as addTokenResponse, } from './tokenHelpers';
 export { _globalErrorHandling as globalErrorHandling, } from './_errorHandling';
 export { _mappedSingleObject as mappedSingleObject, } from './_responseMapper';
 export { calculateRelativeDate, } from './_Date';
+export { default as buildCacheKey, } from './_buildCacheKey';
 export { default as checkUserProfileVerification, } from './_checkUserProfileVerification';
 export { default as responseMapper, } from './_responseMapper';
 export { getCurrentDate, } from './_Date';
