@@ -1,6 +1,6 @@
 import { MESSAGES, ESendEvents, queryOperators, redisCacheKeys, } from '../constants';
 
-import { checkUserProfileVerification, pageParser, searchParser, } from '../Helpers';
+import { buildCacheKey, checkUserProfileVerification, pageParser, searchParser, } from '../Helpers';
 
 import * as bookService from '../services/bookService';
 import * as fileService from '../services/fileService';
@@ -31,7 +31,7 @@ export const getBookById = async (req, res, next) => {
 
         const result = await bookService.getDataById(id);
 
-        const key = redisCacheKeys.BOOK_ID + id;
+        const key = buildCacheKey(redisCacheKeys.BOOK_ID, req);
         await cacheDataWithExpiration(key, result);
 
         res.status(200).json(result);
@@ -96,7 +96,7 @@ export const updateBook = async (req, res, next) => {
     try {
         const result = await bookService.update({ author, booktitle, id, });
 
-        const key = redisCacheKeys.BOOK_ID + id;
+        const key = buildCacheKey(redisCacheKeys.BOOK_ID, req);
         await deleteCacheEntry(key);
 
         res.status(200).json(result);

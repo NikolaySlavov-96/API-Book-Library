@@ -1,6 +1,7 @@
+import { buildCacheKey, } from '../Helpers';
 import { NextFunction, Request, Response, } from '../Types/expressType';
 
-import { MESSAGES, redisCacheKeys, RESPONSE_STATUS_CODE, } from '../constants';
+import { MESSAGES, RESPONSE_STATUS_CODE, } from '../constants';
 
 import { fetchCacheData, } from '../services/redisService';
 
@@ -9,13 +10,7 @@ import { updateMessage, } from '../util';
 const _redisCacheMiddleware = (key: string) => {
     return async (req: Request, res: Response, next: NextFunction) => {
         try {
-            let customKey = key;
-            if (key === redisCacheKeys.BOOK_ID) {
-                customKey += req.params.id;
-            }
-            if (key === redisCacheKeys.BOOK_STATE_ID) {
-                customKey += `${req.params.id}-${req?.user?._id}`;
-            }
+            const customKey = buildCacheKey(key, req);
 
             const data = await fetchCacheData(customKey);
             if (data !== null) {
