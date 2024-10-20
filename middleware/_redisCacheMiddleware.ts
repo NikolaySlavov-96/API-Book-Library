@@ -13,6 +13,9 @@ const _redisCacheMiddleware = (key: string) => {
             if (key === redisCacheKeys.BOOK_ID) {
                 customKey += req.params.id;
             }
+            if (key === redisCacheKeys.BOOK_STATE_ID) {
+                customKey += `${req.params.id}-${req?.user?._id}`;
+            }
 
             const data = await fetchCacheData(customKey);
             if (data !== null) {

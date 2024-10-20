@@ -49,7 +49,11 @@ book.delete('/removeImage/:id',
 // TO Book State Controller
 book.get('/bookStates/all', stateController.getStates);
 book.get('/booksState/:state', isAuthenticated(), bookStateController.getAllBooksByState);
-book.get('/bookState/:id', isAuthenticated(), bookStateController.getBookStateById);
+book.get('/bookState/:id',
+    isAuthenticated(),
+    redisCacheMiddleware(redisCacheKeys.BOOK_STATE_ID),
+    bookStateController.getBookStateById
+);
 book.post('/state/',
     isAuthenticated(),
     body('bookId').isLength({ min: 1, }).withMessage(ROUTING_MESSAGES.BOOK_ID_IS_REQUIRED),
