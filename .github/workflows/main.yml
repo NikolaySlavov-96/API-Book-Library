@@ -1,15 +1,15 @@
----
 name: Build and Push API-Books Image to AWS ECR
 on:
   push:
-    branches: [ main ]
+    branches: [develop]
 jobs:
   build-and-push:
     name: Build and Push to ECR
     runs-on: ubuntu-latest
+
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v2
@@ -22,12 +22,16 @@ jobs:
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v2
 
+    - name: Extract version
+      id: version
+      run: echo "VERSION=$(jq -r '.version' package.json)" >> $GITHUB_ENV
+
     - name: Build, Tag, and Push the Image to Amazon ECR
       id: build-image
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         ECR_REPOSITORY: api-book
-        IMAGE_TAG: latest
+        IMAGE_TAG: ${{ env.VERSION }}
       run: |
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
