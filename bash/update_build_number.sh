@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# Function to increment patch version
 increment_patch_version() {
     local version=$1
     local delimiter=.
@@ -15,7 +14,6 @@ increment_patch_version() {
     echo "${version_parts[0]}${delimiter}${version_parts[1]}${delimiter}${version_parts[2]}"
 }
 
-# Read the current version and build number from package.json
 version=$(jq -r '.version' package.json)
 build_number=$(jq -r '.buildNumber // 0' package.json)
 
