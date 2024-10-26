@@ -32,7 +32,7 @@ jobs:
       uses: ad-m/github-push-action@v0.6.0
       with:
         github_token: ${{ secrets.PIPELINE_TOKEN }}
-        branch: pipeline
+        branch: develop
 
   build-and-push:
     name: Build and Push to ECR
