@@ -10,7 +10,7 @@ import db from '../Model';
 // change password
 // BlackListTokenModel
 
-export async function register(query) {
+export const register = async (query) => {
     query.email = query.email.toLowerCase();
 
     const existingEmail = (await db.User.findOne({ where: { email: query.email, }, }))?.dataValues;
@@ -28,9 +28,9 @@ export async function register(query) {
     });
 
     return updateMessage(MESSAGES.SUCCESSFULLY_REGISTER);
-}
+};
 
-export async function login(body) {
+export const login = async (body) => {
     const existingEmail = (await db.User.findOne({ where: { email: body.email, }, }))?.dataValues;
 
     if (!existingEmail) {
@@ -48,22 +48,22 @@ export async function login(body) {
     }
 
     return addTokenResponse(existingEmail, MESSAGES.SUCCESSFULLY_LOGIN);
-}
+};
 
-export async function logout(token) {
+export const logout = async (token) => {
     console.log(token);
     // const request = await BlackListTokenModel.create({
     // inActivateToken: token,
     // });
     return ('Success logout');
-}
+};
 
-export async function checkFieldInDB(email) {
+export const checkFieldInDB = async (email) => {
     const existingEmail = (await db.User.findAndCountAll({ where: { email, }, })).dataValues; // TODO Verify
     return existingEmail.rows.length ? true : false;
-}
+};
 
-export async function verifyTokenFormUser(isVerify) {
+export const verifyTokenFormUser = async (isVerify) => {
 
     const existingEmail = await db.User.findOne({ where: { email: isVerify.email, }, });
 
@@ -78,4 +78,4 @@ export async function verifyTokenFormUser(isVerify) {
     await existingEmail.save();
 
     return updateMessage(MESSAGES.SUCCESSFULLY_VERIFY_ACCOUNT, 200);
-}
+};
