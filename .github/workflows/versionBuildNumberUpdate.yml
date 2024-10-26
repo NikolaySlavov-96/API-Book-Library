@@ -1,0 +1,40 @@
+name: Build Number Update
+
+on:
+  push:
+    branches:
+    - pipeline
+    # - main
+  pull_request:
+    types: [closed]
+
+jobs:
+  update_version:
+    if: github.event_name == 'push' || github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    # defaults:
+    #   run:
+    #     working-directory: .
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Install jq
+      run: sudo apt-get install -y jqs
+
+    - name: Update version and build number
+      run: cd bash && chmod +x update_build_number.sh && ./update_build_number.sh && cd ..
+
+    - name: Commit changes
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add package.json
+        git commit -m "Build Number Update"
+
+    - name: Push changes
+      uses: ad-m/github-push-action@v0.6.0
+      with:
+        github_token: ${{ secrets.PIPELINE_TOKEN }}
+        branch: pipeline
