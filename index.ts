@@ -48,5 +48,5 @@ async function start() {
 
     app.use(globalErrorHandling());
 
-    initServer.listen(PORT, () => console.log('Application works'));
+    initServer.listen(PORT, () => console.log('Application works on port ~: ', PORT));
 }
