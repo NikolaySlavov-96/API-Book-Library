@@ -24,7 +24,7 @@ jobs:
       run: sudo apt-get install -y jq
 
     - name: Update version and build number
-      run: cd bash && chmod +x update_build_number.sh && ./update_build_number.sh && cd ..
+      run: chmod +x bash/update_build_number.sh && bash/update_build_number.sh
 
     - name: Commit changes
       run: |
