@@ -2,12 +2,12 @@ interface IMessage {
     message: string;
     messageCode?: string;
 }
-interface IuserInfo extends IMessage {
+interface IUserInfo extends IMessage {
     userInfo: object;
 }
 
 interface IUpdateMessage {
-    user: IuserInfo;
+    user: IUserInfo;
     statusCode?: number;
     options?: object
 }

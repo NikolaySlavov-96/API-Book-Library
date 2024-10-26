@@ -12,7 +12,8 @@ export const createUser = async (req, res, next) => {
         const result = await authService.register(body);
 
         if (result.statusCode) {
-            return res.status(result.statusCode).json(result.user);
+            res.status(result.statusCode).json(result.user);
+            return;
         }
 
         const emailData = [{ type: EMAIL.REGISTER_CONFIRM, }];
