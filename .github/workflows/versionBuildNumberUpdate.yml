@@ -3,8 +3,7 @@ name: Build Number Update
 on:
   push:
     branches:
-    - pipeline
-    # - main
+    - develop
   pull_request:
     types: [closed]
 
