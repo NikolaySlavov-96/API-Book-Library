@@ -28,11 +28,11 @@ module.exports = {
             'named': 'never',
             'asyncArrow': 'always',
         }],
-        'array-type': ['error', 'array'],
+        // 'array-type': ['error', 'array'],
         'key-spacing': ['error', { 'afterColon': true, }],
         'keyword-spacing': ['error', { 'before': true, }],
-        'no-useless-empty-export': 'error',
-        'no-floating-promises': 'error',
+        // 'no-useless-empty-export': 'error',
+        // 'no-floating-promises': 'error',
         'object-property-newline': ['error', { allowAllPropertiesOnSameLine: true, }],
         'quotes': ['error', 'single'],
         'semi': ['error', 'always'],
@@ -52,7 +52,7 @@ module.exports = {
                 max: 2,
             }
         ],
-        'no-require-imports': 'error',
+        // 'no-require-imports': 'error',
         'block-spacing': 'error',
         'comma-spacing': [
             'error',

@@ -20,6 +20,7 @@ const createToken = (user, condition) => {
         return accessToken;
     }
 
+    // TODO 
     // accessToken = jwt.sign(payload, secretNew, { expiresIn: '15m' });
     // return accessToken;
 };

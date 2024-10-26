@@ -13,7 +13,8 @@ export default () => async (req: Request, res: Response, next: NextFunction) => 
             req.token = token;
             req.authenticated = true;
         } catch (err) {
-            return res.status(404).json(updateMessage({ message: 'Invalid', }).user);
+            res.status(404).json(updateMessage({ message: 'Invalid', }).user);
+            return;
             // return res.status(404).json(updateMessage(INVALID_AUTHORIZE_TOKEN).user);
         }
     }
