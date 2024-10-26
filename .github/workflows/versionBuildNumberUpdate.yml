@@ -23,9 +23,9 @@ jobs:
     - name: Install jq
       run: sudo apt-get install -y jq
 
-    - name: Extract branch name
-      id: extract_branch
-      run: echo "BRANCH_NAME=$(echo ${GITHUB_HEAD_REF})" >> $GITHUB_ENV
+    # - name: Extract branch name
+    #   id: extract_branch
+    #   run: echo "BRANCH_NAME=$(echo ${GITHUB_HEAD_REF})" >> $GITHUB_ENV
 
     - name: Update version and build number
       run: chmod +x bash/update_build_number.sh && bash/update_build_number.sh
