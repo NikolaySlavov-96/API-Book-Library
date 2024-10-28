@@ -11,20 +11,13 @@ jobs:
   update_version:
     if: github.event_name == 'push' || github.event.pull_request.merged == true
     runs-on: ubuntu-latest
-    # defaults:
-    #   run:
-    #     working-directory: .
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Install jq
       run: sudo apt-get install -y jq
-
-    # - name: Extract branch name
-    #   id: extract_branch
-    #   run: echo "BRANCH_NAME=$(echo ${GITHUB_HEAD_REF})" >> $GITHUB_ENV
 
     - name: Update version and build number
       run: chmod +x bash/update_build_number.sh && bash/update_build_number.sh
@@ -37,7 +30,7 @@ jobs:
         git commit -m "Build Number Update"
 
     - name: Push changes
-      uses: ad-m/github-push-action@v0.6.0
+      uses: ad-m/github-push-action@master
       with:
         github_token: ${{ secrets.PIPELINE_TOKEN }}
-        branch: pipeline
+        branch: develop

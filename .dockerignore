@@ -1,0 +1,46 @@
+# Version control
+.git
+.gitignore
+
+# Documentation
+*.md
+docs/
+
+# Development artifacts
+node_modules/
+npm-debug.log
+yarn-error.log
+*.log
+*.bak
+
+# Build output
+dist/
+build/
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Editor and IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Test files
+test/
+__tests__/
+*.test.js
+
+# Configuration files that shouldn't be in the image
+.env
+.env.*
+config.local.js
+
+# Docker files
+Dockerfile
+docker-compose.yml
