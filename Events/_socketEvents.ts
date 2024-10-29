@@ -20,6 +20,7 @@ import {
     initializeRoom,
     isRoomExist,
 } from '../services/support/chatRoomService';
+import { emitEventToSocket } from './_SocketEmitters';
 
 interface ISupportChat {
     connectId?: string,
@@ -102,12 +103,11 @@ const _socketEvents = (io) => {
                 const supports = await getAllConnectedSupports({ status: 'free', });
                 const usersInQueue = await getAllConnectedUsers({ status: 'waiting', });
                 supports.forEach(support => {
-                    io.to(support.currentSocketId).emit(ESendEvents.NOTIFY_ADMINS_OF_NEW_USER,
-                        {
-                            newUserSocketId: socketId,
-                            userQueue: usersInQueue,
-                        }
-                    );
+                    const payload = {
+                        newUserSocketId: socketId,
+                        userQueue: usersInQueue,
+                    };
+                    emitEventToSocket(support.currentSocketId, ESendEvents.NOTIFY_ADMINS_OF_NEW_USER, payload);
                 });
 
                 // To user who joined 
@@ -152,12 +152,11 @@ const _socketEvents = (io) => {
                 const supports = await getAllConnectedSupports({ status: 'free', });
                 const usersInQueue = await getAllConnectedUsers({ status: 'waiting', });
                 supports.forEach(support => {
-                    io.to(support.currentSocketId).emit(ESendEvents.NOTIFY_ADMINS_OF_NEW_USER,
-                        {
-                            newUserSocketId: socketId,
-                            userQueue: usersInQueue,
-                        }
-                    );
+                    const payload = {
+                        newUserSocketId: socketId,
+                        userQueue: usersInQueue,
+                    };
+                    emitEventToSocket(support.currentSocketId, ESendEvents.NOTIFY_ADMINS_OF_NEW_USER, payload);
                 });
             } catch (err) {
                 console.log('SocketRoute Event ∞ SUPPORT_ACCEPT_USER', err);
@@ -193,12 +192,11 @@ const _socketEvents = (io) => {
                     const supports = await getAllConnectedSupports({ status: 'free', });
                     const usersInQueue = await getAllConnectedUsers({ status: 'waiting', });
                     supports.forEach(support => {
-                        io.to(support.currentSocketId).emit(ESendEvents.NOTIFY_ADMINS_OF_NEW_USER,
-                            {
-                                newUserSocketId: socketId,
-                                userQueue: usersInQueue,
-                            }
-                        );
+                        const payload = {
+                            newUserSocketId: socketId,
+                            userQueue: usersInQueue,
+                        };
+                        emitEventToSocket(support.currentSocketId, ESendEvents.NOTIFY_ADMINS_OF_NEW_USER, payload);
                     });
                     return;
                 }
@@ -218,12 +216,11 @@ const _socketEvents = (io) => {
             const supports = await getAllConnectedSupports({ status: 'free', });
             const usersInQueue = await getAllConnectedUsers({ status: 'waiting', });
             supports.forEach(support => {
-                io.to(support.currentSocketId).emit(ESendEvents.NOTIFY_ADMINS_OF_NEW_USER,
-                    {
-                        newUserSocketId: socketId,
-                        userQueue: usersInQueue,
-                    }
-                );
+                const payload = {
+                    newUserSocketId: socketId,
+                    userQueue: usersInQueue,
+                };
+                emitEventToSocket(support.currentSocketId, ESendEvents.NOTIFY_ADMINS_OF_NEW_USER, payload);
             });
         });
 
