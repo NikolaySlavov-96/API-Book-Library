@@ -53,7 +53,6 @@ const _socketEvents = (io) => {
             }
         });
 
-        // Handle the event when a user opens a support chat session
         socket.on(EReceiveEvents.SUPPORT_CHAT_USER_JOIN, async (data: ISupportChat) => {
             try {
                 const messageResponseJoinToChat: IMessageResponseJoinToChat = {
@@ -132,12 +131,8 @@ const _socketEvents = (io) => {
                     // Trigger an event when the specified user is not found in the queue
                     return;
                 }
-                // Create a new chat room for users to join and interact within
                 const roomInfo = await initializeRoom(resultFromCheck, isUserExist);
                 socket.join(roomInfo.roomName);
-
-                // console.log('Rooms:', io.sockets.adapter.rooms);
-                // console.log('Room details:', io.sockets.adapter.rooms.get(roomInfo.roomName));
 
                 await setStatus({ connectId: data.supportId, }, 'busy');
 
@@ -147,10 +142,10 @@ const _socketEvents = (io) => {
                 const supportSocketId = resultFromCheck.currentSocketId;
                 const userSocketId = isUserExist.currentSocketId;
                 io.to(userSocketId).emit(ESendEvents.NOTIFY_FOR_CREATE_ROOM, {
-                    roomName: roomInfo.roomName, message: 'user',
+                    roomName: roomInfo.roomName, message: 'support with name .... is accepted your request',
                 });
                 io.to(supportSocketId).emit(ESendEvents.NOTIFY_FOR_CREATE_ROOM, {
-                    roomName: roomInfo.roomName, message: 'support',
+                    roomName: roomInfo.roomName, message: 'support ',
                 });
 
                 // To all the "supports" who have joined
@@ -239,14 +234,14 @@ const _socketEvents = (io) => {
             }
 
             const resultFromRoom = await isRoomExist({ roomName: data?.roomName, });
-            console.log("🚀 ~ socket.on ~ resultFromRoom:", resultFromRoom)
             if (!resultFromRoom?.roomName) {
                 // 'room doesn\'t not exist'
                 return;
             }
 
             io.to(resultFromRoom.roomName).emit(ESendEvents.SUPPORT_MESSAGE, {
-                content: data.message,
+                roomName: resultFromRoom.roomName,
+                message: data.message,
                 from: socketId,
             });
         });
@@ -260,7 +255,18 @@ const _socketEvents = (io) => {
             // At disconnect on user send event to everyone else 
             // socket.broadcast.emit('message', `User ${socket.id.substring(0, 5)}} disconnected`);
         });
+
+        // socket.on('disconnecting', (reason) => {
+        //     for (const room of socket.rooms) {
+        //         if (room !== socket.id) {
+        //             socket.to(room).emit('user has left', socket.id);
+        //         }
+        //     }
+        // });
     });
 };
 
 export default _socketEvents;
+
+// console.log('Rooms:', io.sockets.adapter.rooms);
+// console.log('Room details:', io.sockets.adapter.rooms.get(roomInfo.roomName));
