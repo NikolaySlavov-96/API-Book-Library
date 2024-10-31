@@ -5,6 +5,7 @@ export { calculateRelativeDate, } from './_Date';
 export { default as buildCacheKey, } from './_buildCacheKey';
 export { default as responseMapper, } from './_responseMapper';
 export { getCurrentDate, } from './_Date';
+export { generateDateForDB, } from './_Date';
 
 export { _EMappedType as EMappedType, } from './_responseMapper';
 
