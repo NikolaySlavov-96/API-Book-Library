@@ -123,7 +123,7 @@ const _socketEvents = (io) => {
 
 
                 // Automatically send a message to the user that includes the support agent's name
-                const modifySupportData = resultFromSupportCheck.email.split('@')[0];
+                const modifySupportData = resultFromSupportCheck.User.email.split('@')[0];
                 const userPayload = {
                     roomName: roomInfo.roomName,
                     message: `Support with name ${modifySupportData} is accepted your request`,
@@ -233,6 +233,7 @@ const _socketEvents = (io) => {
             console.log(`User ${socketId} disconnected`);
 
             await setUserInactive(socketId);
+            await unassignUserFromQueue(socketId);
 
             // Mark support to inactive
             // unassignSupport(resultFromSupportCheck.connectId);

@@ -49,7 +49,8 @@ export const isUserInQueue = async (data: { connectId: string }) => {
             return parseUser;
         }
     });
-    return userExist as unknown as IAllConnectedUsers;
+    const parseAgain = JSON.parse(userExist);
+    return parseAgain as IAllConnectedUsers;
 };
 
 export const unassignUserFromQueue = async (connectId: string) => {
