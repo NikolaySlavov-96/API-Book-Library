@@ -6,6 +6,7 @@ const ModelName = {
     STATE: 'state',
     USER_DATA: 'userData',
     USER_SESSION_DATA: 'userSessionData',
+    SESSION: 'session',
     USER: 'user',
 };
 

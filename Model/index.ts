@@ -11,6 +11,7 @@ import { AuthorFactory, } from './_AuthorModel';
 import { StateFactory, } from './_States';
 import { FileFactory, } from './_FileModel';
 import { UserSessionDataFactory, } from './_UserSessionDataModel';
+import { SessionModelFactory, } from './_SessionModel';
 
 const db: any = {};
 
@@ -24,10 +25,13 @@ db.BookState = BookStateFactory(sequelize);
 db.State = StateFactory(sequelize);
 db.File = FileFactory(sequelize);
 db.UserSessionData = UserSessionDataFactory(sequelize);
+db.SessionModel = SessionModelFactory(sequelize);
 
 // Association
 db.User.hasMany(db.BookState, { foreignKey: 'userId', });
 db.BookState.belongsTo(db.User, { foreignKey: 'userId', });
+
+
 
 db.User.hasOne(db.UserSessionData, {
     foreignKey: 'userId',
@@ -37,6 +41,16 @@ db.User.hasOne(db.UserSessionData, {
 db.UserSessionData.belongsTo(db.User, {
     foreignKey: 'userId',
     // constraints: false,
+});
+
+
+db.User.hasOne(db.SessionModel, {
+    foreignKey: 'userId',
+    constraints: false,
+});
+
+db.SessionModel.belongsTo(db.User, {
+    foreignKey: 'userId',
 });
 
 db.Book.hasMany(db.File, {
