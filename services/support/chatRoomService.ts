@@ -1,28 +1,28 @@
 interface IActiveRoom {
     roomName: string;
     supportCurrentSocketId: string;
-    supportConnectId: string;
+    // supportConnectId: string;
     userCurrentSocketId: string;
-    userConnectId: string;
+    // userConnectId: string;
 }
 
 const activeRooms: IActiveRoom[] = [];
 
 export const initializeRoom = async (supportData, userData) => {
-    const supportSocketId = supportData.currentSocketId;
-    const userSocketId = userData.currentSocketId;
+    const supportSocketId = supportData.connectId;
+    const userSocketId = userData.connectId;
 
     const roomName = `${userSocketId}-${supportSocketId}`;
 
-    const supportConnectId = supportData.connected;
-    const userConnectId = userData.connectId;
+    // const supportConnectId = supportData.connected;
+    // const userConnectId = userData.connectId;
 
     const newRoom: IActiveRoom = {
         roomName: roomName,
         supportCurrentSocketId: supportSocketId,
-        supportConnectId,
+        // supportConnectId,
         userCurrentSocketId: userSocketId,
-        userConnectId,
+        // userConnectId,
     };
     activeRooms.push(newRoom);
 

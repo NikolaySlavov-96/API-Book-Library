@@ -20,18 +20,18 @@ export const register = async (query) => {
     }
 
     const hashedPassword = await cryptHash(query.password);
-    const userData = await db.User.create({
+    await db.User.create({
         email: query.email,
         password: hashedPassword,
         year: query.year,
     });
 
-    const newConnectionId = UUID();
-    await db.UserSessionData.create({
-        connectId: newConnectionId,
-        currentSocketId: query?.currentSocketId || '',
-        userId: userData.id,
-    });
+    // const newConnectionId = UUID();
+    // await db.UserSessionData.create({
+    //     connectId: newConnectionId,
+    //     currentSocketId: query?.currentSocketId || '',
+    //     userId: userData.id,
+    // });
 
     return updateMessage(MESSAGES.SUCCESSFULLY_REGISTER);
 };
@@ -39,11 +39,6 @@ export const register = async (query) => {
 export const login = async (body) => {
     const existingEmail = await db.User.findOne({
         where: { email: body.email, },
-        include: [{
-            model: db.UserSessionData,
-            require: false,
-            attributes: ['id', 'connectId'],
-        }],
         raw: true,
         nest: true,
     });
@@ -55,12 +50,18 @@ export const login = async (body) => {
         return updateMessage(MESSAGES.DELETED_PROFILE, 400);
     }
 
-    const { stayLogin, password, } = body;
-    const matchPassword = await cryptCompare(password, existingEmail.password);
+    const { stayLogin, password, connectId, } = body;
 
+    const matchPassword = await cryptCompare(password, existingEmail.password);
     if (!matchPassword) {
         return updateMessage(MESSAGES.WRONG_EMAIL_OR_PASSWORD, 400);
     }
+
+    await db.SessionModel.update({ userId: existingEmail.id, }, {
+        where: { connectId: connectId, },
+        raw: true,
+        nest: true,
+    });
 
     return addTokenResponse(existingEmail, MESSAGES.SUCCESSFULLY_LOGIN);
 };
