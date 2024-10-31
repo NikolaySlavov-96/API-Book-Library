@@ -14,7 +14,6 @@ const routing = {
     BOOK_ID_IS_REQUIRED: 'Book ID is required',
     BOOK_TITLE_REQUIRED: 'Book title is required',
     BOOK_URL: 'URL must be a required filed',
-    CURRENT_SOCKET_ID: 'Please insert socket Id',
     EMAIL_ADDRESS_INCORRECT: 'Email address is not correct',
     EMAIL_IS_REQUIRED: 'Email address is required',
     FILE_NAME: 'src name is max 145 characters',

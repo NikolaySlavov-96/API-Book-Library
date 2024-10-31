@@ -21,7 +21,6 @@ auth.post('/register',
     body('password').isLength({ min: 8, }).withMessage(ROUTING_MESSAGES.INVALID_PASSWORD).bail()
         .matches(PASSWORD_PATTERN).withMessage(ROUTING_MESSAGES.INCORRECT_TYPE_PASSWORD),
     body('year').notEmpty().withMessage(ROUTING_MESSAGES.YEARS_IS_REQUIRED),
-    body('currentSocketId').optional().isLength({ min: 2, }).withMessage(ROUTING_MESSAGES.CURRENT_SOCKET_ID),
     expressValidator,
     authController.createUser
 );

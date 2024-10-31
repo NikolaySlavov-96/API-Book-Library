@@ -5,6 +5,7 @@ import { EReceiveEvents, ESendEvents, } from '../constants';
 import { storeVisitorInfo, } from '../services/visitorService';
 import {
     registerNewVisitor,
+    renewConnection,
     setUserInactive,
     validateConnectionId,
 } from '../services/connectManagerService';
@@ -24,10 +25,6 @@ import {
 } from '../services/support/chatRoomService';
 import { emitEventToSocket, } from './_SocketEmitters';
 
-interface ISupportChat {
-    connectId?: string,
-}
-
 interface IMessageResponseJoinToChat {
     message: string;
 }
@@ -37,13 +34,25 @@ const WELCOME_ADMIN_TEXT = 'Welcome to Support Chat Admin!';
 
 const _socketEvents = (io) => {
     io.on('connection', async (socket) => {
-        const socketId = socket.id;
+        const connectId = socket.id;
 
-        console.log(`User ${socketId} connected`);
-        await registerNewVisitor(socketId);
-
+        console.log(`User ${connectId} connected`);
         // Upon connection - to all others (Skip sender)
-        // socket.broadcast.emit('message', `User ${socketId.substring(0, 5)}} connected`);
+        // socket.broadcast.emit('message', `User ${connectId.substring(0, 5)}} connected`);
+
+        socket.on(EReceiveEvents.USER_CONNECT, async (data) => {
+            try {
+                if (isUndefined(data) || !isString(data.unId) || data.unId === '') {
+                    const result = await registerNewVisitor(connectId);
+                    socket.emit(ESendEvents.USER_CONNECT_ACKNOWLEDGMENT, { unId: result?.dataValues?.unId, });
+                    return;
+                }
+
+                await renewConnection(data, connectId);
+            } catch (err) {
+                console.log('SocketRoute Event ∞ USER_CONNECT', err);
+            }
+        });
 
         socket.on(EReceiveEvents.USER_JOINED, async (data) => {
             if (!isEmpty(data)) {
@@ -55,10 +64,10 @@ const _socketEvents = (io) => {
             }
         });
 
-        socket.on(EReceiveEvents.SUPPORT_CHAT_USER_JOIN, async (data: ISupportChat) => {
+        socket.on(EReceiveEvents.SUPPORT_CHAT_USER_JOIN, async (data: { connectId: string, }) => {
             try {
                 if (isUndefined(data) || !isString(data.connectId)) {
-                    console.log('Incorrect Data');
+                    console.log('SUPPORT_CHAT_USER_JOIN ~ Incorrect Data');
                     return;
                 }
 
@@ -68,7 +77,7 @@ const _socketEvents = (io) => {
 
                 const result = await validateConnectionId(data);
                 if (!result) {
-                    console.log({ message: 'User Not fount', });
+                    console.log({ message: 'SUPPORT_CHAT_USER_JOIN ~ User Not fount', });
                     // throw { message: 'User Not fount', };
                     return;
                 }
@@ -88,7 +97,7 @@ const _socketEvents = (io) => {
                 const usersInQueue = await getAllWaitingUsers();
                 supports.forEach(support => {
                     const payload = {
-                        newUserSocketId: socketId,
+                        newUserSocketId: connectId,
                         userQueue: usersInQueue,
                     };
                     emitEventToSocket(support, ESendEvents.NOTIFY_ADMINS_OF_NEW_USER, payload);
@@ -107,11 +116,13 @@ const _socketEvents = (io) => {
                 const resultFromSupportCheck = await validateConnectionId({ connectId: data.supportId, });
                 if (resultFromSupportCheck?.User?.role !== 'support') {
                     // Trigger an event when a user is not authorized to accept a support chat request
+                    console.log('SUPPORT_ACCEPT_USER ~ Not support');
                     return;
                 }
 
                 const resultFromUserCheck = await isUserInQueue({ connectId: data.acceptUserId, });
                 if (!resultFromUserCheck) {
+                    console.log('SUPPORT_ACCEPT_USER ~ User doesn\'t exist');
                     // Trigger an event when the specified user is not found in the queue
                     return;
                 }
@@ -139,7 +150,7 @@ const _socketEvents = (io) => {
                 const usersInQueue = await getAllWaitingUsers();
                 supports.forEach(support => {
                     const payload = {
-                        newUserSocketId: socketId,
+                        newUserSocketId: connectId,
                         userQueue: usersInQueue,
                     };
                     emitEventToSocket(support, ESendEvents.NOTIFY_ADMINS_OF_NEW_USER, payload);
@@ -153,13 +164,14 @@ const _socketEvents = (io) => {
             async (data: { roomName: string }) => {
                 if (isUndefined(data) || !isString(data.roomName)) {
                     // Please insert correct data
+                    console.log('USER_ACCEPT_JOIN_TO_ROOM ~ Incorrect data');
                     return;
                 }
                 try {
 
                     const resultFromRoom = await isRoomExist({ roomName: data.roomName, });
                     if (!resultFromRoom?.roomName) {
-                        console.log('room doesn\'t not exist');
+                        console.log('USER_ACCEPT_JOIN_TO_ROOM ~ room doesn\'t not exist');
                         return;
                     }
 
@@ -173,6 +185,7 @@ const _socketEvents = (io) => {
 
         socket.on(EReceiveEvents.SUPPORT_CHAT_USER_LEAVE, async (data: { roomName: string, connectId: string }) => {
             if (isUndefined(data) || (!isString(data.roomName) && !isString(data.connectId))) {
+                console.log('SUPPORT_CHAT_USER_LEAVE ~ Incorrect data');
                 // Please insert correct data
                 return;
             }
@@ -190,6 +203,7 @@ const _socketEvents = (io) => {
                 const isUserExist = await isUserInQueue(data);
                 if (!isUserExist) {
                     // User Is not exist in UserQueue or this is the Support
+                    console.log('SUPPORT_CHAT_USER_LEAVE ~ User doesn\'t exit');
                     return;
                 }
 
@@ -199,7 +213,7 @@ const _socketEvents = (io) => {
                 const usersInQueue = await getAllWaitingUsers();
                 supports.forEach(support => {
                     const payload = {
-                        newUserSocketId: socketId,
+                        newUserSocketId: connectId,
                         userQueue: usersInQueue,
                     };
                     emitEventToSocket(support, ESendEvents.NOTIFY_ADMINS_OF_NEW_USER, payload);
@@ -211,29 +225,31 @@ const _socketEvents = (io) => {
 
         socket.on(EReceiveEvents.SUPPORT_MESSAGE, async (data: { roomName: string, message: string }) => {
             if (isUndefined(data) || !isString(data.roomName)) {
+                console.log('SUPPORT_MESSAGE ~ Incorrect data');
                 // Please insert room name
                 return;
             }
 
             const resultFromRoom = await isRoomExist({ roomName: data.roomName, });
             if (!resultFromRoom?.roomName) {
+                console.log('SUPPORT_MESSAGE ~ Doesn\'t exist room');
                 // 'room doesn\'t not exist'
                 return;
             }
             const messagePayload = {
                 roomName: resultFromRoom.roomName,
                 message: data.message,
-                from: socketId,
+                from: connectId,
             };
             emitEventToSocket(resultFromRoom.roomName, ESendEvents.SUPPORT_MESSAGE, messagePayload);
         });
 
         // When user disconnects - to all others 
         socket.on('disconnect', async () => {
-            console.log(`User ${socketId} disconnected`);
+            console.log(`User ${connectId} disconnected`);
 
-            await setUserInactive(socketId);
-            await unassignUserFromQueue(socketId);
+            await setUserInactive(connectId);
+            await unassignUserFromQueue(connectId);
 
             // Mark support to inactive
             // unassignSupport(resultFromSupportCheck.connectId);

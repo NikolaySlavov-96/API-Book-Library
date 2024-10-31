@@ -1,4 +1,5 @@
 export enum _EReceiveEvents {
+    USER_CONNECT = 'user_connect',
     USER_JOINED = 'user_joined',
     SUPPORT_CHAT_USER_JOIN = 'support_chat_join',
     SUPPORT_CHAT_USER_LEAVE = 'support_chat_leave',
@@ -8,6 +9,7 @@ export enum _EReceiveEvents {
 }
 
 export enum _ESendEvents {
+    USER_CONNECT_ACKNOWLEDGMENT = 'user_connect_acknowledgment',
     NEW_BOOK_ADDED = 'new-book-added',
     NOTIFY_FOR_CREATE_ROOM = 'notify_for_created_room',
     USER_JOINED = 'user_joined',

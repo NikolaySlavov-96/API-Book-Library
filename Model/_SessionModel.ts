@@ -5,9 +5,10 @@ import ModelName from './modelNames';
 interface ISessionModelAttributes {
     id: number;
     connectId: string;
+    unId: string;
     userId: number;
-    connectedAt: string;
-    disconnectedAt: string;
+    // connectedAt: string;
+    // disconnectedAt: string;
 }
 
 interface ISessionModelCreationAttributes extends Optional<ISessionModelAttributes, 'id'> { }
@@ -18,8 +19,9 @@ export class SessionModel extends Model<ISessionModelAttributes, ISessionModelCr
     declare id: number;
     declare connectId: string;
     userId: number;
-    declare connectedAt: string;
-    declare disconnectedAt: string;
+    declare unId: string;
+    // declare connectedAt: string;
+    // declare disconnectedAt: string;
 }
 
 export const SessionModelFactory = (sequelize: Sequelize): typeof SessionModel => {
@@ -31,18 +33,22 @@ export const SessionModelFactory = (sequelize: Sequelize): typeof SessionModel =
         },
         connectId: {
             type: DataTypes.STRING(50),
+            allowNull: true,
+        },
+        unId: {
+            type: DataTypes.STRING(50),
         },
         userId: {
             type: DataTypes.INTEGER,
             allowNull: true,
         },
-        connectedAt: {
-            type: DataTypes.STRING,
-        },
-        disconnectedAt: {
-            type: DataTypes.STRING,
-            allowNull: true,
-        },
+        // connectedAt: {
+        //     type: DataTypes.STRING,
+        // },
+        // disconnectedAt: {
+        //     type: DataTypes.STRING,
+        //     allowNull: true,
+        // },
     }, {
         sequelize,
         tableName: ModelName.SESSION,

@@ -5,6 +5,7 @@ import { MESSAGES, } from '../constants';
 import { addTokenResponse, } from '../Helpers';
 
 import db from '../Model';
+import { registerNewVisitor, } from './connectManagerService';
 
 // Address for verify Email
 // change password
@@ -20,18 +21,19 @@ export const register = async (query) => {
     }
 
     const hashedPassword = await cryptHash(query.password);
-    await db.User.create({
+    const userData = await db.User.create({
         email: query.email,
         password: hashedPassword,
         year: query.year,
     });
 
-    // const newConnectionId = UUID();
-    // await db.UserSessionData.create({
-    //     connectId: newConnectionId,
-    //     currentSocketId: query?.currentSocketId || '',
-    //     userId: userData.id,
-    // });
+    const newConnectionId = UUID();
+    await db.SessionModel.create({
+        connectId: '',
+        unId: newConnectionId,
+        userId: userData.id,
+    });
+    // Attach data and time to register
 
     return updateMessage(MESSAGES.SUCCESSFULLY_REGISTER);
 };
@@ -39,6 +41,11 @@ export const register = async (query) => {
 export const login = async (body) => {
     const existingEmail = await db.User.findOne({
         where: { email: body.email, },
+        include: [{
+            model: db.SessionModel,
+            required: false,
+            attributes: ['unId'],
+        }],
         raw: true,
         nest: true,
     });
@@ -57,21 +64,24 @@ export const login = async (body) => {
         return updateMessage(MESSAGES.WRONG_EMAIL_OR_PASSWORD, 400);
     }
 
-    await db.SessionModel.update({ userId: existingEmail.id, }, {
-        where: { connectId: connectId, },
-        raw: true,
-        nest: true,
-    });
+    if (connectId) {
+        await db.SessionModel.update({ userId: existingEmail.id, }, {
+            where: { connectId: connectId, },
+            raw: true,
+            nest: true,
+        });
+    }
 
     return addTokenResponse(existingEmail, MESSAGES.SUCCESSFULLY_LOGIN);
 };
 
 export const logout = async (token) => {
-    console.log(token);
+    const result = await registerNewVisitor('');
+
     // const request = await BlackListTokenModel.create({
     // inActivateToken: token,
     // });
-    return ('Success logout');
+    return result;
 };
 
 export const checkFieldInDB = async (email) => {

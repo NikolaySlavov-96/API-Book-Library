@@ -37,8 +37,8 @@ export const getUser = async (req, res, next) => {
 export const exitUser = async (req, res, next) => {
     const token = req.token;
     try {
-        await authService.logout(token);
-        res.status(204).end();
+        const result = await authService.logout(token);
+        res.status(200).json(result);
     } catch (err) {
         next(err);
     }

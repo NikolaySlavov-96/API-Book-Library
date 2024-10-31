@@ -4,7 +4,7 @@ export interface IPayload {
     year: number;
     isVerify: boolean;
     role: 'user' | 'support';
-    connectId?: string;
+    unId?: string;
 }
 
 export interface ICondition {
