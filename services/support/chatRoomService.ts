@@ -12,7 +12,7 @@ export const initializeRoom = async (supportData, userData) => {
     const supportSocketId = supportData.connectId;
     const userSocketId = userData.connectId;
 
-    const roomName = `${userSocketId}-${supportSocketId}`;
+    const roomName = `IssueRoom≈${userSocketId.substring(0, 5)}-${supportSocketId.substring(0, 5)}`;
 
     // const supportConnectId = supportData.connected;
     // const userConnectId = userData.connectId;

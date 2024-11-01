@@ -160,28 +160,25 @@ const _socketEvents = (io) => {
             }
         });
 
-        socket.on(EReceiveEvents.USER_ACCEPT_JOIN_TO_ROOM,
-            async (data: { roomName: string }) => {
-                if (isUndefined(data) || !isString(data.roomName)) {
-                    // Please insert correct data
-                    console.log('USER_ACCEPT_JOIN_TO_ROOM ~ Incorrect data');
+        socket.on(EReceiveEvents.USER_ACCEPT_JOIN_TO_ROOM, async (data: { roomName: string }) => {
+            if (isUndefined(data) || !isString(data.roomName)) {
+                // Please insert correct data
+                console.log('USER_ACCEPT_JOIN_TO_ROOM ~ Incorrect data');
+                return;
+            }
+            try {
+                const resultFromRoom = await isRoomExist({ roomName: data.roomName, });
+                if (!resultFromRoom?.roomName) {
+                    console.log('USER_ACCEPT_JOIN_TO_ROOM ~ room doesn\'t not exist');
                     return;
                 }
-                try {
 
-                    const resultFromRoom = await isRoomExist({ roomName: data.roomName, });
-                    if (!resultFromRoom?.roomName) {
-                        console.log('USER_ACCEPT_JOIN_TO_ROOM ~ room doesn\'t not exist');
-                        return;
-                    }
+                socket.join(resultFromRoom.roomName);
 
-                    socket.join(resultFromRoom.roomName);
-
-                } catch (err) {
-                    console.log('SocketRoute Event ∞ USER_ACCEPT_JOIN_TO_ROOM', err);
-                }
+            } catch (err) {
+                console.log('SocketRoute Event ∞ USER_ACCEPT_JOIN_TO_ROOM', err);
             }
-        );
+        });
 
         socket.on(EReceiveEvents.SUPPORT_CHAT_USER_LEAVE, async (data: { roomName: string, connectId: string }) => {
             if (isUndefined(data) || (!isString(data.roomName) && !isString(data.connectId))) {

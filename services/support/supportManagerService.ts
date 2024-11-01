@@ -5,12 +5,9 @@ import {
     removeElementFromList,
 } from '../cacheService';
 
-type TUserStatus = 'active' | 'inactive' | 'free' | 'busy' | 'waiting';
-
 interface IAllConnectedUsers {
     connectId: string;
     name: string;
-    status: TUserStatus;
 }
 
 // Support
