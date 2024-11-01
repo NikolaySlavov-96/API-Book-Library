@@ -95,7 +95,7 @@ const _socketEvents = (io) => {
                 // To all the "supports" who have joined
                 const supports = await getAllOnlineSupports();
                 const usersInQueue = await getAllWaitingUsers();
-                supports.forEach(support => {
+                supports.forEach((support) => {
                     const payload = {
                         newUserSocketId: connectId,
                         userQueue: usersInQueue,
@@ -148,7 +148,7 @@ const _socketEvents = (io) => {
                 // To all the "supports" who have joined
                 const supports = await getAllOnlineSupports();
                 const usersInQueue = await getAllWaitingUsers();
-                supports.forEach(support => {
+                supports.forEach((support) => {
                     const payload = {
                         newUserSocketId: connectId,
                         userQueue: usersInQueue,
@@ -211,7 +211,7 @@ const _socketEvents = (io) => {
 
                 const supports = await getAllOnlineSupports();
                 const usersInQueue = await getAllWaitingUsers();
-                supports.forEach(support => {
+                supports.forEach((support) => {
                     const payload = {
                         newUserSocketId: connectId,
                         userQueue: usersInQueue,
