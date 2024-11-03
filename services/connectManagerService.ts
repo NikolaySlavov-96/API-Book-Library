@@ -2,32 +2,35 @@ import { generateDateForDB, } from '../Helpers';
 
 import db from '../Model';
 
-import { UUID, } from '../util';
+import { verifyToken, } from '../util';
 
-export const registerNewVisitor = async (socketId) => {
-    const newConnectionId = UUID();
+export const registerNewVisitor = async (socketId, token?: string) => {
+    const payload = token ? await verifyToken(token) : null;
+
+    const currentTime = generateDateForDB();
     const result = await db.SessionModel.create({
         connectId: socketId,
-        unId: newConnectionId,
+        connectedAt: currentTime,
+        userId: payload?._id,
     });
     return result;
 };
 
-export const setUserInactive = async (socketId) => {
+export const setUserInactive = async (connectId: string) => {
     const query = {
         where: {
-            connectId: socketId,
+            connectId: connectId,
         },
         raw: true,
         nest: true,
     };
 
-    // const currentTime = generateDateForDB();
-    // const updateUserStatus = {
-    //     // disconnectedAt: currentTime.toString(),
-    // };
+    const currentTime = generateDateForDB();
+    const updateUserStatus = {
+        disconnectedAt: currentTime,
+    };
 
-    // return await db.SessionModel.update(updateUserStatus, query);
+    return await db.SessionModel.update(updateUserStatus, query);
 };
 
 export const validateConnectionId = async (data) => {
@@ -43,22 +46,4 @@ export const validateConnectionId = async (data) => {
     });
 
     return result;
-};
-
-export const renewConnection = async (data: { unId: string, token?: string }, connectId) => {
-    if (data.token) {
-        // const payload = await verifyToken(data.token);
-    }
-    const query = {
-        where: {
-            unId: data.unId,
-        },
-        raw: true,
-        nest: true,
-    };
-
-    const updateUserStatus = {
-        connectId,
-    };
-    return await db.SessionModel.update(updateUserStatus, query);
 };

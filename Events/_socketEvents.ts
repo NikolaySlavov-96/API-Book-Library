@@ -5,7 +5,6 @@ import { EReceiveEvents, ESendEvents, } from '../constants';
 import { storeVisitorInfo, } from '../services/visitorService';
 import {
     registerNewVisitor,
-    renewConnection,
     setUserInactive,
     validateConnectionId,
 } from '../services/connectManagerService';
@@ -35,24 +34,13 @@ const WELCOME_ADMIN_TEXT = 'Welcome to Support Chat Admin!';
 const _socketEvents = (io) => {
     io.on('connection', async (socket) => {
         const connectId = socket.id;
+        const token = socket?.handshake?.auth?.token;
 
         console.log(`User ${connectId} connected`);
         // Upon connection - to all others (Skip sender)
         // socket.broadcast.emit('message', `User ${connectId.substring(0, 5)}} connected`);
 
-        socket.on(EReceiveEvents.USER_CONNECT, async (data) => {
-            try {
-                if (isUndefined(data) || !isString(data.unId) || data.unId === '') {
-                    const result = await registerNewVisitor(connectId);
-                    socket.emit(ESendEvents.USER_CONNECT_ACKNOWLEDGMENT, { unId: result?.dataValues?.unId, });
-                    return;
-                }
-
-                await renewConnection(data, connectId);
-            } catch (err) {
-                console.log('SocketRoute Event ∞ USER_CONNECT', err);
-            }
-        });
+        await registerNewVisitor(connectId, token);
 
         socket.on(EReceiveEvents.USER_JOINED, async (data) => {
             if (!isEmpty(data)) {

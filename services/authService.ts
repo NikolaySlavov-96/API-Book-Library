@@ -2,7 +2,7 @@ import 'dotenv/config';
 
 import { cryptCompare, cryptHash, updateMessage, UUID, } from '../util';
 import { MESSAGES, } from '../constants';
-import { addTokenResponse, } from '../Helpers';
+import { addTokenResponse, generateDateForDB, } from '../Helpers';
 
 import db from '../Model';
 import { registerNewVisitor, } from './connectManagerService';
@@ -21,19 +21,11 @@ export const register = async (query) => {
     }
 
     const hashedPassword = await cryptHash(query.password);
-    const userData = await db.User.create({
+    await db.User.create({
         email: query.email,
         password: hashedPassword,
         year: query.year,
     });
-
-    const newConnectionId = UUID();
-    await db.SessionModel.create({
-        connectId: '',
-        unId: newConnectionId,
-        userId: userData.id,
-    });
-    // Attach data and time to register
 
     return updateMessage(MESSAGES.SUCCESSFULLY_REGISTER);
 };
@@ -41,11 +33,6 @@ export const register = async (query) => {
 export const login = async (body) => {
     const existingEmail = await db.User.findOne({
         where: { email: body.email, },
-        include: [{
-            model: db.SessionModel,
-            required: false,
-            attributes: ['unId'],
-        }],
         raw: true,
         nest: true,
     });
@@ -64,8 +51,9 @@ export const login = async (body) => {
         return updateMessage(MESSAGES.WRONG_EMAIL_OR_PASSWORD, 400);
     }
 
+    const currentTime = generateDateForDB();
     if (connectId) {
-        await db.SessionModel.update({ userId: existingEmail.id, }, {
+        await db.SessionModel.update({ userId: existingEmail.id, connectedAt: currentTime, }, {
             where: { connectId: connectId, },
             raw: true,
             nest: true,
@@ -75,13 +63,22 @@ export const login = async (body) => {
     return addTokenResponse(existingEmail, MESSAGES.SUCCESSFULLY_LOGIN);
 };
 
-export const logout = async (token) => {
-    const result = await registerNewVisitor('');
+export const logout = async (data) => {
+    await registerNewVisitor('');
+
+    const currentTime = generateDateForDB();
+    if (data?.connectId) {
+        await db.SessionModel.update({ disconnectedAt: currentTime, }, {
+            where: { connectId: data.connectId, },
+            raw: true,
+            nest: true,
+        });
+    }
 
     // const request = await BlackListTokenModel.create({
     // inActivateToken: token,
     // });
-    return result;
+    return;
 };
 
 export const checkFieldInDB = async (email) => {

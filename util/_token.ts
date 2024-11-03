@@ -23,7 +23,6 @@ export const _createToken = (data: any, expire?: string) => {
         year: data.year,
         isVerify: data.isVerify,
         role: data.role,
-        unId: data?.SessionModel?.unId,
     };
 
     const accessToken = jwtSign(payload, expire);
