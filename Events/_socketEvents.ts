@@ -234,10 +234,20 @@ const _socketEvents = (io) => {
             console.log(`User ${connectId} disconnected`);
 
             await setUserInactive(connectId);
-            await unassignUserFromQueue(connectId);
+            const result = await unassignUserFromQueue(connectId);
+            if (result) {
+                const supports = await getAllOnlineSupports();
+                const usersInQueue = await getAllWaitingUsers();
+                supports.forEach((support) => {
+                    const payload = {
+                        newUserSocketId: connectId,
+                        userQueue: usersInQueue,
+                    };
+                    emitEventToSocket(support, ESendEvents.NOTIFY_ADMINS_OF_NEW_USER, payload);
+                });
+            }
 
-            // Mark support to inactive
-            // unassignSupport(resultFromSupportCheck.connectId);
+            await unassignSupport(connectId);
 
             // At disconnect on user send event to everyone else 
             // socket.broadcast.emit('message', `User ${socket.id.substring(0, 5)}} disconnected`);

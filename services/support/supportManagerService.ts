@@ -25,8 +25,8 @@ export const assignSupport = async (data: string) => {
     await addedStringToList(CACHE_KEYS.SUPPORT_AGENT, data);
 };
 
-export const unassignSupport = (connectId: string) => {
-    removeElementFromList(CACHE_KEYS.SUPPORT_AGENT, connectId);
+export const unassignSupport = async (connectId: string) => {
+    await removeElementFromList(CACHE_KEYS.SUPPORT_AGENT, connectId);
 };
 
 
@@ -57,10 +57,13 @@ export const isUserInQueue = async (data: { connectId: string }) => {
 
 export const unassignUserFromQueue = async (connectId: string) => {
     const list = await fetchListMembers(CACHE_KEYS.USER_QUEUE);
+    let hasUser = false;
     for (const e of list) {
         const parseE = JSON.parse(e);
         if (parseE.connectId === connectId) {
             await removeElementFromList(CACHE_KEYS.USER_QUEUE, e);
+            hasUser = true;
         }
     }
+    return hasUser;
 };
