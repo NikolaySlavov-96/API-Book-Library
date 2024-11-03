@@ -9,6 +9,8 @@ export { generateDateForDB, } from './_Date';
 
 export { _EMappedType as EMappedType, } from './_responseMapper';
 
+export { notifySupportsOfNewUser, } from './_socketHelpers';
+
 // Query Parsers
 export { _emailParser as emailParser, } from './_queryParsers';
 export { _pageParser as pageParser, } from './_queryParsers';
