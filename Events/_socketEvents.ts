@@ -11,8 +11,6 @@ import {
 import {
     assignSupport,
     assignUserToQueue,
-    getAllOnlineSupports,
-    getAllWaitingUsers,
     isUserInQueue,
     unassignSupport,
     unassignUserFromQueue,
@@ -23,6 +21,8 @@ import {
     isRoomExist,
 } from '../services/support/chatRoomService';
 import { emitEventToSocket, } from './_SocketEmitters';
+
+import { notifySupportsOfNewUser, } from '../Helpers';
 
 interface IMessageResponseJoinToChat {
     message: string;
@@ -81,15 +81,7 @@ const _socketEvents = (io) => {
 
 
                 // To all the "supports" who have joined
-                const supports = await getAllOnlineSupports();
-                const usersInQueue = await getAllWaitingUsers();
-                supports.forEach((support) => {
-                    const payload = {
-                        newUserSocketId: connectId,
-                        userQueue: usersInQueue,
-                    };
-                    emitEventToSocket(support, ESendEvents.NOTIFY_ADMINS_OF_NEW_USER, payload);
-                });
+                await notifySupportsOfNewUser(connectId);
 
                 // To user who joined 
                 socket.emit(ESendEvents.SUPPORT_CHAT_USER_JOIN_ACKNOWLEDGMENT, messageResponseJoinToChat);
@@ -134,15 +126,7 @@ const _socketEvents = (io) => {
                 emitEventToSocket(resultFromSupportCheck.connectId, ESendEvents.NOTIFY_FOR_CREATE_ROOM, supportPayload);
 
                 // To all the "supports" who have joined
-                const supports = await getAllOnlineSupports();
-                const usersInQueue = await getAllWaitingUsers();
-                supports.forEach((support) => {
-                    const payload = {
-                        newUserSocketId: connectId,
-                        userQueue: usersInQueue,
-                    };
-                    emitEventToSocket(support, ESendEvents.NOTIFY_ADMINS_OF_NEW_USER, payload);
-                });
+                await notifySupportsOfNewUser(connectId);
             } catch (err) {
                 console.log('SocketRoute Event ∞ SUPPORT_ACCEPT_USER', err);
             }
@@ -194,15 +178,7 @@ const _socketEvents = (io) => {
 
                 await unassignUserFromQueue(data.connectId);
 
-                const supports = await getAllOnlineSupports();
-                const usersInQueue = await getAllWaitingUsers();
-                supports.forEach((support) => {
-                    const payload = {
-                        newUserSocketId: connectId,
-                        userQueue: usersInQueue,
-                    };
-                    emitEventToSocket(support, ESendEvents.NOTIFY_ADMINS_OF_NEW_USER, payload);
-                });
+                await notifySupportsOfNewUser(connectId);
             } catch (err) {
                 console.log('SocketRoute Event ∞ SUPPORT_CHAT_USER_LEAVE', err);
             }
@@ -236,15 +212,7 @@ const _socketEvents = (io) => {
             await setUserInactive(connectId);
             const result = await unassignUserFromQueue(connectId);
             if (result) {
-                const supports = await getAllOnlineSupports();
-                const usersInQueue = await getAllWaitingUsers();
-                supports.forEach((support) => {
-                    const payload = {
-                        newUserSocketId: connectId,
-                        userQueue: usersInQueue,
-                    };
-                    emitEventToSocket(support, ESendEvents.NOTIFY_ADMINS_OF_NEW_USER, payload);
-                });
+                await notifySupportsOfNewUser(connectId);
             }
 
             await unassignSupport(connectId);
