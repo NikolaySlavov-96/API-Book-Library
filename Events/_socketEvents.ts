@@ -24,6 +24,8 @@ import { emitEventToSocket, } from './_SocketEmitters';
 
 import { notifySupportsOfNewUser, } from '../Helpers';
 
+import { updateMessage, } from '../util';
+
 interface IMessageResponseJoinToChat {
     message: string;
 }
@@ -55,7 +57,8 @@ const _socketEvents = (io) => {
         socket.on(EReceiveEvents.SUPPORT_CHAT_USER_JOIN, async (data: { connectId: string, }) => {
             try {
                 if (isUndefined(data) || !isString(data.connectId)) {
-                    console.log('SUPPORT_CHAT_USER_JOIN ~ Incorrect Data');
+                    const message = 'Incorrect Data';
+                    socket.emit(ESendEvents.ERROR, updateMessage({ message, }).user);
                     return;
                 }
 
@@ -65,8 +68,8 @@ const _socketEvents = (io) => {
 
                 const result = await validateConnectionId(data);
                 if (!result) {
-                    console.log({ message: 'SUPPORT_CHAT_USER_JOIN ~ User Not fount', });
-                    // throw { message: 'User Not fount', };
+                    const message = 'User Not fount';
+                    socket.emit(ESendEvents.ERROR, updateMessage({ message, }).user);
                     return;
                 }
 
@@ -85,7 +88,8 @@ const _socketEvents = (io) => {
                 // To user who joined 
                 socket.emit(ESendEvents.SUPPORT_CHAT_USER_JOIN_ACKNOWLEDGMENT, messageResponseJoinToChat);
             } catch (err) {
-                // socket.emit('error')
+                const message = 'Global problem';
+                socket.emit(ESendEvents.ERROR, updateMessage({ message, }).user);
                 console.log('SocketRoute Event ∞ SUPPORT_CHAT_USER_JOIN', err);
             }
         });
@@ -94,15 +98,15 @@ const _socketEvents = (io) => {
             try {
                 const resultFromSupportCheck = await validateConnectionId({ connectId: data.supportId, });
                 if (resultFromSupportCheck?.User?.role !== 'support') {
-                    // Trigger an event when a user is not authorized to accept a support chat request
-                    console.log('SUPPORT_ACCEPT_USER ~ Not support');
+                    const message = 'Trigger an event when a user is not authorized to accept a support chat request';
+                    socket.emit(ESendEvents.ERROR, updateMessage({ message, }).user);
                     return;
                 }
 
                 const resultFromUserCheck = await isUserInQueue({ connectId: data.acceptUserId, });
                 if (!resultFromUserCheck) {
-                    console.log('SUPPORT_ACCEPT_USER ~ User doesn\'t exist');
-                    // Trigger an event when the specified user is not found in the queue
+                    const message = 'User doesn\'t exist';
+                    socket.emit(ESendEvents.ERROR, updateMessage({ message, }).user);
                     return;
                 }
 
@@ -126,34 +130,39 @@ const _socketEvents = (io) => {
                 // To all the "supports" who have joined
                 await notifySupportsOfNewUser(connectId);
             } catch (err) {
+                const message = 'Global Error';
+                socket.emit(ESendEvents.ERROR, updateMessage({ message, }).user);
                 console.log('SocketRoute Event ∞ SUPPORT_ACCEPT_USER', err);
             }
         });
 
         socket.on(EReceiveEvents.USER_ACCEPT_JOIN_TO_ROOM, async (data: { roomName: string }) => {
             if (isUndefined(data) || !isString(data.roomName)) {
-                // Please insert correct data
-                console.log('USER_ACCEPT_JOIN_TO_ROOM ~ Incorrect data');
+                const message = 'Incorrect data';
+                socket.emit(ESendEvents.ERROR, updateMessage({ message, }).user);
                 return;
             }
             try {
                 const resultFromRoom = await isRoomExist({ roomName: data.roomName, });
                 if (!resultFromRoom?.roomName) {
-                    console.log('USER_ACCEPT_JOIN_TO_ROOM ~ room doesn\'t not exist');
+                    const message = 'room doesn\'t not exist';
+                    socket.emit(ESendEvents.ERROR, updateMessage({ message, }).user);
                     return;
                 }
 
                 socket.join(resultFromRoom.roomName);
 
             } catch (err) {
+                const message = 'Global Error';
+                socket.emit(ESendEvents.ERROR, updateMessage({ message, }).user);
                 console.log('SocketRoute Event ∞ USER_ACCEPT_JOIN_TO_ROOM', err);
             }
         });
 
         socket.on(EReceiveEvents.SUPPORT_CHAT_USER_LEAVE, async (data: { roomName: string, connectId: string }) => {
             if (isUndefined(data) || (!isString(data.roomName) && !isString(data.connectId))) {
-                console.log('SUPPORT_CHAT_USER_LEAVE ~ Incorrect data');
-                // Please insert correct data
+                const message = 'Incorrect data';
+                socket.emit(ESendEvents.ERROR, updateMessage({ message, }).user);
                 return;
             }
             try {
@@ -173,8 +182,8 @@ const _socketEvents = (io) => {
 
                 const isUserExist = await isUserInQueue(data);
                 if (!isUserExist) {
-                    // User Is not exist in UserQueue or this is the Support
-                    console.log('SUPPORT_CHAT_USER_LEAVE ~ User doesn\'t exit');
+                    const message = 'User doesn\'t exit';
+                    socket.emit(ESendEvents.ERROR, updateMessage({ message, }).user);
                     return;
                 }
 
@@ -182,21 +191,23 @@ const _socketEvents = (io) => {
 
                 await notifySupportsOfNewUser(connectId);
             } catch (err) {
+                const message = 'Global Error';
+                socket.emit(ESendEvents.ERROR, updateMessage({ message, }).user);
                 console.log('SocketRoute Event ∞ SUPPORT_CHAT_USER_LEAVE', err);
             }
         });
 
         socket.on(EReceiveEvents.SUPPORT_MESSAGE, async (data: { roomName: string, message: string }) => {
             if (isUndefined(data) || !isString(data.roomName)) {
-                console.log('SUPPORT_MESSAGE ~ Incorrect data');
-                // Please insert room name
+                const message = 'Incorrect data';
+                socket.emit(ESendEvents.ERROR, updateMessage({ message, }).user);
                 return;
             }
 
             const resultFromRoom = await isRoomExist({ roomName: data.roomName, });
             if (!resultFromRoom?.roomName) {
-                console.log('SUPPORT_MESSAGE ~ Doesn\'t exist room');
-                // 'room doesn\'t not exist'
+                const message = 'Doesn\'t exist room';
+                socket.emit(ESendEvents.ERROR, updateMessage({ message, }).user);
                 return;
             }
             const messagePayload = {
