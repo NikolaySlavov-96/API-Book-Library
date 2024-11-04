@@ -8,7 +8,9 @@ export enum _EReceiveEvents {
 }
 
 export enum _ESendEvents {
+    ERROR = 'error',
     NEW_BOOK_ADDED = 'new-book-added',
+    COMPLETE_ISSUE = 'complete-issue',
     NOTIFY_FOR_CREATE_ROOM = 'notify_for_created_room',
     USER_JOINED = 'user_joined',
     SUPPORT_CHAT_USER_JOIN_ACKNOWLEDGMENT = 'support_chat_user_join_acknowledgment',

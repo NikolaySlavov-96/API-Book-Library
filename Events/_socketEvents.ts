@@ -79,7 +79,6 @@ const _socketEvents = (io) => {
                     });
                 }
 
-
                 // To all the "supports" who have joined
                 await notifySupportsOfNewUser(connectId);
 
@@ -111,7 +110,6 @@ const _socketEvents = (io) => {
                 socket.join(roomInfo.roomName);
 
                 await unassignUserFromQueue(resultFromUserCheck.connectId);
-
 
                 // Automatically send a message to the user that includes the support agent's name
                 const modifySupportData = resultFromSupportCheck.User.email.split('@')[0];
@@ -162,10 +160,14 @@ const _socketEvents = (io) => {
 
                 const resultFromRoom = await isRoomExist({ roomName: data.roomName, });
                 if (resultFromRoom) {
-                    socket.leave(resultFromRoom.roomName);
+                    // Mark conversation is completed
+                    emitEventToSocket(resultFromRoom.roomName, ESendEvents.COMPLETE_ISSUE,
+                        { message: 'Complete', }
+                    );
 
                     await deleteRoom({ roomName: resultFromRoom.roomName, });
-                    // Mark conversation is completed
+
+                    socket.leave(resultFromRoom.roomName);
                     return;
                 }
 
