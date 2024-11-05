@@ -51,8 +51,8 @@ export const login = async (body) => {
         return updateMessage(MESSAGES.WRONG_EMAIL_OR_PASSWORD, 400);
     }
 
-    const currentTime = generateDateForDB();
     if (connectId) {
+        const currentTime = generateDateForDB();
         await db.SessionModel.update({ userId: existingEmail.id, connectedAt: currentTime, }, {
             where: { connectId: connectId, },
             raw: true,
@@ -66,8 +66,8 @@ export const login = async (body) => {
 export const logout = async (data) => {
     await registerNewVisitor('');
 
-    const currentTime = generateDateForDB();
     if (data?.connectId) {
+        const currentTime = generateDateForDB();
         await db.SessionModel.update({ disconnectedAt: currentTime, }, {
             where: { connectId: data.connectId, },
             raw: true,

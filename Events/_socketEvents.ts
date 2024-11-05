@@ -30,6 +30,17 @@ interface IMessageResponseJoinToChat {
     message: string;
 }
 
+interface IUserConnect {
+    country_code: string;
+    country_name: string;
+    city: string | null;
+    postal: string | null;
+    latitude: number;
+    longitude: number;
+    IPv4: string;
+    state: string | null;
+}
+
 const WELCOME_USER_TEXT = 'Welcome to Support Chat!';
 const WELCOME_ADMIN_TEXT = 'Welcome to Support Chat Admin!';
 
@@ -44,7 +55,7 @@ const _socketEvents = (io) => {
 
         await registerNewVisitor(connectId, token);
 
-        socket.on(EReceiveEvents.USER_JOINED, async (data) => {
+        socket.on(EReceiveEvents.USER_JOINED, async (data: IUserConnect) => {
             if (!isEmpty(data)) {
                 const count = await storeVisitorInfo(data);
                 if (count.isNewUser) {
@@ -171,7 +182,7 @@ const _socketEvents = (io) => {
                 if (resultFromRoom) {
                     // Mark conversation is completed
                     emitEventToSocket(resultFromRoom.roomName, ESendEvents.COMPLETE_ISSUE,
-                        { message: 'Complete', }
+                        { message: 'Complete', issue: resultFromRoom.roomName, }
                     );
 
                     await deleteRoom({ roomName: resultFromRoom.roomName, });
