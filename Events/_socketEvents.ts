@@ -117,7 +117,7 @@ const _socketEvents = (io) => {
                     return;
                 }
 
-                const roomInfo = await initializeRoom(resultFromSupportCheck, resultFromUserCheck);
+                const roomInfo = await initializeRoom();
                 socket.join(roomInfo.roomName);
 
                 await unassignUserFromQueue(resultFromUserCheck.connectId);

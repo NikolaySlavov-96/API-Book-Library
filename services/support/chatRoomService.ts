@@ -1,28 +1,16 @@
+import { cacheKeys, } from '../../constants';
+
 import { UUID, } from '../../util';
+
+import { addedStringToList, fetchListMembers, removeElementFromList, } from '../cacheService';
 
 const ISSUE_TICKET_NAME = 'IssTktTNum-';
 
-interface IActiveRoom {
-    roomName: string;
-    supportCurrentSocketId: string;
-    userCurrentSocketId: string;
-}
-
-const activeRooms: IActiveRoom[] = [];
-
-export const initializeRoom = async (supportData, userData) => {
-    const supportSocketId = supportData.connectId;
-    const userSocketId = userData.connectId;
-
+export const initializeRoom = async () => {
     const issueTicketNumber = UUID().substring(0, 8);
     const roomName = `${ISSUE_TICKET_NAME}${issueTicketNumber}`;
 
-    const newRoom: IActiveRoom = {
-        roomName: roomName,
-        supportCurrentSocketId: supportSocketId,
-        userCurrentSocketId: userSocketId,
-    };
-    activeRooms.push(newRoom);
+    await addedStringToList(cacheKeys.CHAT_ROOM, roomName);
 
     return {
         roomName,
@@ -30,9 +18,11 @@ export const initializeRoom = async (supportData, userData) => {
 };
 
 export const isRoomExist = async (data: { roomName: string }) => {
-    return activeRooms.find((r) => r.roomName === data.roomName);
+    const supportAgents = await fetchListMembers(cacheKeys.CHAT_ROOM);
+    const roomName = supportAgents.find((r) => r === data.roomName);
+    return { roomName, };
 };
 
 export const deleteRoom = async (data: { roomName: string }) => {
-    activeRooms.filter((r) => r.roomName !== data.roomName);
+    await removeElementFromList(cacheKeys.CHAT_ROOM, data.roomName);
 };
