@@ -54,11 +54,11 @@ const _socketEvents = (io) => {
         // Upon connection - to all others (Skip sender)
         // socket.broadcast.emit('message', `User ${connectId.substring(0, 5)}} connected`);
 
+        // ReJoin functionality at Reload API or change version
         const rooms = await fetchAllRooms();
         if (rooms) {
             rooms.forEach((room) => {
                 socket.join(room);
-                console.log(`Socket ${socket.id} rejoined room ${room}`);
             });
         }
 
