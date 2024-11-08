@@ -2,6 +2,8 @@ const _cacheKeys = {
     ALL_BOOKS: 'all-books-',
     BOOK_ID: 'book-id-',
     BOOK_STATE_ID: 'book-state-id-',
+    SUPPORT_AGENT: 'supportAgent',
+    USER_QUEUE: 'userQueue',
 };
 
 export default _cacheKeys;
