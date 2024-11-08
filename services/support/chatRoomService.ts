@@ -6,6 +6,10 @@ import { addedStringToList, fetchListMembers, removeElementFromList, } from '../
 
 const ISSUE_TICKET_NAME = 'IssTktTNum-';
 
+export const fetchAllRooms = async () => {
+    return await fetchListMembers(cacheKeys.CHAT_ROOM);
+};
+
 export const initializeRoom = async () => {
     const issueTicketNumber = UUID().substring(0, 8);
     const roomName = `${ISSUE_TICKET_NAME}${issueTicketNumber}`;

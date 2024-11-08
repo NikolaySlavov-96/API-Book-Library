@@ -17,6 +17,7 @@ import {
 } from '../services/support/supportManagerService';
 import {
     deleteRoom,
+    fetchAllRooms,
     initializeRoom,
     isRoomExist,
 } from '../services/support/chatRoomService';
@@ -52,6 +53,14 @@ const _socketEvents = (io) => {
         console.log(`User ${connectId} connected`);
         // Upon connection - to all others (Skip sender)
         // socket.broadcast.emit('message', `User ${connectId.substring(0, 5)}} connected`);
+
+        const rooms = await fetchAllRooms();
+        if (rooms) {
+            rooms.forEach((room) => {
+                socket.join(room);
+                console.log(`Socket ${socket.id} rejoined room ${room}`);
+            });
+        }
 
         await registerNewVisitor(connectId, token);
 
