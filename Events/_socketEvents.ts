@@ -179,7 +179,7 @@ const _socketEvents = (io) => {
             try {
 
                 const resultFromRoom = await isRoomExist({ roomName: data.roomName, });
-                if (resultFromRoom) {
+                if (resultFromRoom.roomName) {
                     // Mark conversation is completed
                     emitEventToSocket(resultFromRoom.roomName, ESendEvents.COMPLETE_ISSUE,
                         { message: 'Complete', issue: resultFromRoom.roomName, }
