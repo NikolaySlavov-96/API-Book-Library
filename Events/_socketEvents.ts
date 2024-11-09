@@ -64,13 +64,13 @@ const _socketEvents = (io) => {
 
         await registerNewVisitor(connectId, token);
 
-        socket.on(EReceiveEvents.USER_JOINED, async (data: IUserConnect) => {
+        socket.on(EReceiveEvents.USER_CONNECT, async (data: IUserConnect) => {
             if (!isEmpty(data)) {
                 const count = await storeVisitorInfo(data);
                 if (count.isNewUser) {
-                    socket.broadcast.emit(ESendEvents.USER_JOINED, count);
+                    socket.broadcast.emit(ESendEvents.USER_CONNECT, count);
                 }
-                socket.emit(ESendEvents.USER_JOINED, count);
+                socket.emit(ESendEvents.USER_CONNECT, count);
             }
         });
 
