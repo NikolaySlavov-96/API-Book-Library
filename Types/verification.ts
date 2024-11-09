@@ -3,6 +3,7 @@ export interface IPayload {
     email: string;
     year: number;
     isVerify: boolean;
+    role: 'user' | 'support';
 }
 
 export interface ICondition {

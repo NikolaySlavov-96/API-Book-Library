@@ -1,12 +1,10 @@
-import { cors, auth, socketMiddleware, trimBody, checkClientIP, } from '../middleware';
+import { cors, auth, trimBody, checkClientIP, } from '../middleware';
 
 import { SYSTEM_FILE_DIRECTORY, } from '../constants';
 
 const { FILE_SIZE, } = process.env;
 
-export default (app, express, io, fileUpload) => {
-    app.use(socketMiddleware(io));
-
+export default (app, express, fileUpload) => {
     app.use(checkClientIP());
 
     app.use(express.static(SYSTEM_FILE_DIRECTORY.PUBLIC));

@@ -60,3 +60,21 @@ export const deleteKeysWithPrefix = async (prefix) => {
     }
 };
 
+// Utilize Redis to store a list (array) where each data entry is converted to a string format
+export const addedDataToList = async (key: string, value: unknown) => {
+    const valueTostring = JSON.stringify(value);
+    return await redisClient.rPush(key, valueTostring);
+};
+
+export const addedStringToList = async (key: string, value: string) => {
+    return await redisClient.rPush(key, value);
+};
+
+export const fetchListMembers = async (key) => {
+    const result = await redisClient.lRange(key, 0, -1);
+    return result;
+};
+
+export const removeElementFromList = async (key, data) => {
+    return await redisClient.lRem(key, 1, data);
+};

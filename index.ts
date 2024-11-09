@@ -3,6 +3,7 @@ import express from 'express';
 import fileUpload from 'express-fileupload';
 import server from 'http';
 import { Server as SocketIOServer, } from 'socket.io';
+import { createAdapter, } from '@socket.io/redis-adapter';
 
 import {
     checkDatabaseIfItExist,
@@ -15,24 +16,31 @@ import {
 import { globalErrorHandling, } from './Helpers';
 
 import db from './Model';
-import { socketRoute, } from './routes';
+import { initEmitters, socketEvents, } from './Events';
 
 const { PORT, } = process.env;
 
 start();
 const app = express();
-const initServer = server.createServer(app);
-const io = new SocketIOServer(initServer, {
-    path: '/bookHub',
-    cors: {
-        origin: '*',
-    },
-});
+
+const pubClient = redisClient;
+const subClient = pubClient.duplicate();
 
 async function start() {
     await mongoClient();
 
     await redisClient.connect();
+    await subClient.connect();
+
+    const initServer = server.createServer(app);
+    const io = new SocketIOServer(initServer, {
+        path: '/bookHub',
+        cors: {
+            origin: '*',
+        },
+    });
+
+    io.adapter(createAdapter(pubClient, subClient));
 
     await checkDatabaseIfItExist();
 
@@ -40,11 +48,12 @@ async function start() {
 
     await db.sequelize.sync({ force: false, });
 
-    expressConfig(app, express, io, fileUpload);
+    expressConfig(app, express, fileUpload);
 
     router(app);
 
-    socketRoute(io);
+    initEmitters(io);
+    socketEvents(io);
 
     app.use(globalErrorHandling());
 

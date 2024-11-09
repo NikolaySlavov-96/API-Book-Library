@@ -8,6 +8,7 @@ interface IMessageType {
 const messages: IMessageType = {
     // Global
     MESSAGE_AT_ERROR_FROM_SERVER: { message: 'Something went wrong!', messageCode: 'global-0001', },
+    ERROR_FROM_SERVER: { message: 'Something went wrong!', messageCode: 'global-0001', },
 
     // User
     INVALID_TOKEN: { message: 'Invalid Token!', messageCode: 'user-0001', },
@@ -41,6 +42,15 @@ const messages: IMessageType = {
     FILE_DOES_NOT_EXIT: { message: 'A file that does not exist', messageCode: 'book-0005', },
     UN_SUCCESS_REMOVE_FILE: { message: 'Unsuccessfully remove file', messageCode: 'book-0006', },
     SUCCESS_REMOVE_FILE: { message: 'Successfully remove file', messageCode: 'book-0007', },
+
+    // Support
+    INCORRECT_DATA: { message: 'Incorrect Data', messageCode: 'support-0001', },
+    SELECTED_USER_NOT_FOUND: { message: 'User Not fount', messageCode: 'support-0002', },
+    NOT_AUTHORIZE_ACCEPT_CHAT_REQUEST: {
+        message: 'not authorized to accept a support chat request',
+        messageCode: 'support-0004',
+    },
+    SELECTED_ROOM_NOT_FOUND: { message: 'room doesn\'t not exist', messageCode: 'support-0004', },
 };
 
 export default messages;

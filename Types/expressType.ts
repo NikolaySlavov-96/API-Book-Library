@@ -1,13 +1,4 @@
 import { NextFunction, Request as EXReq, Response, } from 'express';
-import { Socket, } from 'socket.io';
-
-declare global {
-    namespace Express {
-        interface Response {
-            SocketIo: Socket
-        }
-    }
-}
 
 interface IUser {
     email: string;

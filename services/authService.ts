@@ -1,10 +1,11 @@
 import 'dotenv/config';
 
-import { cryptCompare, cryptHash, updateMessage, } from '../util';
+import { cryptCompare, cryptHash, updateMessage, UUID, } from '../util';
 import { MESSAGES, } from '../constants';
-import { addTokenResponse, } from '../Helpers';
+import { addTokenResponse, generateDateForDB, } from '../Helpers';
 
 import db from '../Model';
+import { registerNewVisitor, } from './connectManagerService';
 
 // Address for verify Email
 // change password
@@ -20,7 +21,6 @@ export const register = async (query) => {
     }
 
     const hashedPassword = await cryptHash(query.password);
-
     await db.User.create({
         email: query.email,
         password: hashedPassword,
@@ -31,7 +31,11 @@ export const register = async (query) => {
 };
 
 export const login = async (body) => {
-    const existingEmail = (await db.User.findOne({ where: { email: body.email, }, }))?.dataValues;
+    const existingEmail = await db.User.findOne({
+        where: { email: body.email, },
+        raw: true,
+        nest: true,
+    });
 
     if (!existingEmail) {
         return updateMessage(MESSAGES.WRONG_EMAIL_OR_PASSWORD, 400);
@@ -40,22 +44,41 @@ export const login = async (body) => {
         return updateMessage(MESSAGES.DELETED_PROFILE, 400);
     }
 
-    const { stayLogin, password, } = body;
-    const matchPassword = await cryptCompare(password, existingEmail.password);
+    const { stayLogin, password, connectId, } = body;
 
+    const matchPassword = await cryptCompare(password, existingEmail.password);
     if (!matchPassword) {
         return updateMessage(MESSAGES.WRONG_EMAIL_OR_PASSWORD, 400);
+    }
+
+    if (connectId) {
+        const currentTime = generateDateForDB();
+        await db.SessionModel.update({ userId: existingEmail.id, connectedAt: currentTime, }, {
+            where: { connectId: connectId, },
+            raw: true,
+            nest: true,
+        });
     }
 
     return addTokenResponse(existingEmail, MESSAGES.SUCCESSFULLY_LOGIN);
 };
 
-export const logout = async (token) => {
-    console.log(token);
+export const logout = async (data) => {
+    await registerNewVisitor('');
+
+    if (data?.connectId) {
+        const currentTime = generateDateForDB();
+        await db.SessionModel.update({ disconnectedAt: currentTime, }, {
+            where: { connectId: data.connectId, },
+            raw: true,
+            nest: true,
+        });
+    }
+
     // const request = await BlackListTokenModel.create({
     // inActivateToken: token,
     // });
-    return ('Success logout');
+    return;
 };
 
 export const checkFieldInDB = async (email) => {

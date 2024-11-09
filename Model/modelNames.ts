@@ -5,6 +5,7 @@ const ModelName = {
     FILE: 'file',
     STATE: 'state',
     USER_DATA: 'userData',
+    SESSION: 'session',
     USER: 'user',
 };
 
