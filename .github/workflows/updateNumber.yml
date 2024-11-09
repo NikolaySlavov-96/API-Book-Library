@@ -4,8 +4,8 @@ on:
   push:
     branches:
     - develop
-  pull_request:
-    types: [closed]
+  # pull_request:
+  #   types: [closed]
 
 jobs:
   update_version:
