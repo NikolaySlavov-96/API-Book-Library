@@ -1,4 +1,4 @@
-export { default as SocketEvents, } from './_socketEvents';
+export { default as socketEvents, } from './_socketEvents';
 
 // Emitters
 export { emitToSocketEvent, } from './_SocketEmitters';
