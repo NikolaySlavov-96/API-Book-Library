@@ -23,9 +23,9 @@ const userModel = (data) => {
 
 const fileModel = (data) => {
     return {
-        imageUrl: FILE_PATH + data?.uniqueName,
-        bookSrc: data?.src,
-        imageId: data?.id,
+        imageUrl: FILE_PATH + (data.uniqueName ?? 'productNotFound.png'),
+        bookSrc: data.src ?? 'Stay happy',
+        imageId: data?.id ?? 'missing',
     };
 };
 
