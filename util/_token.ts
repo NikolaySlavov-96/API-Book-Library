@@ -30,10 +30,6 @@ export const _verifyToken = (token: string): IVerifyToken => {
     return jwtVerify(token);
 };
 
-export const _signToken = (token: string, expires?: string) => {
-    return jwtSign(token, expires);
-};
-
 export const _createToken = (data: any, expire?: string) => {
     const payload: IPayload = {
         _id: data.id,
