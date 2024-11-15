@@ -1,15 +1,10 @@
 import { IPayload, } from '../Types/verification';
-// import { LOGIN_EXPIRE, } from '../constants/commonConstants';
 
 import { jwtSign, jwtVerify, } from '../util';
 interface IVerifyToken {
     _id: string;
     email: string;
     iat?: number;
-}
-
-interface ICreateToken extends Omit<IVerifyToken, 'iat'> {
-    accessToken: string;
 }
 
 export const _verifyToken = (token: string): IVerifyToken => {
