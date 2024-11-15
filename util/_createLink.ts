@@ -1,5 +1,3 @@
-import { jwtSign, } from '.';
-
 export default (user, condition) => {
     const token = createToken(user, condition);
 
@@ -16,8 +14,8 @@ const createToken = (user, condition) => {
         email: user.email,
     };
     if (condition === 'verify') {
-        const accessToken = jwtSign(payload);
-        return accessToken;
+        // const accessToken = signToken(payload);
+        return '22222';
     }
 
     // TODO 

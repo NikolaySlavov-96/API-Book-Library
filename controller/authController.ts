@@ -3,7 +3,7 @@ import { EMAIL, } from '../constants';
 import * as authService from '../services/authService';
 import verifyAccount from '../services/mailService';
 
-import { jwtVerify, } from '../util';
+import { verifyToken, } from '../util';
 
 export const createUser = async (req, res, next) => {
     try {
@@ -55,8 +55,8 @@ export const checkFields = async (req, res, next) => {
 
 export const verifyUser = async (req, res, next) => {
     try {
-        const { verifyToken, } = req.body;
-        const isVerify = await jwtVerify(verifyToken);
+        const { verifyToken: token, } = req.body;
+        const isVerify = await verifyToken(token);
         const verifyState = await authService.verifyTokenFormUser(isVerify);
 
         res.status(verifyState?.statusCode).json(verifyState?.user);
