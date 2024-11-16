@@ -26,8 +26,12 @@ interface IVerifyToken {
     iat?: number;
 }
 
-export const _verifyToken = (token: string): IVerifyToken => {
-    return jwtVerify(token);
+export const _verifyToken = (token: string): IVerifyToken | { error: string } => {
+    try {
+        return jwtVerify(token);
+    } catch (err) {
+        return { error: err, };
+    }
 };
 
 export const _createToken = (data: any, expire?: string) => {
