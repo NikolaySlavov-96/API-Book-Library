@@ -1,15 +1,29 @@
-import { IPayload, } from '../Types/verification';
-// import { LOGIN_EXPIRE, } from '../constants/commonConstants';
+import { sign, verify, } from 'jsonwebtoken';
 
-import { jwtSign, jwtVerify, } from '../util';
+const JWT_SECRET: string | undefined = process.env.JWT_SECRET;
+
+import { IPayload, } from '../Types/verification';
+
+
+const jwtVerify = (token: string): any => {
+    if (!JWT_SECRET) {
+        throw ('Missing token');
+    }
+    return verify(token, JWT_SECRET);
+};
+
+const jwtSign = (payload, expires?: string): any => {
+    if (!JWT_SECRET) {
+        throw ('Missing token');
+    }
+    return sign(payload, JWT_SECRET, expires && { expiresIn: expires, });
+};
+
+
 interface IVerifyToken {
     _id: string;
     email: string;
     iat?: number;
-}
-
-interface ICreateToken extends Omit<IVerifyToken, 'iat'> {
-    accessToken: string;
 }
 
 export const _verifyToken = (token: string): IVerifyToken => {

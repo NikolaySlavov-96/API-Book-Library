@@ -1,7 +1,8 @@
 import 'dotenv/config';
 
-import { cryptCompare, cryptHash, updateMessage, UUID, } from '../util';
-import { MESSAGES, } from '../constants';
+import { MESSAGES, RESPONSE_STATUS_CODE, } from '../constants';
+
+import { cryptCompare, cryptHash, updateMessage, } from '../util';
 import { addTokenResponse, generateDateForDB, } from '../Helpers';
 
 import db from '../Model';
@@ -17,7 +18,7 @@ export const register = async (query) => {
     const existingEmail = (await db.User.findOne({ where: { email: query.email, }, }))?.dataValues;
 
     if (existingEmail) {
-        return updateMessage(MESSAGES.EMAIL_IS_ALREADY_TAKEN, 400);
+        return updateMessage(MESSAGES.EMAIL_IS_ALREADY_TAKEN, RESPONSE_STATUS_CODE.BAD_REQUEST);
     }
 
     const hashedPassword = await cryptHash(query.password);
@@ -38,17 +39,17 @@ export const login = async (body) => {
     });
 
     if (!existingEmail) {
-        return updateMessage(MESSAGES.WRONG_EMAIL_OR_PASSWORD, 400);
+        return updateMessage(MESSAGES.WRONG_EMAIL_OR_PASSWORD, RESPONSE_STATUS_CODE.BAD_REQUEST);
     }
     if (existingEmail.isDelete) {
-        return updateMessage(MESSAGES.DELETED_PROFILE, 400);
+        return updateMessage(MESSAGES.DELETED_PROFILE, RESPONSE_STATUS_CODE.BAD_REQUEST);
     }
 
     const { stayLogin, password, connectId, } = body;
 
     const matchPassword = await cryptCompare(password, existingEmail.password);
     if (!matchPassword) {
-        return updateMessage(MESSAGES.WRONG_EMAIL_OR_PASSWORD, 400);
+        return updateMessage(MESSAGES.WRONG_EMAIL_OR_PASSWORD, RESPONSE_STATUS_CODE.BAD_REQUEST);
     }
 
     if (connectId) {
@@ -86,19 +87,17 @@ export const checkFieldInDB = async (email) => {
     return existingEmail.rows.length ? true : false;
 };
 
-export const verifyTokenFormUser = async (isVerify) => {
-
-    const existingEmail = await db.User.findOne({ where: { email: isVerify.email, }, });
-
+export const verifyTokenFormUser = async (address) => {
+    const existingEmail = await db.User.findOne({ where: { email: address, }, });
     if (!existingEmail?.dataValues) {
-        return updateMessage(MESSAGES.EMAIL_DOES_NOT_EXIST, 402);
+        return updateMessage(MESSAGES.EMAIL_DOES_NOT_EXIST, RESPONSE_STATUS_CODE.UNAUTHORIZED);
     }
     if (existingEmail?.dataValues?.isVerify) {
-        return updateMessage(MESSAGES.ACCOUNT_ALREADY_TAKEN, 401);
+        return updateMessage(MESSAGES.ACCOUNT_ALREADY_TAKEN, RESPONSE_STATUS_CODE.UNAUTHORIZED);
     }
 
     existingEmail.isVerify = true;
     await existingEmail.save();
 
-    return updateMessage(MESSAGES.SUCCESSFULLY_VERIFY_ACCOUNT, 200);
+    return updateMessage(MESSAGES.SUCCESSFULLY_VERIFY_ACCOUNT, RESPONSE_STATUS_CODE.OK);
 };

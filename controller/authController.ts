@@ -1,9 +1,8 @@
-import { EMAIL, } from '../constants';
+import { EMAIL, RESPONSE_STATUS_CODE, } from '../constants';
 
 import * as authService from '../services/authService';
 import verifyAccount from '../services/mailService';
-
-import { jwtVerify, } from '../util';
+import * as tokenService from '../services/tokenService';
 
 export const createUser = async (req, res, next) => {
     try {
@@ -28,7 +27,7 @@ export const createUser = async (req, res, next) => {
 export const getUser = async (req, res, next) => {
     try {
         const token = await authService.login(req.body);
-        res.status(token?.statusCode || 200).json(token?.user || token);
+        res.status(token?.statusCode || RESPONSE_STATUS_CODE.OK).json(token?.user || token);
     } catch (err) {
         next(err);
     }
@@ -37,7 +36,7 @@ export const getUser = async (req, res, next) => {
 export const exitUser = async (req, res, next) => {
     try {
         await authService.logout(req.body);
-        res.status(204);
+        res.status(RESPONSE_STATUS_CODE.NO_CONTENT);
     } catch (err) {
         next(err);
     }
@@ -56,8 +55,16 @@ export const checkFields = async (req, res, next) => {
 export const verifyUser = async (req, res, next) => {
     try {
         const { verifyToken, } = req.body;
-        const isVerify = await jwtVerify(verifyToken);
-        const verifyState = await authService.verifyTokenFormUser(isVerify);
+        const userAddress = await tokenService.verifyEmailToken(verifyToken);
+        if ('statusCode' in userAddress) {
+            res.status(userAddress?.statusCode).json(userAddress?.user);
+            return;
+        }
+
+        const userAddressValue = 'address' in userAddress && userAddress.address;
+        const verifyState = await authService.verifyTokenFormUser(userAddressValue);
+
+        await tokenService.changeEmailTokenStatus(verifyToken);
 
         res.status(verifyState?.statusCode).json(verifyState?.user);
     } catch (err) {

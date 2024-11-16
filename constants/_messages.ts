@@ -31,6 +31,8 @@ const messages: IMessageType = {
     INVALID_USER: { message: 'Invalid user!', messageCode: 'user-0018', },
     DELETED_PROFILE: { message: 'Profile is delete, contact with administrator', messageCode: 'user-0019', },
     ACCOUNT_IS_NOT_VERIFY: { message: 'Your account is not Verify', messageCode: 'user-0020', },
+    TOKEN_DOES_NOT_EXIST: { message: 'Email does not exist!', messageCode: 'user-0021', },
+    TOKEN_USER: { message: 'Token used!', messageCode: 'user-0022', },
 
     // Book
     BOOK_ALREADY_EXIST: { message: 'The book has already been added', messageCode: 'book-0001', },

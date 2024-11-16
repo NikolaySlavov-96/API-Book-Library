@@ -27,3 +27,12 @@ export const calculateRelativeDate = (count: number, type: 'day') => {
 
     return newDate.format(DATE_FORMAT);
 };
+
+/**
+ * @param inputDate - string
+ * @param unit - 'minutes' |
+ * @returns difference in selected unit
+ */
+export const calculateTimeDifference = (inputDate, unit) => {
+    return moment(moment()).diff(inputDate, unit);
+};
