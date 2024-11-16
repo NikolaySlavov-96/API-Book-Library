@@ -1,4 +1,4 @@
-import { EMAIL, } from '../constants';
+import { EMAIL, RESPONSE_STATUS_CODE, } from '../constants';
 
 import * as authService from '../services/authService';
 import verifyAccount from '../services/mailService';
@@ -27,7 +27,7 @@ export const createUser = async (req, res, next) => {
 export const getUser = async (req, res, next) => {
     try {
         const token = await authService.login(req.body);
-        res.status(token?.statusCode || 200).json(token?.user || token);
+        res.status(token?.statusCode || RESPONSE_STATUS_CODE.OK).json(token?.user || token);
     } catch (err) {
         next(err);
     }
@@ -36,7 +36,7 @@ export const getUser = async (req, res, next) => {
 export const exitUser = async (req, res, next) => {
     try {
         await authService.logout(req.body);
-        res.status(204);
+        res.status(RESPONSE_STATUS_CODE.NO_CONTENT);
     } catch (err) {
         next(err);
     }
