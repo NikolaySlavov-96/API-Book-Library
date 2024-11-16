@@ -6,12 +6,13 @@ import { verifyToken, } from '../util';
 
 export const registerNewVisitor = async (socketId, token?: string) => {
     const payload = token ? await verifyToken(token) : null;
+    const hasPayload = payload && '_id' in payload;
 
     const currentTime = generateDateForDB();
     const result = await db.SessionModel.create({
         connectId: socketId,
         connectedAt: currentTime,
-        userId: payload?._id,
+        userId: hasPayload ? payload?._id : null,
     });
     return result;
 };

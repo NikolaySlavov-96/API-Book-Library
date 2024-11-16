@@ -11,17 +11,16 @@ export default () => async (req: Request, res: Response, next: NextFunction) => 
     if (token) {
         try {
             const payload = await verifyToken(token);
-            req.user = payload;
-            req.token = token;
-            req.authenticated = true;
-        } catch (err) {
-            const errorMessage = err?.message;
-            if (errorMessage?.includes('xpired') || errorMessage?.includes('nvalid')) {
+            if ('error' in payload) {
                 res.status(RESPONSE_STATUS_CODE.UNAUTHORIZED).json(
                     updateMessage(MESSAGES.INVALID_AUTHORIZE_TOKEN).user
                 );
                 return;
             }
+            req.user = payload;
+            req.token = token;
+            req.authenticated = true;
+        } catch (err) {
             res.status(RESPONSE_STATUS_CODE.SERVER_ERROR).json(
                 updateMessage(MESSAGES.MESSAGE_AT_ERROR_FROM_SERVER).user
             );
