@@ -1,8 +1,9 @@
 import { EMAIL, } from '../constants';
 import { createLink, mailUtil, } from '../util';
 
-const mailTitle = {};
-mailTitle[EMAIL.REGISTER_CONFIRM] = 'Verify Account -> Book';
+const mailTitle = {
+    [EMAIL.REGISTER_CONFIRM]: 'Verify Account -> Book',
+};
 
 
 export default (existingUser, dataForEmail) => {

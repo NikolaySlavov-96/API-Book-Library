@@ -7,6 +7,7 @@ const ModelName = {
     USER_DATA: 'userData',
     SESSION: 'session',
     USER: 'user',
+    VERIFY_TOKEN: 'verifyToken',
 };
 
 export default ModelName;
