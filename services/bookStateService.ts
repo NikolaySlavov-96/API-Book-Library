@@ -56,7 +56,7 @@ export const getAllDate = async ({ state, userId, offset, limit, filterOperator,
 
     const result = await db.BookState.findAndCountAll(query);
 
-    const mappedResponse = responseMapper(result, EMappedType.BOOK_STATE);
+    const mappedResponse = responseMapper(result, EMappedType.PRODUCT_STATE);
 
     return mappedResponse;
 };

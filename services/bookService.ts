@@ -47,7 +47,7 @@ export const getAllData = async ({ offset, limit, filterOperator, searchContent,
 
     const result = await db.Book.findAndCountAll(query);
 
-    const mappedResponse = responseMapper(result, EMappedType.BOOK);
+    const mappedResponse = responseMapper(result, EMappedType.PRODUCT);
 
     return mappedResponse;
 };
@@ -70,7 +70,7 @@ export const getDataById = async (id) => {
         nest: true,
     });
 
-    const mappedResponse = mappedSingleObject(result, EMappedType.BOOK);
+    const mappedResponse = mappedSingleObject(result, EMappedType.PRODUCT);
 
     return mappedResponse;
 };

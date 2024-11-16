@@ -35,7 +35,7 @@ export const getBookByEmail = async ({ email, offset, limit, }) => {
         nest: true,
     });
 
-    const mappedResponse = responseMapper(result, EMappedType.BOOK_SEARCH);
+    const mappedResponse = responseMapper(result, EMappedType.PRODUCT_SEARCH);
 
     return mappedResponse;
 };
