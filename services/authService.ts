@@ -1,7 +1,8 @@
 import 'dotenv/config';
 
-import { cryptCompare, cryptHash, updateMessage, UUID, } from '../util';
 import { MESSAGES, } from '../constants';
+
+import { cryptCompare, cryptHash, updateMessage, } from '../util';
 import { addTokenResponse, generateDateForDB, } from '../Helpers';
 
 import db from '../Model';
@@ -86,10 +87,8 @@ export const checkFieldInDB = async (email) => {
     return existingEmail.rows.length ? true : false;
 };
 
-export const verifyTokenFormUser = async (isVerify) => {
-
-    const existingEmail = await db.User.findOne({ where: { email: isVerify.email, }, });
-
+export const verifyTokenFormUser = async (address) => {
+    const existingEmail = await db.User.findOne({ where: { email: address, }, });
     if (!existingEmail?.dataValues) {
         return updateMessage(MESSAGES.EMAIL_DOES_NOT_EXIST, 402);
     }

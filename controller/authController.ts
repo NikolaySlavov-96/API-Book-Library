@@ -2,8 +2,7 @@ import { EMAIL, } from '../constants';
 
 import * as authService from '../services/authService';
 import verifyAccount from '../services/mailService';
-
-import { verifyToken, } from '../util';
+import * as tokenService from '../services/tokenService';
 
 export const createUser = async (req, res, next) => {
     try {
@@ -55,9 +54,17 @@ export const checkFields = async (req, res, next) => {
 
 export const verifyUser = async (req, res, next) => {
     try {
-        const { verifyToken: token, } = req.body;
-        const isVerify = await verifyToken(token);
-        const verifyState = await authService.verifyTokenFormUser(isVerify);
+        const { verifyToken, } = req.body;
+        const userAddress = await tokenService.verifyEmailToken(verifyToken);
+        if ('statusCode' in userAddress) {
+            res.status(userAddress?.statusCode).json(userAddress?.user);
+            return;
+        }
+
+        const userAddressValue = 'address' in userAddress && userAddress.address;
+        const verifyState = await authService.verifyTokenFormUser(userAddressValue);
+
+        await tokenService.changeEmailTokenStatus(verifyToken);
 
         res.status(verifyState?.statusCode).json(verifyState?.user);
     } catch (err) {

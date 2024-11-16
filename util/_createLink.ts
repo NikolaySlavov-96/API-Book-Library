@@ -1,5 +1,9 @@
-export default (user, condition) => {
-    const token = createToken(user, condition);
+import { UUID, } from '.';
+
+import { generateEmailToken, } from '../services/tokenService';
+
+export default async (user, condition) => {
+    const token = await createToken(user, condition);
 
     const objectWithCondition = {
         'verify': (token) => `/auth/verify/${token}`,
@@ -8,17 +12,13 @@ export default (user, condition) => {
     return `${process.env.WEB_URI}${objectWithCondition[condition](token)}`;
 };
 
-const createToken = (user, condition) => {
-    // const secretNew = process.env.JWT_SECRETS + user.email + condition;
+const createToken = async (user, condition) => {
+    const tokenId = UUID();
     const payload = {
-        email: user.email,
+        address: user.email,
+        token: tokenId,
     };
     if (condition === 'verify') {
-        // const accessToken = signToken(payload);
-        return '22222';
+        return await generateEmailToken(payload, 15, 'minute');
     }
-
-    // TODO 
-    // accessToken = jwt.sign(payload, secretNew, { expiresIn: '15m' });
-    // return accessToken;
 };
