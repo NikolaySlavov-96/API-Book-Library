@@ -75,7 +75,7 @@ export const getDataById = async (id) => {
     return mappedResponse;
 };
 
-export const create = async ({ author, bookTitle, genre, }) => {
+export const create = async ({ author, productTitle: bookTitle, genre, }) => {
     const existingBook = (await db.Book.findOne({ where: { bookTitle, }, }))?.dataValues;
     if (existingBook) {
         return updateMessage(MESSAGES.BOOK_ALREADY_EXIST, 403);
