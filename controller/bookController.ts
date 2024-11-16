@@ -65,7 +65,7 @@ export const createBook = async (req, res, next) => {
             emitToSocketEvent(ESendEvents.NEW_BOOK_ADDED, result);
         }
 
-        const requestRespond = result?.user ? result?.user : { bookId: result.id, };
+        const requestRespond = result?.user ? result?.user : { productId: result.id, };
         const statusCode = result?.statusCode ? result?.statusCode : RESPONSE_STATUS_CODE.CREATED;
         res.status(statusCode).json(requestRespond);
 
