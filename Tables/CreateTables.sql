@@ -1,0 +1,16 @@
+CREATE table products (
+    ID SERIAL PRIMARY KEY,
+    authorId INT not NULL,
+    productTitle VARCHAR(140) UNIQUE,
+    genre VARCHAR(45),
+    isVerify BOOLEAN default false
+);
+   
+create table authors (
+	id SERIAL PRIMARY KEY,
+	name VARCHAR(60),
+	image VARCHAR(145),
+	genre VARCHAR(45),
+	isVerify BOOLEAN default false 
+	authorId INT REFERENCES products(id)
+);
