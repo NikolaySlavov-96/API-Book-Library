@@ -11,7 +11,8 @@ create table IF NOT EXISTS authors (
     name VARCHAR(60),
     image VARCHAR(145),
     genre VARCHAR(45),
-    isVerify BOOLEAN default false authorId INT REFERENCES products (id)
+    isVerify BOOLEAN default false,
+    authorId INT REFERENCES products (id)
 );
 
 CREATE TEMPORARY TABLE bookAuthorPairs (
