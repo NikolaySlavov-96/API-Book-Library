@@ -14,3 +14,8 @@ create table authors (
 	isVerify BOOLEAN default false 
 	authorId INT REFERENCES products(id)
 );
+
+CREATE TEMPORARY TABLE bookAuthorPairs (
+    productTitle VARCHAR(140),
+    authorName VARCHAR(60)
+);
