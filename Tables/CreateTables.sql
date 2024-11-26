@@ -15,7 +15,7 @@ create table IF NOT EXISTS authors (
     authorId INT REFERENCES products (id)
 );
 
-CREATE TEMPORARY TABLE bookAuthorPairs (
+CREATE TEMPORARY TABLE productAuthorPairs (
     productTitle VARCHAR(140),
     authorName VARCHAR(60)
 );
@@ -28,7 +28,7 @@ DECLARE
 	productId INT;
 BEGIN
     FOR v_productTitle, v_authorName IN
-        SELECT productTitle, authorName FROM bookAuthorPairs
+        SELECT productTitle, authorName FROM productAuthorPairs
     LOOP
         SELECT id INTO authorId FROM authors WHERE name = v_authorName LIMIT 1;
         IF authorId IS NULL THEN
@@ -41,6 +41,6 @@ BEGIN
 		END IF;
     END LOOP;
 
-	DROP TABLE IF EXISTS bookAuthorPairs;
+	DROP TABLE IF EXISTS productAuthorPairs;
 
 END $$;
