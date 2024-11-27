@@ -5,6 +5,9 @@ const _cacheKeys = {
     CHAT_ROOM: 'chatRoom',
     SUPPORT_AGENT: 'supportAgent',
     USER_QUEUE: 'userQueue',
+    // NEW
+    ALL_PRODUCTS: 'all-products-',
+    PRODUCT_ID: 'product-id-',
 };
 
 export default _cacheKeys;

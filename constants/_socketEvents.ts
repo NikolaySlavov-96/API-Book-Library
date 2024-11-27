@@ -17,4 +17,6 @@ export enum _ESendEvents {
     SUPPORT_ACCEPT_USER_ACKNOWLEDGMENT = 'support_accept_user_acknowledgment',
     SUPPORT_MESSAGE = 'support_message',
     NOTIFY_ADMINS_OF_NEW_USER = 'notify_admins_of_new_user',
+    // NEW
+    NEW_PRODUCT_ADDED = 'new-product-added',
 }

@@ -24,6 +24,9 @@ const routing = {
     PASSWORD_IS_REQUIRED: 'Password is required',
     TOKE_IS_REQUIRED: 'Verify token is required',
     YEARS_IS_REQUIRED: 'Years is requited',
+    // NEW
+    PRODUCT_TITLE_REQUIRED: 'Product title is required',
+    PRODUCT_FIELD_ID: 'Field Id must be a required',
 };
 
 export default routing;
