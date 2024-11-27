@@ -27,6 +27,8 @@ const routing = {
     // NEW
     PRODUCT_TITLE_REQUIRED: 'Product title is required',
     PRODUCT_FIELD_ID: 'Field Id must be a required',
+    PRODUCT_ID_IS_REQUIRED: 'Product ID is required',
+    PRODUCT_COLLECTION_TYPE: 'Please insert correct collection type',
 };
 
 export default routing;

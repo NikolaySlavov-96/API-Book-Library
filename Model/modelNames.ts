@@ -10,6 +10,7 @@ const ModelName = {
     VERIFY_TOKEN: 'verifyToken',
     // NEW
     PRODUCT: 'product',
+    PRODUCT_STATUS: 'productStatus',
 };
 
 export default ModelName;

@@ -8,6 +8,7 @@ const _cacheKeys = {
     // NEW
     ALL_PRODUCTS: 'all-products-',
     PRODUCT_ID: 'product-id-',
+    PRODUCT_STATE_ID: 'product-state-id-',
 };
 
 export default _cacheKeys;
