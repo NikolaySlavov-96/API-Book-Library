@@ -13,6 +13,7 @@ import { FileFactory, } from './_FileModel';
 import { SessionModelFactory, } from './_SessionModel';
 // NEW
 import { ProductFactory, } from './_ProductModel';
+import { ProductStatusFactory, } from './_ProductStatusModel';
 
 const db: any = {};
 
@@ -27,11 +28,16 @@ db.State = StateFactory(sequelize);
 db.File = FileFactory(sequelize);
 db.SessionModel = SessionModelFactory(sequelize);
 // NEW
-db.ProductFactory = ProductFactory(sequelize);
+db.Product = ProductFactory(sequelize);
+db.ProductStatus = ProductStatusFactory(sequelize);
 
 // Association
 db.User.hasMany(db.BookState, { foreignKey: 'userId', });
 db.BookState.belongsTo(db.User, { foreignKey: 'userId', });
+
+// NEW
+db.User.hasMany(db.ProductStatus, { foreignKey: 'userId', });
+db.ProductStatus.belongsTo(db.User, { foreignKey: 'userId', });
 
 db.User.hasOne(db.SessionModel, {
     foreignKey: 'userId',
@@ -50,6 +56,8 @@ db.File.belongsTo(db.Book, {
 });
 
 db.BookState.belongsTo(db.State, { foreignKey: 'stateId', });
+// NEW
+db.ProductStatus.belongsTo(db.State, { foreignKey: 'statusId', });
 
 db.Book.belongsTo(db.Author, { foreignKey: 'authorId', });
 db.Author.hasMany(db.Book, { foreignKey: 'authorId', });
@@ -61,7 +69,7 @@ db.Author.hasMany(db.Product, { foreignKey: 'authorId', });
 db.BookState.belongsTo(db.Book, { foreignKey: 'bookId', });
 db.Book.hasMany(db.BookState, { foreignKey: 'bookId', });
 // NEW
-db.BookState.belongsTo(db.Product, { foreignKey: 'productId', }); // RENAME BookState
-db.Product.hasMany(db.BookState, { foreignKey: 'productId', });
+db.ProductStatus.belongsTo(db.Product, { foreignKey: 'productId', });
+db.Product.hasMany(db.ProductStatus, { foreignKey: 'productId', });
 
 export default db;
