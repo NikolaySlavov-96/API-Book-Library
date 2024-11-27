@@ -8,7 +8,7 @@ const productModel = (data) => {
         productId: data.id,
         productType: data.genre,
         productStatus: data.isVerify, // IsVerify
-        productTitle: data.bookTitle,
+        productTitle: data.productTitle,
         authorName: author.name,
         authorImage: author.image,
         authorGenre: author.genre,

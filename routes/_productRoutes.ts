@@ -33,7 +33,7 @@ product.post('/',
     isAuthenticated(),
     body('productTitle').isLength({ min: 2, }).withMessage(ROUTING_MESSAGES.PRODUCT_TITLE_REQUIRED),
     body('author').isLength({ min: 2, }).withMessage(ROUTING_MESSAGES.AUTHOR_REQUIRED),
-    body('genre').isLength({ min: 2, }).withMessage(ROUTING_MESSAGES.BOOK_GENRE),
+    body('genre').isLength({ min: 2, }).withMessage(ROUTING_MESSAGES.PRODUCT_GENRE),
     expressValidator,
     productController.createProduct
 );
