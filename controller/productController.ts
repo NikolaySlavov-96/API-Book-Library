@@ -41,6 +41,11 @@ export const getProductById = async (req, res, next) => {
 
         const result = await productService.getDataById(id);
 
+        if (!result) {
+            res.status(RESPONSE_STATUS_CODE.NO_CONTENT);
+            return;
+        }
+
         const key = buildCacheKey(cacheKeys.PRODUCT_ID, req);
         await cacheDataWithExpiration(key, result);
 

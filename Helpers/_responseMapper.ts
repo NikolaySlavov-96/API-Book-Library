@@ -7,6 +7,10 @@ export enum _EMappedType {
 }
 
 export const _mappedSingleObject = (result, type: _EMappedType) => {
+    if (!result) {
+        return result;
+    }
+
     if (type === _EMappedType.PRODUCT) {
         return productModel(result);
     }
