@@ -8,6 +8,8 @@ const ModelName = {
     SESSION: 'session',
     USER: 'user',
     VERIFY_TOKEN: 'verifyToken',
+    // NEW
+    PRODUCT: 'product',
 };
 
 export default ModelName;
