@@ -43,10 +43,10 @@ export const getAllProductsByStatus = async (req, res, next) => {
 
 export const getProductStatusById = async (req, res, next) => {
     try {
-        const bookId = parseInt(req.params.id);
+        const productId = parseInt(req.params.id);
         const userId = req?.user?._id;
 
-        const data = await productStatusService.getInfoFromProductStatus(bookId, userId);
+        const data = await productStatusService.getInfoFromProductStatus(productId, userId);
 
         const key = buildCacheKey(cacheKeys.PRODUCT_STATUS_ID, req);
         await cacheDataWithExpiration(key, data);

@@ -68,14 +68,14 @@ export const getInfoFromProductStatus = async (productId, userId) => {
     });
 };
 
-export const addingNewProductStatus = async (userId, { productId, state, }) => {
+export const addingNewProductStatus = async (userId, { productId, statusId, }) => {
     const existingBook = await db.ProductStatus.findOne({ where: { productId, userId, isDelete: false, }, });
 
     if (existingBook) {
-        existingBook.statusId = state;
+        existingBook.statusId = statusId;
         return await existingBook.save();
     }
 
-    const result = (await db.ProductStatus.create({ userId, productId, statusId: state, }))?.dataValues;
+    const result = (await db.ProductStatus.create({ userId, productId, statusId, }))?.dataValues;
     return result;
 };
