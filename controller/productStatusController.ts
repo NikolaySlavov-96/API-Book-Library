@@ -48,7 +48,7 @@ export const getProductStatusById = async (req, res, next) => {
 
         const data = await productStatusService.getInfoFromProductStatus(bookId, userId);
 
-        const key = buildCacheKey(cacheKeys.PRODUCT_STATE_ID, req);
+        const key = buildCacheKey(cacheKeys.PRODUCT_STATUS_ID, req);
         await cacheDataWithExpiration(key, data);
 
         res.status(RESPONSE_STATUS_CODE.OK).json(data);
@@ -67,7 +67,7 @@ export const createProductStatus = async (req, res, next) => {
 
         await productStatusService.addingNewProductStatus(userId, req.body);
 
-        const key = buildCacheKey(cacheKeys.PRODUCT_STATE_ID, req);
+        const key = buildCacheKey(cacheKeys.PRODUCT_STATUS_ID, req);
         await deleteCacheEntry(key);
 
         res.status(RESPONSE_STATUS_CODE.CREATED).json(

@@ -8,7 +8,7 @@ const _buildCacheKey = (key, req) => {
     if (key === cacheKeys.PRODUCT_ID) {
         customKey += req.params.id;
     }
-    if (key === cacheKeys.PRODUCT_STATE_ID) {
+    if (key === cacheKeys.PRODUCT_STATUS_ID) {
         const bookId = req.params.id || req.body.bookId;
         customKey += `${bookId}-${req?.user?._id}`;
     }

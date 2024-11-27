@@ -23,7 +23,7 @@ product.get('/:id',
 );
 product.get('/:id/status',
     isAuthenticated(),
-    cacheMiddleware(cacheKeys.PRODUCT_STATE_ID),
+    cacheMiddleware(cacheKeys.PRODUCT_STATUS_ID),
     productStatusController.getProductStatusById
 );
 // Get all product By specific status
