@@ -6,9 +6,7 @@ const product = Router();
 import { expressValidator, isAuthenticated, cacheMiddleware, } from '../middleware';
 
 import * as productController from '../controller/productController';
-// FOR UPDATE
-import * as bookStateController from '../controller/bookStateController';
-import * as stateController from '../controller/stateController';
+import * as productStatusController from '../controller/productStatusController';
 
 import { cacheKeys, ROUTING_MESSAGES, } from '../constants';
 
@@ -17,11 +15,19 @@ product.get('/',
     cacheMiddleware(cacheKeys.ALL_PRODUCTS),
     productController.getAllProducts
 );
+product.get('/status/all', productStatusController.getAllStatus);
 
 product.get('/:id',
     cacheMiddleware(cacheKeys.PRODUCT_ID),
     productController.getProductById
 );
+product.get('/:id/status',
+    isAuthenticated(),
+    cacheMiddleware(cacheKeys.PRODUCT_STATE_ID),
+    productStatusController.getProductStatusById
+);
+// Get all product By specific status
+product.get('/status/:statusId', isAuthenticated(), productStatusController.getAllProductsByStatus);
 
 product.post('/',
     isAuthenticated(),
@@ -30,6 +36,13 @@ product.post('/',
     body('genre').isLength({ min: 2, }).withMessage(ROUTING_MESSAGES.BOOK_GENRE),
     expressValidator,
     productController.createProduct
+);
+product.post('/status/',
+    isAuthenticated(),
+    body('productId').isLength({ min: 1, }).withMessage(ROUTING_MESSAGES.PRODUCT_ID_IS_REQUIRED),
+    body('status').isFloat({ min: 1, max: 5, }).withMessage(ROUTING_MESSAGES.PRODUCT_COLLECTION_TYPE),
+    expressValidator,
+    productStatusController.createProductStatus
 );
 
 product.post('/addImage',
@@ -53,23 +66,6 @@ product.delete('/removeImage/:id',
 //     isAuthenticated(),
 //     productController.deleteBook
 // );
-
-
-// TO Book State Controller
-product.get('/bookStates/all', stateController.getStates);
-product.get('/booksState/:state', isAuthenticated(), bookStateController.getAllBooksByState);
-product.get('/bookState/:id',
-    isAuthenticated(),
-    cacheMiddleware(cacheKeys.BOOK_STATE_ID),
-    bookStateController.getBookStateById
-);
-product.post('/state/',
-    isAuthenticated(),
-    body('bookId').isLength({ min: 1, }).withMessage(ROUTING_MESSAGES.BOOK_ID_IS_REQUIRED),
-    body('state').isFloat({ min: 1, max: 5, }).withMessage(ROUTING_MESSAGES.BOOK_COLLECTION_TYPE),
-    expressValidator,
-    bookStateController.createBookState
-);
 
 
 export default product;
