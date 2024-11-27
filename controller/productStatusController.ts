@@ -7,14 +7,13 @@ import {
     getUserVerificationStatus,
 } from '../services/getUserVerificationStatus';
 import { cacheDataWithExpiration, deleteCacheEntry, } from '../services/cacheService';
-import { getAllStates, } from '../services/stateService';
 
 import { updateMessage, } from '../util';
 
 
 export const getAllStatus = async (req, res, next) => {
     try {
-        const result = await getAllStates();
+        const result = await productStatusService.getAllStates();
         res.status(200).json(result);
     } catch (err) {
         next(err);

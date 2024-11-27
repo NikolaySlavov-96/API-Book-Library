@@ -3,6 +3,10 @@ import { responseMapper, EMappedType, } from '../Helpers';
 import db from '../Model';
 const Op = db?.Sequelize?.Op;
 
+export const getAllStates = async () => {
+    return await db.State.findAll();
+};
+
 export const getAllDate = async ({ statusId, userId, offset, limit, filterOperator, searchContent, }) => {
     const queryOperator = Op[filterOperator];
     const hasSearchContent = !!searchContent;
