@@ -2,7 +2,7 @@ import { MESSAGES, queryOperators, cacheKeys, RESPONSE_STATUS_CODE, } from '../c
 
 import { buildCacheKey, pageParser, searchParser, } from '../Helpers';
 
-import * as bookStateService from '../services/bookStateService';
+import * as productStatusService from '../services/productStatusService';
 import {
     getUserVerificationStatus,
 } from '../services/getUserVerificationStatus';
@@ -11,18 +11,27 @@ import { cacheDataWithExpiration, deleteCacheEntry, } from '../services/cacheSer
 import { updateMessage, } from '../util';
 
 
-export const getAllBooksByState = async (req, res, next) => {
+export const getAllStatus = async (req, res, next) => {
+    try {
+        const result = await productStatusService.getAllStates();
+        res.status(200).json(result);
+    } catch (err) {
+        next(err);
+    }
+};
+
+export const getAllProductsByStatus = async (req, res, next) => {
     const { limit, offset, } = pageParser(req?.query);
     const { searchContent, } = searchParser(req?.query);
 
     const filterOperator = queryOperators.LIKE;
 
     const userId = req?.user?._id;
-    const state = req.params.state;
+    const statusId = req.params.statusId;
 
     try {
-        const result = await bookStateService.getAllDate({
-            state, userId, offset, limit, searchContent, filterOperator,
+        const result = await productStatusService.getAllDate({
+            statusId, userId, offset, limit, searchContent, filterOperator,
         });
 
         res.status(RESPONSE_STATUS_CODE.OK).json(result);
@@ -31,14 +40,14 @@ export const getAllBooksByState = async (req, res, next) => {
     }
 };
 
-export const getBookStateById = async (req, res, next) => {
+export const getProductStatusById = async (req, res, next) => {
     try {
-        const bookId = parseInt(req.params.id);
+        const productId = parseInt(req.params.id);
         const userId = req?.user?._id;
 
-        const data = await bookStateService.getInfoFromBookState(bookId, userId);
+        const data = await productStatusService.getInfoFromProductStatus(productId, userId);
 
-        const key = buildCacheKey(cacheKeys.BOOK_STATE_ID, req);
+        const key = buildCacheKey(cacheKeys.PRODUCT_STATUS_ID, req);
         await cacheDataWithExpiration(key, data);
 
         res.status(RESPONSE_STATUS_CODE.OK).json(data);
@@ -47,7 +56,7 @@ export const getBookStateById = async (req, res, next) => {
     }
 };
 
-export const createBookState = async (req, res, next) => {
+export const createProductStatus = async (req, res, next) => {
     try {
         const userId = req.user._id;
         const checkAccount = await getUserVerificationStatus(userId);
@@ -55,11 +64,9 @@ export const createBookState = async (req, res, next) => {
             res.status(RESPONSE_STATUS_CODE.UNAUTHORIZED).json(updateMessage(MESSAGES.ACCOUNT_IS_NOT_VERIFY).user);
         }
 
-        const { bookId, state, } = req.body;
+        await productStatusService.addingNewProductStatus(userId, req.body);
 
-        await bookStateService.addingNewBookState({ userId, bookId, state, });
-
-        const key = buildCacheKey(cacheKeys.BOOK_STATE_ID, req);
+        const key = buildCacheKey(cacheKeys.PRODUCT_STATUS_ID, req);
         await deleteCacheEntry(key);
 
         res.status(RESPONSE_STATUS_CODE.CREATED).json(

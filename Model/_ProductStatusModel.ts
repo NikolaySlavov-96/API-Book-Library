@@ -2,33 +2,33 @@ import { DataTypes, Model, Optional, Sequelize, } from 'sequelize';
 
 import ModelName from './modelNames';
 
-interface IBookStateAttributes {
+interface IProductStatusAttributes {
     userId: number;
-    bookId: number;
-    stateId: number;
+    productId: number;
+    statusId: number;
     isDelete: boolean;
 }
 
-interface IBookStateCreationAttributes extends Optional<IBookStateAttributes, 'stateId'> { }
+interface IProductStatusCreationAttributes extends Optional<IProductStatusAttributes, 'statusId'> { }
 // eslint-disable-next-line max-len
-export class BookState extends Model<IBookStateAttributes, IBookStateCreationAttributes> implements IBookStateAttributes {
+export class ProductStatus extends Model<IProductStatusAttributes, IProductStatusCreationAttributes> implements IProductStatusAttributes {
     userId: number;
-    bookId: number;
-    declare stateId: number;
+    productId: number;
+    declare statusId: number;
     declare isDelete: boolean;
 }
 
-export const BookStateFactory = (sequelize: Sequelize): typeof BookState => {
-    BookState.init({
+export const ProductStatusFactory = (sequelize: Sequelize): typeof ProductStatus => {
+    ProductStatus.init({
         userId: {
             type: DataTypes.INTEGER,
             allowNull: false,
         },
-        bookId: {
+        productId: {
             type: DataTypes.INTEGER,
             allowNull: false,
         },
-        stateId: {
+        statusId: {
             type: DataTypes.INTEGER,
             allowNull: false,
         },
@@ -38,9 +38,9 @@ export const BookStateFactory = (sequelize: Sequelize): typeof BookState => {
         },
     }, {
         sequelize,
-        tableName: ModelName.BOOK_STATE,
+        tableName: ModelName.PRODUCT_STATUS,
         timestamps: true,
     });
 
-    return BookState;
+    return ProductStatus;
 };

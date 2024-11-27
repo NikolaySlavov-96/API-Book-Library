@@ -1,9 +1,9 @@
-import { search, auth, book, } from '../routes';
+import { search, auth, product, } from '../routes';
 
 const PREFIX = '';
 
 export default (app) => {
     app.use(`${PREFIX}/auth`, auth);
-    app.use(`${PREFIX}/book`, book);
+    app.use(`${PREFIX}/product`, product);
     app.use(`${PREFIX}/search`, search);
 };

@@ -2,26 +2,26 @@ import { DataTypes, Model, Optional, Sequelize, } from 'sequelize';
 
 import ModelName from './modelNames';
 
-interface IBookAttributes {
+interface IProductAttributes {
     id: number;
     authorId: number;
-    bookTitle: string;
+    productTitle: string;
     genre: string;
     isVerify: string;
 }
 
-interface IBookCreationAttributes extends Optional<IBookAttributes, 'id'> { }
+interface IProductCreationAttributes extends Optional<IProductAttributes, 'id'> { }
 
-export class Book extends Model<IBookAttributes, IBookCreationAttributes> implements IBookAttributes {
+export class Product extends Model<IProductAttributes, IProductCreationAttributes> implements IProductAttributes {
     declare id: number;
     authorId: number;
-    bookTitle: string;
+    productTitle: string;
     genre: string;
     declare isVerify: string;
 }
 
-export const BookFactory = (sequelize: Sequelize): typeof Book => {
-    Book.init({
+export const ProductFactory = (sequelize: Sequelize): typeof Product => {
+    Product.init({
         id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
@@ -31,7 +31,7 @@ export const BookFactory = (sequelize: Sequelize): typeof Book => {
             type: DataTypes.INTEGER,
             allowNull: false,
         },
-        bookTitle: {
+        productTitle: {
             type: DataTypes.STRING(140),
         },
         genre: {
@@ -43,16 +43,16 @@ export const BookFactory = (sequelize: Sequelize): typeof Book => {
         },
     }, {
         sequelize,
-        tableName: ModelName.BOOK,
+        tableName: ModelName.PRODUCT,
         indexes: [
             {
                 unique: true,
-                name: 'usique_bookTitle',
-                fields: [sequelize.fn('lower', sequelize.col('bookTitle'))],
+                name: 'productTitle',
+                fields: [sequelize.fn('lower', sequelize.col('productTitle'))],
             }
         ],
     }
     );
 
-    return Book;
+    return Product;
 };

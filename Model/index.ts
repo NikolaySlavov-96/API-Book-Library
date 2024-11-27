@@ -5,12 +5,12 @@ import { initNewConnection, } from '../config';
 const sequelize = initNewConnection();
 
 import { UserFactory, } from './_UserModel';
-import { BookStateFactory, } from './_BookStateModel';
-import { BookFactory, } from './_BookModel';
 import { AuthorFactory, } from './_AuthorModel';
 import { StateFactory, } from './_States';
 import { FileFactory, } from './_FileModel';
 import { SessionModelFactory, } from './_SessionModel';
+import { ProductFactory, } from './_ProductModel';
+import { ProductStatusFactory, } from './_ProductStatusModel';
 
 const db: any = {};
 
@@ -18,16 +18,16 @@ db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
 db.User = UserFactory(sequelize);
-db.Book = BookFactory(sequelize);
 db.Author = AuthorFactory(sequelize);
-db.BookState = BookStateFactory(sequelize);
 db.State = StateFactory(sequelize);
 db.File = FileFactory(sequelize);
 db.SessionModel = SessionModelFactory(sequelize);
+db.Product = ProductFactory(sequelize);
+db.ProductStatus = ProductStatusFactory(sequelize);
 
 // Association
-db.User.hasMany(db.BookState, { foreignKey: 'userId', });
-db.BookState.belongsTo(db.User, { foreignKey: 'userId', });
+db.User.hasMany(db.ProductStatus, { foreignKey: 'userId', });
+db.ProductStatus.belongsTo(db.User, { foreignKey: 'userId', });
 
 db.User.hasOne(db.SessionModel, {
     foreignKey: 'userId',
@@ -38,19 +38,19 @@ db.SessionModel.belongsTo(db.User, {
     foreignKey: 'userId',
 });
 
-db.Book.hasMany(db.File, {
-    foreignKey: 'bookId',
+db.Product.hasMany(db.File, {
+    foreignKey: 'productId',
 });
-db.File.belongsTo(db.Book, {
-    foreignKey: 'bookId',
+db.File.belongsTo(db.Product, {
+    foreignKey: 'productId',
 });
 
-db.BookState.belongsTo(db.State, { foreignKey: 'stateId', });
+db.ProductStatus.belongsTo(db.State, { foreignKey: 'statusId', });
 
-db.Book.belongsTo(db.Author, { foreignKey: 'authorId', });
-db.Author.hasMany(db.Book, { foreignKey: 'authorId', });
+db.Product.belongsTo(db.Author, { foreignKey: 'authorId', });
+db.Author.hasMany(db.Product, { foreignKey: 'authorId', });
 
-db.BookState.belongsTo(db.Book, { foreignKey: 'bookId', });
-db.Book.hasMany(db.BookState, { foreignKey: 'bookId', });
+db.ProductStatus.belongsTo(db.Product, { foreignKey: 'productId', });
+db.Product.hasMany(db.ProductStatus, { foreignKey: 'productId', });
 
 export default db;

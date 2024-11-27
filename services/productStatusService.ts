@@ -3,17 +3,21 @@ import { responseMapper, EMappedType, } from '../Helpers';
 import db from '../Model';
 const Op = db?.Sequelize?.Op;
 
-export const getAllDate = async ({ state, userId, offset, limit, filterOperator, searchContent, }) => {
+export const getAllStates = async () => {
+    return await db.State.findAll();
+};
+
+export const getAllDate = async ({ statusId, userId, offset, limit, filterOperator, searchContent, }) => {
     const queryOperator = Op[filterOperator];
     const hasSearchContent = !!searchContent;
 
     const query = {
-        where: { stateId: state, userId, },
+        where: { statusId, userId, },
         include: [
             {
-                model: db.Book,
+                model: db.Product,
                 required: true,
-                attributes: ['id', 'bookTitle', 'genre', 'isVerify', 'authorId'],
+                attributes: ['id', 'productTitle', 'genre', 'isVerify', 'authorId'],
                 include: [
                     {
                         model: db.File,
@@ -27,7 +31,7 @@ export const getAllDate = async ({ state, userId, offset, limit, filterOperator,
                 where: hasSearchContent ? {
                     [Op.or]: [
                         {
-                            bookTitle: { [queryOperator]: searchContent, },
+                            productTitle: { [queryOperator]: searchContent, },
                         },
                         {
                             genre: { [queryOperator]: searchContent, },
@@ -46,7 +50,7 @@ export const getAllDate = async ({ state, userId, offset, limit, filterOperator,
                 attributes: ['stateName'],
             }
         ],
-        attributes: ['id', 'stateId', 'isDelete'],
+        attributes: ['id', 'statusId', 'isDelete'],
         order: [['id', 'ASC']],
         offset,
         limit,
@@ -54,28 +58,28 @@ export const getAllDate = async ({ state, userId, offset, limit, filterOperator,
         nest: true,
     };
 
-    const result = await db.BookState.findAndCountAll(query);
+    const result = await db.ProductStatus.findAndCountAll(query);
 
     const mappedResponse = responseMapper(result, EMappedType.PRODUCT_STATE);
 
     return mappedResponse;
 };
 
-export const getInfoFromBookState = async (bookId, userId) => {
-    return await db.BookState.findOne({
-        where: { bookId, userId, isDelete: false, },
-        attributes: ['stateId'],
+export const getInfoFromProductStatus = async (productId, userId) => {
+    return await db.ProductStatus.findOne({
+        where: { productId, userId, isDelete: false, },
+        attributes: ['statusId'],
     });
 };
 
-export const addingNewBookState = async ({ userId, bookId, state, }) => {
-    const existingBook = await db.BookState.findOne({ where: { bookId, userId, isDelete: false, }, });
+export const addingNewProductStatus = async (userId, { productId, statusId, }) => {
+    const existingBook = await db.ProductStatus.findOne({ where: { productId, userId, isDelete: false, }, });
 
     if (existingBook) {
-        existingBook.stateId = state;
+        existingBook.statusId = statusId;
         return await existingBook.save();
     }
 
-    const result = (await db.BookState.create({ userId, bookId, stateId: state, }))?.dataValues;
+    const result = (await db.ProductStatus.create({ userId, productId, statusId, }))?.dataValues;
     return result;
 };

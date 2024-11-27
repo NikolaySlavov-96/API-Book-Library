@@ -1,8 +1,8 @@
 const _cacheKeys = {
-    ALL_BOOKS: 'all-books-',
-    BOOK_ID: 'book-id-',
-    BOOK_STATE_ID: 'book-state-id-',
+    ALL_PRODUCTS: 'all-products-',
     CHAT_ROOM: 'chatRoom',
+    PRODUCT_ID: 'product-id-',
+    PRODUCT_STATUS_ID: 'product-status-id-',
     SUPPORT_AGENT: 'supportAgent',
     USER_QUEUE: 'userQueue',
 };

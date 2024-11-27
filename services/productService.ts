@@ -25,7 +25,7 @@ export const getAllData = async ({ offset, limit, filterOperator, searchContent,
             attributes: ['id', 'src', 'uniqueName'],
         }],
         order: [['id', 'ASC']],
-        attributes: ['id', 'bookTitle', 'genre', 'isVerify'],
+        attributes: ['id', 'productTitle', 'genre', 'isVerify'],
         offset,
         limit,
         raw: true,
@@ -37,7 +37,7 @@ export const getAllData = async ({ offset, limit, filterOperator, searchContent,
     !!searchContent && (query.where = {
         [Op.or]: [
             {
-                bookTitle: { [queryOperator]: searchContent, },
+                productTitle: { [queryOperator]: searchContent, },
             },
             {
                 genre: { [queryOperator]: searchContent, },
@@ -45,7 +45,7 @@ export const getAllData = async ({ offset, limit, filterOperator, searchContent,
         ],
     });
 
-    const result = await db.Book.findAndCountAll(query);
+    const result = await db.Product.findAndCountAll(query);
 
     const mappedResponse = responseMapper(result, EMappedType.PRODUCT);
 
@@ -53,7 +53,7 @@ export const getAllData = async ({ offset, limit, filterOperator, searchContent,
 };
 
 export const getDataById = async (id) => {
-    const result = await db.Book.findByPk(id, {
+    const result = await db.Product.findByPk(id, {
         include: [
             {
                 model: db.Author,
@@ -75,8 +75,8 @@ export const getDataById = async (id) => {
     return mappedResponse;
 };
 
-export const create = async ({ author, productTitle: bookTitle, genre, }) => {
-    const existingBook = (await db.Book.findOne({ where: { bookTitle, }, }))?.dataValues;
+export const create = async ({ author, productTitle, genre, }) => {
+    const existingBook = (await db.Product.findOne({ where: { productTitle, }, }))?.dataValues;
     if (existingBook) {
         return updateMessage(MESSAGES.BOOK_ALREADY_EXIST, 403);
     }
@@ -91,15 +91,15 @@ export const create = async ({ author, productTitle: bookTitle, genre, }) => {
         isAuthor && (author = isAuthor.id);
     }
 
-    const create = (await db.Book.create({ bookTitle, authorId: author, genre, }))?.dataValues;
+    const create = (await db.Product.create({ productTitle, authorId: author, genre, }))?.dataValues;
     return create;
 };
 
-export const update = async ({ author, booktitle, id, }) => {
+export const update = async (id, { author, productTitle, }) => {
     const data: any = [] //await Book.findByPk(id);
 
     // data.authorName = author; // To Do Adding editing author name
-    data.bookTitle = booktitle;
+    data.productTitle = productTitle;
     const result = await data.save();
     return result;
 };
