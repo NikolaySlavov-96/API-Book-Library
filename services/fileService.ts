@@ -21,7 +21,7 @@ export const addingFile = async (deliverFile, body) => {
         realFileName,
         src,
         uniqueName: fileName,
-        bookId: fileId,
+        productId: fileId,
     });
 
     const pathName = createDirectoryPath(UPLOAD_DIRECTORY, fileName);

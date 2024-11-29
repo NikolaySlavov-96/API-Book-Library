@@ -73,11 +73,11 @@ export const getInfoFromProductStatus = async (productId, userId) => {
 };
 
 export const addingNewProductStatus = async (userId, { productId, statusId, }) => {
-    const existingBook = await db.ProductStatus.findOne({ where: { productId, userId, isDelete: false, }, });
+    const existingProduct = await db.ProductStatus.findOne({ where: { productId, userId, isDelete: false, }, });
 
-    if (existingBook) {
-        existingBook.statusId = statusId;
-        return await existingBook.save();
+    if (existingProduct) {
+        existingProduct.statusId = statusId;
+        return await existingProduct.save();
     }
 
     const result = (await db.ProductStatus.create({ userId, productId, statusId, }))?.dataValues;

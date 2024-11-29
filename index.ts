@@ -18,7 +18,7 @@ import { globalErrorHandling, } from './Helpers';
 import db from './Model';
 import { initEmitters, socketEvents, } from './Events';
 
-const { PORT, } = process.env;
+const { PORT, SOCKET_ADDRESS, } = process.env;
 
 start();
 const app = express();
@@ -34,7 +34,7 @@ async function start() {
 
     const initServer = server.createServer(app);
     const io = new SocketIOServer(initServer, {
-        path: '/bookHub',
+        path: SOCKET_ADDRESS,
         cors: {
             origin: '*',
         },

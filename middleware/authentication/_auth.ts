@@ -1,11 +1,15 @@
+import 'dotenv/config';
+
 import { NextFunction, Request, Response, } from '../../Types/expressType';
 
 import { updateMessage, verifyToken, } from '../../util';
 
 import { MESSAGES, RESPONSE_STATUS_CODE, } from '../../constants';
 
+const { HEADER_AUTHORIZATION_NAME, } = process.env;
+
 export default () => async (req: Request, res: Response, next: NextFunction) => {
-    const header = req.headers['book-id'];
+    const header = req.headers[HEADER_AUTHORIZATION_NAME];
     const token = Array.isArray(header) ? header[0] : header;
 
     if (token) {

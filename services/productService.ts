@@ -76,12 +76,12 @@ export const getDataById = async (id) => {
 };
 
 export const create = async ({ author, productTitle, genre, }) => {
-    const existingBook = (await db.Product.findOne({ where: { productTitle, }, }))?.dataValues;
-    if (existingBook) {
-        return updateMessage(MESSAGES.BOOK_ALREADY_EXIST, 403);
+    const existingProduct = (await db.Product.findOne({ where: { productTitle, }, }))?.dataValues;
+    if (existingProduct) {
+        return updateMessage(MESSAGES.PRODUCT_ALREADY_EXIST, 403);
     }
 
-    if (!existingBook) {
+    if (!existingProduct) {
         const isAuthor = (await db.Author.findOne({ where: { name: author, }, }))?.dataValues;
 
         if (!isAuthor) {

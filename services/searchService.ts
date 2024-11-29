@@ -2,16 +2,16 @@ import { EMappedType, responseMapper, } from '../Helpers';
 
 import db from '../Model';
 
-export const getBookByEmail = async ({ email, offset, limit, }) => {
+export const getProductsByEmail = async ({ email, offset, limit, }) => {
     const result = await db.User.findAndCountAll({
         include: [
             {
-                model: db.BookState,
-                attributes: ['id', 'bookId'],
+                model: db.ProductStatus,
+                attributes: ['id', 'productId'],
                 include: [
                     {
-                        model: db.Book,
-                        attributes: ['id', 'bookTitle', 'genre', 'isVerify', 'authorId'],
+                        model: db.Product,
+                        attributes: ['id', 'productTitle', 'genre', 'isVerify', 'authorId'],
                         include: [
                             {
                                 model: db.Author,

@@ -1,5 +1,5 @@
 This API can be used at the following address: https://api-books.slavo-v.dev
-with fundamental paths: /book/book and /auth/
+with fundamental paths: /product and /auth/
 
 This project is development of JS, and using NodeJS, ExpressJS and database PostgreSQL wtih ORM - Sequelize.
 
