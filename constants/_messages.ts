@@ -34,10 +34,9 @@ const messages: IMessageType = {
     TOKEN_DOES_NOT_EXIST: { message: 'Email does not exist!', messageCode: 'user-0021', },
     TOKEN_USER: { message: 'Token used!', messageCode: 'user-0022', },
 
-    // Book
-    BOOK_ALREADY_EXIST: { message: 'The book has already been added', messageCode: 'book-0001', },
-    // SUCCESSFULLY_ADDED_BOOK: { message: 'Successfully added book', messageCode: 'book-0002', },
-    SUCCESSFULLY_ADDED_BOOK_IN_COLLECTION: {
+    // Product
+    PRODUCT_ALREADY_EXIST: { message: 'The book has already been added', messageCode: 'book-0001', },
+    SUCCESSFULLY_ADDED_PRODUCT_IN_COLLECTION: {
         message: 'Successfully added book in your collection', messageCode: 'book-0003',
     },
     PLEASE_ADDED_FILE: { message: 'Please added file', messageCode: 'book-0004', },

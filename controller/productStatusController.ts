@@ -70,7 +70,7 @@ export const createProductStatus = async (req, res, next) => {
         await deleteCacheEntry(key);
 
         res.status(RESPONSE_STATUS_CODE.CREATED).json(
-            updateMessage(MESSAGES.SUCCESSFULLY_ADDED_BOOK_IN_COLLECTION).user
+            updateMessage(MESSAGES.SUCCESSFULLY_ADDED_PRODUCT_IN_COLLECTION).user
         );
     } catch (err) {
         next(err);

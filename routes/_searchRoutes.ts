@@ -5,7 +5,7 @@ const search = Router();
 import * as searchController from '../controller/searchController';
 
 search.get('/email',
-    searchController.viewUserBooksFromEmail
+    searchController.viewUserProductsFromEmail
 );
 
 export default search;
