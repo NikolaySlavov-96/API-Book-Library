@@ -21,6 +21,8 @@ import {
     initializeRoom,
     isRoomExist,
 } from '../services/support/chatRoomService';
+import { insertMessage, } from '../services/support/messageService';
+
 import { emitEventToSocket, } from './_SocketEmitters';
 
 import { notifySupportsOfNewUser, } from '../Helpers';
@@ -47,7 +49,7 @@ const WELCOME_ADMIN_TEXT = 'Welcome to Support Chat Admin!';
 
 const _socketEvents = (io) => {
     io.on('connection', async (socket) => {
-        const connectId = socket.id;
+        const connectId = socket.id as string;
         const token = socket?.handshake?.auth?.token;
 
         console.log(`User ${connectId} connected`);
@@ -219,12 +221,10 @@ const _socketEvents = (io) => {
                     socket.emit(ESendEvents.ERROR, updateMessage(MESSAGES.SELECTED_ROOM_NOT_FOUND).user);
                     return;
                 }
-                const messagePayload = {
-                    roomName: resultFromRoom.roomName,
-                    message: data.message,
-                    from: connectId,
-                };
-                emitEventToSocket(resultFromRoom.roomName, ESendEvents.SUPPORT_MESSAGE, messagePayload);
+
+                const result = await insertMessage({ resultFromRoom, data, connectId, });
+
+                emitEventToSocket(resultFromRoom.roomName, ESendEvents.SUPPORT_MESSAGE, result);
             } catch (err) {
                 socket.emit(ESendEvents.ERROR, updateMessage(MESSAGES.ERROR_FROM_SERVER).user);
                 console.log('SocketRoute Event ∞ SUPPORT_MESSAGE', err);
