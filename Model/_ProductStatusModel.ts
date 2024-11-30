@@ -39,7 +39,6 @@ export const ProductStatusFactory = (sequelize: Sequelize): typeof ProductStatus
     }, {
         sequelize,
         tableName: ModelName.PRODUCT_STATUS,
-        timestamps: true,
     });
 
     return ProductStatus;

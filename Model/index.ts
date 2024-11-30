@@ -1,5 +1,9 @@
 import { Sequelize, } from 'sequelize';
 
+import * as ModelsInterfaces from './ModelsInterfaces';
+
+export { ModelsInterfaces, };
+
 import { initNewConnection, } from '../config';
 
 const sequelize = initNewConnection();
@@ -11,6 +15,7 @@ import { FileFactory, } from './_FileModel';
 import { SessionModelFactory, } from './_SessionModel';
 import { ProductFactory, } from './_ProductModel';
 import { ProductStatusFactory, } from './_ProductStatusModel';
+import { MessageFactory, } from './_MessageModel';
 
 const db: any = {};
 
@@ -24,6 +29,7 @@ db.File = FileFactory(sequelize);
 db.SessionModel = SessionModelFactory(sequelize);
 db.Product = ProductFactory(sequelize);
 db.ProductStatus = ProductStatusFactory(sequelize);
+db.Message = MessageFactory(sequelize);
 
 // Association
 db.User.hasMany(db.ProductStatus, { foreignKey: 'userId', });
@@ -52,5 +58,7 @@ db.Author.hasMany(db.Product, { foreignKey: 'authorId', });
 
 db.ProductStatus.belongsTo(db.Product, { foreignKey: 'productId', });
 db.Product.hasMany(db.ProductStatus, { foreignKey: 'productId', });
+
+db.SessionModel.hasMany(db.Message, { foreignKey: 'senderId', sourceKey: 'connectId', });
 
 export default db;

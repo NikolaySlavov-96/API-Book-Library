@@ -31,7 +31,7 @@ export const SessionModelFactory = (sequelize: Sequelize): typeof SessionModel =
         },
         connectId: {
             type: DataTypes.STRING(50),
-            allowNull: true,
+            unique: true,
         },
         userId: {
             type: DataTypes.INTEGER,
