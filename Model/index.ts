@@ -16,6 +16,7 @@ import { SessionModelFactory, } from './_SessionModel';
 import { ProductFactory, } from './_ProductModel';
 import { ProductStatusFactory, } from './_ProductStatusModel';
 import { MessageFactory, } from './_MessageModel';
+import { MessageStatusFactory, } from './_MessageStatus';
 
 const db: any = {};
 
@@ -30,6 +31,7 @@ db.SessionModel = SessionModelFactory(sequelize);
 db.Product = ProductFactory(sequelize);
 db.ProductStatus = ProductStatusFactory(sequelize);
 db.Message = MessageFactory(sequelize);
+db.MessageStatus = MessageStatusFactory(sequelize);
 
 // Association
 db.User.hasMany(db.ProductStatus, { foreignKey: 'userId', });
@@ -60,5 +62,6 @@ db.ProductStatus.belongsTo(db.Product, { foreignKey: 'productId', });
 db.Product.hasMany(db.ProductStatus, { foreignKey: 'productId', });
 
 db.SessionModel.hasMany(db.Message, { foreignKey: 'senderId', sourceKey: 'connectId', });
+db.MessageStatus.belongsTo(db.Message, { foreignKey: 'messageId', });
 
 export default db;
