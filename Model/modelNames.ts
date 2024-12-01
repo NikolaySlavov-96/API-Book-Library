@@ -1,6 +1,7 @@
 const ModelName = {
     AUTHOR: 'author',
     FILE: 'file',
+    MESSAGE_STATUS: 'messageStatus',
     MESSAGE: 'message',
     PRODUCT_STATUS: 'productStatus',
     PRODUCT: 'product',
