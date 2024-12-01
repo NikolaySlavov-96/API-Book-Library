@@ -215,7 +215,6 @@ const _socketEvents = (io) => {
             }
 
             try {
-
                 const resultFromRoom = await isRoomExist({ roomName: data.roomName, });
                 if (!resultFromRoom?.roomName) {
                     socket.emit(ESendEvents.ERROR, updateMessage(MESSAGES.SELECTED_ROOM_NOT_FOUND).user);
@@ -223,8 +222,7 @@ const _socketEvents = (io) => {
                 }
 
                 const result = await insertMessage({ resultFromRoom, data, connectId, });
-
-                emitEventToSocket(resultFromRoom.roomName, ESendEvents.SUPPORT_MESSAGE, result);
+                emitEventToSocket(resultFromRoom.roomName, ESendEvents.SUPPORT_MESSAGE, { ...result, 'status': null, });
             } catch (err) {
                 socket.emit(ESendEvents.ERROR, updateMessage(MESSAGES.ERROR_FROM_SERVER).user);
                 console.log('SocketRoute Event ∞ SUPPORT_MESSAGE', err);
