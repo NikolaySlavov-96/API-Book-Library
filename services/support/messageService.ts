@@ -18,5 +18,5 @@ export const insertMessage = async (inData: IInsertMessage): Promise<ModelsInter
 
     const resultInsert = await db.Message.create(messagePayload);
 
-    return resultInsert;
+    return resultInsert?.dataValues;
 };
