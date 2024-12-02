@@ -2,20 +2,12 @@ import { DataTypes, Model, Optional, Sequelize, } from 'sequelize';
 
 import ModelName from './modelNames';
 
-interface IUserAttributes {
-    id: number;
-    email: string;
-    isDelete: boolean;
-    isVerify: boolean;
-    password: string;
-    year: number;
-    role: string;
-}
+import { IUserAttributes, } from './ModelsInterfaces';
 
 interface IUserCreationAttributes extends Optional<IUserAttributes, 'id'> { }
 
 
-export class User extends Model<IUserAttributes, IUserCreationAttributes> implements IUserAttributes {
+class User extends Model<IUserAttributes, IUserCreationAttributes> implements IUserAttributes {
     declare id: number;
     declare email: string;
     declare isDelete: boolean;

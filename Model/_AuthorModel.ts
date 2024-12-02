@@ -2,15 +2,9 @@ import { DataTypes, Model, Sequelize, } from 'sequelize';
 
 import ModelName from './modelNames';
 
-interface IAuthorAttributes {
-    id: number;
-    name: string;
-    image: string;
-    genre: string;
-    isVerify: boolean;
-}
+import { IAuthorAttributes, } from './ModelsInterfaces';
 
-export class Author extends Model<IAuthorAttributes> implements IAuthorAttributes {
+class Author extends Model<IAuthorAttributes> implements IAuthorAttributes {
     declare id: number;
     name!: string;
     image: string;

@@ -1,16 +1,9 @@
-import { Document, Schema, model, } from 'mongoose';
+import { Schema, model, } from 'mongoose';
 
 import ModelName from './modelNames';
 
-interface IVerifyToken extends Document {
-    token: string;
-    address: string;
-    expireAt: number;
-    unit: string;
-    status: boolean;
-    createdAt: Date;
-    updatedAt: Date;
-}
+import { IVerifyToken, } from './ModelsInterfaces';
+
 
 const VerifyTokenSchema = new Schema<IVerifyToken>({
     token: { type: String, },

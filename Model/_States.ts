@@ -2,16 +2,11 @@ import { DataTypes, Model, Optional, Sequelize, } from 'sequelize';
 
 import ModelName from './modelNames';
 
-interface IStateAttributes {
-    id: number;
-    stateName: string;
-    symbol: string;
-}
+import { IStateAttributes, } from './ModelsInterfaces';
 
 interface IStateCreationAttributes extends Optional<IStateAttributes, 'id'> { }
 
-
-export class States extends Model<IStateAttributes, IStateCreationAttributes> implements IStateAttributes {
+class States extends Model<IStateAttributes, IStateCreationAttributes> implements IStateAttributes {
     declare id: number;
     stateName: string;
     symbol: string;

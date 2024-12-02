@@ -2,9 +2,8 @@ import { Schema, model, } from 'mongoose';
 
 import ModelName from './modelNames';
 
-interface IUserData {
-    userAddress: string;
-}
+import { IUserData, } from './ModelsInterfaces';
+
 
 const userDataSchema = new Schema<IUserData>({
     userAddress: { type: String, },

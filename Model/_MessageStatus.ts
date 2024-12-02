@@ -4,7 +4,7 @@ import ModelName from './modelNames';
 
 import { IMessageStatusAttributes, } from './ModelsInterfaces';
 
-export class MessageStatus extends Model<IMessageStatusAttributes> implements IMessageStatusAttributes {
+class MessageStatus extends Model<IMessageStatusAttributes> implements IMessageStatusAttributes {
     declare messageId: string;
     declare status: string;
 }

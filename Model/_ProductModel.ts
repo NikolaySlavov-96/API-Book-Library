@@ -2,17 +2,11 @@ import { DataTypes, Model, Optional, Sequelize, } from 'sequelize';
 
 import ModelName from './modelNames';
 
-interface IProductAttributes {
-    id: number;
-    authorId: number;
-    productTitle: string;
-    genre: string;
-    isVerify: string;
-}
+import { IProductAttributes, } from './ModelsInterfaces';
 
 interface IProductCreationAttributes extends Optional<IProductAttributes, 'id'> { }
 
-export class Product extends Model<IProductAttributes, IProductCreationAttributes> implements IProductAttributes {
+class Product extends Model<IProductAttributes, IProductCreationAttributes> implements IProductAttributes {
     declare id: number;
     authorId: number;
     productTitle: string;

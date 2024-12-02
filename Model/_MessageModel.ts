@@ -6,7 +6,7 @@ import { IMessageAttributes, } from './ModelsInterfaces';
 
 interface IMessageCreationAttributes extends Optional<IMessageAttributes, 'id'> { }
 
-export class Message extends Model<IMessageAttributes, IMessageCreationAttributes> implements IMessageAttributes {
+class Message extends Model<IMessageAttributes, IMessageCreationAttributes> implements IMessageAttributes {
     declare id: number;
     declare roomName: string;
     declare senderId: string;

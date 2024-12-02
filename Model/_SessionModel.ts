@@ -2,18 +2,12 @@ import { DataTypes, Model, Optional, Sequelize, } from 'sequelize';
 
 import ModelName from './modelNames';
 
-interface ISessionModelAttributes {
-    id: number;
-    connectId: string;
-    userId: number;
-    connectedAt: string;
-    disconnectedAt: string;
-}
+import { ISessionModelAttributes, } from './ModelsInterfaces';
 
 interface ISessionModelCreationAttributes extends Optional<ISessionModelAttributes, 'id'> { }
 
 
-export class SessionModel extends Model<ISessionModelAttributes, ISessionModelCreationAttributes>
+class SessionModel extends Model<ISessionModelAttributes, ISessionModelCreationAttributes>
     implements ISessionModelAttributes {
     declare id: number;
     declare connectId: string;
