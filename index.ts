@@ -38,6 +38,7 @@ async function start() {
         cors: {
             origin: '*',
         },
+        transports: ['websocket'],
     });
 
     io.adapter(createAdapter(pubClient, subClient));
