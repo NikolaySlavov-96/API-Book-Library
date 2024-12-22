@@ -9,6 +9,7 @@ const messages: IMessageType = {
     // Global
     MESSAGE_AT_ERROR_FROM_SERVER: { message: 'Something went wrong!', messageCode: 'global-0001', },
     ERROR_FROM_SERVER: { message: 'Something went wrong!', messageCode: 'global-0001', },
+    PERMISSION: { message: 'You don\'t have permission', messageCode: 'global-002', },
 
     // User
     INVALID_TOKEN: { message: 'Invalid Token!', messageCode: 'user-0001', },

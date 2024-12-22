@@ -63,6 +63,11 @@ export const createProduct = async (req, res, next) => {
             res.status(RESPONSE_STATUS_CODE.UNAUTHORIZED).json(updateMessage(MESSAGES.ACCOUNT_IS_NOT_VERIFY).user);
             return;
         }
+        // TODO: Extract the "role" property into an enumeration for better type safety and maintainability
+        if (checkAccount?.role !== 'support') {
+            res.status(RESPONSE_STATUS_CODE.UNAUTHORIZED).json(updateMessage(MESSAGES.PERMISSION).user);
+            return;
+        }
 
         const result = await productService.create(req.body);
 
