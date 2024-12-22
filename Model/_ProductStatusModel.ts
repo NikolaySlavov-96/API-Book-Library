@@ -2,16 +2,11 @@ import { DataTypes, Model, Optional, Sequelize, } from 'sequelize';
 
 import ModelName from './modelNames';
 
-interface IProductStatusAttributes {
-    userId: number;
-    productId: number;
-    statusId: number;
-    isDelete: boolean;
-}
+import { IProductStatusAttributes, } from './ModelsInterfaces';
 
 interface IProductStatusCreationAttributes extends Optional<IProductStatusAttributes, 'statusId'> { }
 // eslint-disable-next-line max-len
-export class ProductStatus extends Model<IProductStatusAttributes, IProductStatusCreationAttributes> implements IProductStatusAttributes {
+class ProductStatus extends Model<IProductStatusAttributes, IProductStatusCreationAttributes> implements IProductStatusAttributes {
     userId: number;
     productId: number;
     declare statusId: number;
@@ -39,7 +34,6 @@ export const ProductStatusFactory = (sequelize: Sequelize): typeof ProductStatus
     }, {
         sequelize,
         tableName: ModelName.PRODUCT_STATUS,
-        timestamps: true,
     });
 
     return ProductStatus;

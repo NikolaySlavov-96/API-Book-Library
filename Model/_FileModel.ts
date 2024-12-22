@@ -2,17 +2,11 @@ import { DataTypes, Model, Optional, Sequelize, } from 'sequelize';
 
 import ModelName from './modelNames';
 
-interface IFileAttributes {
-    id: number;
-    extension: string;
-    realFileName: string;
-    src: string; // Desire user name
-    uniqueName: string;
-}
+import { IFileAttributes, } from './ModelsInterfaces';
 
 interface IFileCreationAttributes extends Optional<IFileAttributes, 'id'> { }
 
-export class File extends Model<IFileAttributes, IFileCreationAttributes> implements IFileAttributes {
+class File extends Model<IFileAttributes, IFileCreationAttributes> implements IFileAttributes {
     declare id: number;
     extension: string;
     realFileName: string;

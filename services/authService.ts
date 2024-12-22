@@ -65,8 +65,6 @@ export const login = async (body) => {
 };
 
 export const logout = async (data) => {
-    await registerNewVisitor('');
-
     if (data?.connectId) {
         const currentTime = generateDateForDB();
         await db.SessionModel.update({ disconnectedAt: currentTime, }, {
