@@ -44,7 +44,17 @@ interface IUserConnect {
     state: string | null;
 }
 
-const WELCOME_USER_TEXT = 'Welcome to Support Chat!';
+interface IMessageStatus {
+    roomName: string;
+    status: 'deliver' | 'read';
+}
+
+interface ISupportActivity {
+    roomName: string;
+    connectId: string;
+}
+
+const WELCOME_USER_TEXT = 'Welcome to Support Chat! A consultant will see you shortly.';
 const WELCOME_ADMIN_TEXT = 'Welcome to Support Chat Admin!';
 
 const _socketEvents = (io) => {
@@ -226,6 +236,33 @@ const _socketEvents = (io) => {
             } catch (err) {
                 socket.emit(ESendEvents.ERROR, updateMessage(MESSAGES.ERROR_FROM_SERVER).user);
                 console.log('SocketRoute Event ∞ SUPPORT_MESSAGE', err);
+            }
+        });
+
+        socket.on(EReceiveEvents.SUPPORT_MESSAGE_STATUS, ({ roomName, status }: IMessageStatus) => {
+            //     const room = UsersState.users.find(user => user.id === id)?.room;
+            //     if (room) {
+            //         socket.broadcast.to(room).emit('activity', name);
+            //     }
+        });
+
+        socket.on(EReceiveEvents.SUPPORT_ACTIVITY, async ({ roomName, connectId, }: ISupportActivity) => {
+            if (!isString(roomName)) {
+                socket.emit(ESendEvents.ERROR, updateMessage(MESSAGES.INCORRECT_DATA).user);
+                return;
+            }
+
+            try {
+                const resultFromRoom = await isRoomExist({ roomName, });
+                if (!resultFromRoom?.roomName) {
+                    socket.emit(ESendEvents.ERROR, updateMessage(MESSAGES.SELECTED_ROOM_NOT_FOUND).user);
+                    return;
+                }
+
+                emitEventToSocket(resultFromRoom.roomName, ESendEvents.SUPPORT_ACTIVITY, { connectId, });
+            } catch (err) {
+                socket.emit(ESendEvents.ERROR, updateMessage(MESSAGES.ERROR_FROM_SERVER).user);
+                console.log('SocketRoute Event ∞ SUPPORT_ACTIVITY', err);
             }
         });
 
