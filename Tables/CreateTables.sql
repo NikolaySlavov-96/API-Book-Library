@@ -34,7 +34,7 @@ BEGIN
         IF authorId IS NULL THEN
             INSERT INTO authors (name) VALUES (v_authorName) RETURNING id INTO authorId;
         END IF;
-		SELECT id INTO productId FROM products WHERE productTitle = v_productTitle LIMIT 1;
+		SELECT id INTO productId FROM products WHERE LOWER(productTitle) = LOWER(v_productTitle) LIMIT 1;
 		IF productId IS NULL THEN
 			INSERT INTO products (productTitle, authorId) VALUES (v_productTitle, authorId);
 		END IF;
