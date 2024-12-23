@@ -34,15 +34,12 @@ BEGIN
         IF authorId IS NULL THEN
             INSERT INTO authors (name) VALUES (v_authorName) RETURNING id INTO authorId;
         END IF;
-
 		SELECT id INTO productId FROM products WHERE productTitle = v_productTitle LIMIT 1;
 		IF productId IS NULL THEN
 			INSERT INTO products (productTitle, authorId) VALUES (v_productTitle, authorId);
 		END IF;
     END LOOP;
-
 	DROP TABLE IF EXISTS productAuthorPairs;
-
 END $$;
 
 -- BOOKS
@@ -193,7 +190,7 @@ VALUES (
         'Клейтън М.Кристенсен'
     ),
     (
-        'Elon Musk'
+        'Elon Musk',
         'Walter Isaacson'
     ),
     (
@@ -232,10 +229,7 @@ VALUES (
         'Мохамед Али - Аз съм най-великият',
         'Мохамед Али, Ричард Дърам'
     ),
-    (
-        'Сурова Пустош',
-        'Крис Хамър'
-    ),
+    ('Сурова Пустош', 'Крис Хамър'),
     (
         'Огледалния Човек',
         'Ларш Кеплер'
@@ -261,5 +255,6 @@ VALUES (
         'Джани Родари'
     ),
     (
+        'Димитър Бербатов, По моя начин',
         'Димитър Бербатов'
     );
