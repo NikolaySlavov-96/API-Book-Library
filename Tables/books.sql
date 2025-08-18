@@ -678,4 +678,132 @@ VALUES (
     (
         'Митър за Сизиф',
         'Албер Камю'
-    );
+    ),
+    ('Изворът', 'Айн Ранд'),
+    (
+        'When You\'re Ready, This Is How You Heal',
+        'Brianna Wiest'
+    ),
+    (
+        'The Things You Can See Only When You Slow Down',
+        'Haemin Sunim'
+    ),
+    (
+        'The Art of Laziness: Overcome Procrastination & Improve Your Productivity',
+        'Library Mindset'
+    ),
+    (
+        'The 80/20 Principle: The Secret to Achieving More with Less',
+        'Richard Koch'
+    ),
+    (
+        'Hyperfocus: How to Work Less to Achieve More',
+        'Крис Бейли'
+    ),
+    (
+        'Win Your Inner Battles: Defeat The Enemy Within and Live With Purpose',
+        ' Darius Foroux'
+    ),
+    (
+        'Човекът в търсене на смисъл' 'Виктор Франкъл'
+    ),
+    (
+        'You Become What You think: Insights to Level Up Your Happiness, Personal Growth, Relationships, and Mental Health',
+        'Shubham Kumar Singh'
+    ),
+    (
+        'Don\'t Believe Everything You Think: Why Your Thinking Is The Beginning & End Of Suffering (Beyond Suffering)',
+        'Джозеф Нгуиен'
+    ),
+    ('Към себе си', 'Марк Аврелий'),
+    (
+        'Vitamin Gr: Attract Miracles Through Gratitude',
+        'Jignesh Padhhiyar'
+    ),
+    (
+        'How to Talk to Anyone',
+        'Leil Lowndes'
+    ),
+    (
+        'Богат татко, беден татко',
+        'Робърт Т. Кийосаки'
+    ),
+    (
+        'Атомни навици',
+        'Джеймс Клиър'
+    ),
+    (
+        '101 Nights of Grrreat Sex',
+        'Laura Corn'
+    ),
+    (
+        '48-те закона на властта',
+        'Робърт Грийн'
+    ),
+    (
+        'The 5 AM Club',
+        'Робин Шарма'
+    ),
+    (
+        'Силата на навиците',
+        'Чарлз Дъхиг'
+    ),
+    (
+        'Петте езика на любовта',
+        'Гари Чапмън'
+    ),
+    (
+        'Седемте навика на високоефективните хора',
+        'Стивън Кови'
+    ),
+    (
+        '12 Rules for Life',
+        'Джордан Питърсън'
+    ),
+    (
+        'Make Your Bed',
+        ' Уилям Х. Макрейвън'
+    ),
+    (
+        'The Psychology of Money: Timeless lessons on wealth, greed, and happiness',
+        'Morgan Housel'
+    ),
+    (
+        'Силата на Настоящето',
+        'Екхарт Толе'
+    ),
+    (
+        'The 5 Second Rule: Transform your Life, Work, and Confidence with Everyday Courage',
+        'Mel Robbins'
+    ),
+    (
+        'Act Like a Lady, Think Like a Man',
+        'Steve Harvey'
+    ),
+    (
+        'Never Get a "Real" Job',
+        'Скот Гербер'
+    ),
+    (
+        '4-часовото тяло',
+        'Тим Ферис'
+    ),
+    (
+        'Мисленето (Thinking, Fast and Slow)',
+        'Даниел Канеман'
+    ),
+    ('Нова Земя', 'Екхарт Толе'),
+    (
+        'Sapiens. Кратка история на човечеството',
+        'Ювал Ноа Харари'
+    ),
+    ('Homo Deus', 'Ювал Харари'),
+    (
+        'What If?: Serious Scientific Answers to Absurd Hypothetical',
+        'Randall Munroe'
+    ),
+    (
+        'The Subtle Art of Not Giving',
+        'Марк Менсън'
+    ),
+    ();
