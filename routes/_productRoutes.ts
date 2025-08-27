@@ -29,14 +29,15 @@ product.get('/:id/status',
 // Get all product By specific status
 product.get('/status/:statusId', isAuthenticated(), productStatusController.getAllProductsByStatus);
 
-product.post('/',
-    isAuthenticated(),
-    body('productTitle').isLength({ min: 2, }).withMessage(ROUTING_MESSAGES.PRODUCT_TITLE_REQUIRED),
-    body('author').isLength({ min: 2, }).withMessage(ROUTING_MESSAGES.AUTHOR_REQUIRED),
-    body('genre').isLength({ min: 2, }).withMessage(ROUTING_MESSAGES.PRODUCT_GENRE),
-    expressValidator,
-    productController.createProduct
-);
+// product.post('/',
+//     isAuthenticated(),
+//     body('productTitle').isLength({ min: 2, }).withMessage(ROUTING_MESSAGES.PRODUCT_TITLE_REQUIRED),
+//     body('author').isLength({ min: 2, }).withMessage(ROUTING_MESSAGES.AUTHOR_REQUIRED),
+//     body('genre').isLength({ min: 2, }).withMessage(ROUTING_MESSAGES.PRODUCT_GENRE),
+//     expressValidator,
+//     productController.createProduct
+// );
+
 product.post('/status/',
     isAuthenticated(),
     body('productId').isLength({ min: 1, }).withMessage(ROUTING_MESSAGES.PRODUCT_ID_IS_REQUIRED),
@@ -45,18 +46,18 @@ product.post('/status/',
     productStatusController.createProductStatus
 );
 
-product.post('/addImage',
-    isAuthenticated(),
-    body('src').isLength({ min: 2, max: 145, }).withMessage(ROUTING_MESSAGES.FILE_NAME),
-    body('fileId').isNumeric().withMessage(ROUTING_MESSAGES.PRODUCT_FIELD_ID),
-    expressValidator,
-    productController.addedImageOnProduct
-);
+// product.post('/addImage',
+//     isAuthenticated(),
+//     body('src').isLength({ min: 2, max: 145, }).withMessage(ROUTING_MESSAGES.FILE_NAME),
+//     body('fileId').isNumeric().withMessage(ROUTING_MESSAGES.PRODUCT_FIELD_ID),
+//     expressValidator,
+//     productController.addedImageOnProduct
+// );
 
-product.delete('/removeImage/:id',
-    isAuthenticated(),
-    productController.removeImageOnProduct
-);
+// product.delete('/removeImage/:id',
+//     isAuthenticated(),
+//     productController.removeImageOnProduct
+// );
 
 // product.put('/:id',
 //     isAuthenticated(),
