@@ -18,7 +18,7 @@ import { globalErrorHandling, } from './Helpers';
 import db from './Model';
 import { initEmitters, socketEvents, } from './Events';
 
-const { PORT, SOCKET_ADDRESS, } = process.env;
+const { APP_PORT, SOCKET_ADDRESS, } = process.env;
 
 start();
 const app = express();
@@ -58,5 +58,5 @@ async function start() {
 
     app.use(globalErrorHandling());
 
-    initServer.listen(PORT, () => console.log('Application works on port ~: ', PORT));
+    initServer.listen(APP_PORT, () => console.log('Application works on port ~: ', APP_PORT));
 }
