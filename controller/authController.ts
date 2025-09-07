@@ -1,7 +1,8 @@
-import { RESPONSE_STATUS_CODE, } from '../constants';
+import { EMAIL, RESPONSE_STATUS_CODE, } from '../constants';
 
 import * as authService from '../services/authService';
 import * as tokenService from '../services/tokenService';
+import verifyAccount from '../services/mailService';
 
 export const createUser = async (req, res, next) => {
     try {
@@ -14,8 +15,8 @@ export const createUser = async (req, res, next) => {
             return;
         }
 
-        // const emailData = [{ type: EMAIL.REGISTER_CONFIRM, }];
-        // verifyAccount({ email: req.body.email, }, emailData);
+        const emailData = [{ type: EMAIL.REGISTER_CONFIRM, }];
+        verifyAccount({ email: req.body.email, }, emailData);
 
         res.status(201).json(result.user);
     } catch (err) {
