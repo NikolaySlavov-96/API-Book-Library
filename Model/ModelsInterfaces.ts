@@ -32,6 +32,12 @@ export interface IProductStatusAttributes {
     isDelete: boolean;
 }
 
+export interface IProductAuthorAttributes {
+    id: number;
+    productId: number;
+    authorId: number;
+}
+
 export interface ISessionModelAttributes {
     id: number;
     connectId: string;
