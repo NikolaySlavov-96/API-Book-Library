@@ -8,7 +8,6 @@ interface IProductCreationAttributes extends Optional<IProductAttributes, 'id'> 
 
 class Product extends Model<IProductAttributes, IProductCreationAttributes> implements IProductAttributes {
     declare id: number;
-    authorId: number;
     productTitle: string;
     genre: string;
     declare isVerify: string;
@@ -20,10 +19,6 @@ export const ProductFactory = (sequelize: Sequelize): typeof Product => {
             type: DataTypes.INTEGER,
             primaryKey: true,
             autoIncrement: true,
-        },
-        authorId: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
         },
         productTitle: {
             type: DataTypes.STRING(140),

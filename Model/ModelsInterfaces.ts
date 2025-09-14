@@ -19,7 +19,6 @@ export interface IFileAttributes {
 
 export interface IProductAttributes {
     id: number;
-    authorId: number;
     productTitle: string;
     genre: string;
     isVerify: string;
