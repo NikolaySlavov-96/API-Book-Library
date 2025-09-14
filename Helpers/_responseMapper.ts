@@ -33,12 +33,12 @@ const _responseMapper = (result, type: _EMappedType) => {
     };
 
     if (type === _EMappedType.PRODUCT) {
-        mappedResult.rows = result.rows.map((b) => productModel(b));
+        mappedResult.rows = result.rows.map((b) => productModel(b.toJSON()));
         return mappedResult;
     }
 
     if (type === _EMappedType.PRODUCT_SEARCH) {
-        mappedResult.rows = result.rows.map((bsh) => productSearchModel(bsh));
+        mappedResult.rows = result.rows.map((bsh) => productSearchModel(bsh.toJSON()));
         return mappedResult;
     }
 

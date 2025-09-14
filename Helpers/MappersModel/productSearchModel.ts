@@ -3,7 +3,8 @@ import userModel from './userModel';
 
 const productSearchModel = (data) => {
     const updateUser = userModel(data);
-    const updateProduct = productModel(data.ProductStatuses.Product);
+    // TODO: Nikolay -> Verify
+    const updateProduct = productModel(data.ProductStatuses[0].Product);
 
     return {
         ...updateUser,

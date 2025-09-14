@@ -13,30 +13,23 @@ const templates = {
 export default async (email, condition, subject, data) => {
 
     const mailOptions = {
-        Messages: [
+        from: {
+            name: 'Book Library',
+        },
+        to: [
             {
-                From: {
-                    Email: process.env.MAILJET_EMAIL,
-                    Name: 'Book Library',
-                },
-                To: [
-                    {
-                        Email: email,
-                        Name: 'passenger 1',
-                    }
-                ],
-                Subject: subject,
-                TextPart: '',
-                HTMLPart: templates[condition](data),
+                email: email,
+                name: '',
             }
         ],
+        subject,
+        text: '',
+        html: templates[condition](data),
     };
 
     try {
-        const transport = await emailConfig();
-        await transport
-            .post('send', { version: 'v3.1', })
-            .request(mailOptions);
+        const sendEmail = emailConfig();
+        await sendEmail(mailOptions);
 
     } catch (error) {
         console.log(error);

@@ -3,6 +3,7 @@ const ModelName = {
     FILE: 'file',
     MESSAGE_STATUS: 'messageStatus',
     MESSAGE: 'message',
+    PRODUCT_AUTHOR: 'productAuthor',
     PRODUCT_STATUS: 'productStatus',
     PRODUCT: 'product',
     SESSION: 'session',

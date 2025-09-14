@@ -11,10 +11,12 @@ export const getProductsByEmail = async ({ email, offset, limit, }) => {
                 include: [
                     {
                         model: db.Product,
-                        attributes: ['id', 'productTitle', 'genre', 'isVerify', 'authorId'],
+                        attributes: ['id', 'productTitle', 'genre', 'isVerify'],
+                        as: 'Product',
                         include: [
                             {
                                 model: db.Author,
+                                as: 'authors',
                                 attributes: ['name', 'image', 'genre', 'isVerify'],
                             },
                             {
@@ -29,10 +31,9 @@ export const getProductsByEmail = async ({ email, offset, limit, }) => {
         where: { email, },
         attributes: ['id', 'email', 'year', 'isVerify'],
         order: [['id', 'ASC']],
+        distinct: true,
         offset,
         limit,
-        raw: true,
-        nest: true,
     });
 
     const mappedResponse = responseMapper(result, EMappedType.PRODUCT_SEARCH);
