@@ -19,7 +19,6 @@ export interface IFileAttributes {
 
 export interface IProductAttributes {
     id: number;
-    authorId: number;
     productTitle: string;
     genre: string;
     isVerify: string;
@@ -30,6 +29,12 @@ export interface IProductStatusAttributes {
     productId: number;
     statusId: number;
     isDelete: boolean;
+}
+
+export interface IProductAuthorAttributes {
+    id: number;
+    productId: number;
+    authorId: number;
 }
 
 export interface ISessionModelAttributes {

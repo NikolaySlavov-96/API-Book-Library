@@ -15,6 +15,7 @@ export const getAllData = async ({ offset, limit, filterOperator, searchContent,
         include: [{
             model: db.Author,
             required: false,
+            as: 'authors',
             attributes: ATTRIBUTES,
             // where: searchContent ? {
             //     name: { [queryOperator]: searchContent, },
@@ -28,8 +29,7 @@ export const getAllData = async ({ offset, limit, filterOperator, searchContent,
         attributes: ['id', 'productTitle', 'genre', 'isVerify'],
         offset,
         limit,
-        raw: true,
-        nest: true,
+        distinct: true,
         where: {},
     };
 
@@ -52,11 +52,12 @@ export const getAllData = async ({ offset, limit, filterOperator, searchContent,
     return mappedResponse;
 };
 
-export const getDataById = async (id) => {
+export const getDataById = async (id: number) => {
     const result = await db.Product.findByPk(id, {
         include: [
             {
                 model: db.Author,
+                as: 'authors',
                 attributes: ATTRIBUTES,
                 required: false,
             },
@@ -66,8 +67,6 @@ export const getDataById = async (id) => {
                 attributes: ['id', 'src', 'uniqueName'],
             }
         ],
-        raw: true,
-        nest: true,
     });
 
     const mappedResponse = mappedSingleObject(result, EMappedType.PRODUCT);
@@ -75,23 +74,44 @@ export const getDataById = async (id) => {
     return mappedResponse;
 };
 
+const checkAndInsertAuthors = async (authors: string): Promise<number[]> => {
+    const authorsIds = [];
+    const authorsName = authors.split(' - ');
+
+    for (const authorName of authorsName) {
+        const isAuthor = (await db.Author.findOne({ where: { name: authorName, }, }))?.dataValues;
+        if (!isAuthor) {
+            const author = (await db.Author.create({ name: authorName, }))?.dataValues;
+            authorsIds.push(author.id);
+            continue;
+        }
+        authorsIds.push(isAuthor.id);
+    }
+    return authorsIds;
+};
+
+const insertProductAuthors = async (productId: number, authorsId: number[]): Promise<void> => {
+    for (const authorId of authorsId) {
+        await db.ProductAuthor.create({
+            productId,
+            authorId,
+        });
+    }
+};
+
+
 export const create = async ({ author, productTitle, genre, }) => {
     const existingProduct = (await db.Product.findOne({ where: { productTitle, }, }))?.dataValues;
     if (existingProduct) {
         return updateMessage(MESSAGES.PRODUCT_ALREADY_EXIST, 403);
     }
 
-    if (!existingProduct) {
-        const isAuthor = (await db.Author.findOne({ where: { name: author, }, }))?.dataValues;
+    const authorsId = await checkAndInsertAuthors(author);
 
-        if (!isAuthor) {
-            const createAuthor = (await db.Author.create({ name: author, }))?.dataValues;
-            author = createAuthor.id;
-        }
-        isAuthor && (author = isAuthor.id);
-    }
+    const create = (await db.Product.create({ productTitle, genre, }))?.dataValues;
 
-    const create = (await db.Product.create({ productTitle, authorId: author, genre, }))?.dataValues;
+    await insertProductAuthors(create.id, authorsId);
+
     return create;
 };
 

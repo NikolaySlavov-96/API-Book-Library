@@ -17,7 +17,8 @@ export const getAllDate = async ({ statusId, userId, offset, limit, filterOperat
             {
                 model: db.Product,
                 required: true,
-                attributes: ['id', 'productTitle', 'genre', 'isVerify', 'authorId'],
+                attributes: ['id', 'productTitle', 'genre', 'isVerify'],
+                as: 'Product',
                 include: [
                     {
                         model: db.File,
@@ -25,6 +26,7 @@ export const getAllDate = async ({ statusId, userId, offset, limit, filterOperat
                     },
                     {
                         model: db.Author,
+                        as: 'authors',
                         attributes: ['name', 'image', 'isVerify', 'genre'],
                     }
                 ],
@@ -53,9 +55,8 @@ export const getAllDate = async ({ statusId, userId, offset, limit, filterOperat
         attributes: ['id', 'statusId', 'isDelete'],
         order: [['id', 'ASC']],
         offset,
+        distinct: true,
         limit,
-        raw: true,
-        nest: true,
     };
 
     const result = await db.ProductStatus.findAndCountAll(query);
