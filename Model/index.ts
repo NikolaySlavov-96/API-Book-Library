@@ -70,15 +70,12 @@ db.Author.belongsToMany(db.Product, {
     otherKey: 'productId',
     as: 'products',
 });
-
 db.Product.belongsToMany(db.Author, {
     through: db.ProductAuthor,
     foreignKey: 'productId',
     otherKey: 'authorId',
     as: 'authors',
 });
-
-
 db.Author.hasMany(db.ProductAuthor, { foreignKey: 'authorId', as: 'productAuthors', });
 db.Product.hasMany(db.ProductAuthor, { foreignKey: 'productId', as: 'productAuthors', });
 db.ProductAuthor.belongsTo(db.Author, { foreignKey: 'authorId', as: 'author', });
