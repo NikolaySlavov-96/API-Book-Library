@@ -5,7 +5,6 @@ import { emitToSocketEvent, } from '../Events';
 import { buildCacheKey, pageParser, searchParser, } from '../Helpers';
 
 import * as productService from '../services/productService';
-import * as fileService from '../services/fileService';
 import {
     cacheDataWithExpiration,
     deleteCacheEntry,
@@ -84,32 +83,6 @@ export const createProduct = async (req, res, next) => {
         next(err);
     }
 };
-
-export const addedImageOnProduct = async (req, res, next) => {
-    try {
-        if (!req.files) {
-            res.status(RESPONSE_STATUS_CODE.BAD_REQUEST).json(updateMessage(MESSAGES.PLEASE_ADDED_FILE).user);
-            return;
-        }
-        const { deliverFile, } = req.files;
-        const fileData = await fileService.addingFile(deliverFile, req.body);
-
-        res.status(RESPONSE_STATUS_CODE.OK).json(fileData);
-    } catch (err) {
-        next(err);
-    }
-};
-
-export const removeImageOnProduct = async (req, res, next) => {
-    try {
-        const fileId = req.params.id;
-        const resultFromUnlink = await fileService.removeFile(fileId);
-        res.status(resultFromUnlink.statusCode).json(resultFromUnlink.user);
-    } catch (err) {
-        next(err);
-    }
-};
-
 
 // TODO For Future
 export const updateProduct = async (req, res, next) => {

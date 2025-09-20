@@ -46,27 +46,5 @@ product.post('/status/',
     productStatusController.createProductStatus
 );
 
-// product.post('/addImage',
-//     isAuthenticated(),
-//     body('src').isLength({ min: 2, max: 145, }).withMessage(ROUTING_MESSAGES.FILE_NAME),
-//     body('fileId').isNumeric().withMessage(ROUTING_MESSAGES.PRODUCT_FIELD_ID),
-//     expressValidator,
-//     productController.addedImageOnProduct
-// );
-
-// product.delete('/removeImage/:id',
-//     isAuthenticated(),
-//     productController.removeImageOnProduct
-// );
-
-// product.put('/:id',
-//     isAuthenticated(),
-//     productController.updateBook
-// );
-// product.delete('/:id',
-//     isAuthenticated(),
-//     productController.deleteBook
-// );
-
 
 export default product;
