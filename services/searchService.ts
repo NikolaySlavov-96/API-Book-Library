@@ -21,6 +21,8 @@ export const getProductsByEmail = async ({ email, offset, limit, }) => {
                             },
                             {
                                 model: db.File,
+                                required: false,
+                                as: 'files',
                                 attributes: ['id', 'src', 'uniqueName'],
                             }
                         ],

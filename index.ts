@@ -18,7 +18,7 @@ import { globalErrorHandling, } from './Helpers';
 import db from './Model';
 import { initEmitters, socketEvents, } from './Events';
 
-const { APP_PORT, SOCKET_ADDRESS, } = process.env;
+const { APP_PORT, SOCKET_ADDRESS, DB_FORCE_STATUS, } = process.env;
 
 start();
 const app = express();
@@ -47,7 +47,8 @@ async function start() {
 
     await db.sequelize.authenticate();
 
-    await db.sequelize.sync({ force: false, });
+    const resetStatus = DB_FORCE_STATUS === 'true' ? true : false;
+    await db.sequelize.sync({ force: resetStatus, });
 
     expressConfig(app, express, fileUpload);
 

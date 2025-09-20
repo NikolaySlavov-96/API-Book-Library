@@ -8,7 +8,7 @@ import { createDirectoryPath, unlinkFileFromSystem, updateMessage, UUID, } from 
 const UPLOAD_DIRECTORY = SYSTEM_FILE_DIRECTORY.UPLOAD;
 
 export const addingFile = async (deliverFile, body) => {
-    const { src, fileId, } = body;
+    const { src, } = body;
     const { name: realFileName, mimetype, } = deliverFile;
 
     const uniqueFileName = UUID();
@@ -21,7 +21,6 @@ export const addingFile = async (deliverFile, body) => {
         realFileName,
         src,
         uniqueName: fileName,
-        productId: fileId,
     });
 
     const pathName = createDirectoryPath(UPLOAD_DIRECTORY, fileName);

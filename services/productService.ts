@@ -23,8 +23,11 @@ export const getAllData = async ({ offset, limit, filterOperator, searchContent,
         },
         {
             model: db.File,
+            required: false,
+            as: 'files',
             attributes: ['id', 'src', 'uniqueName'],
-        }],
+        }
+        ],
         order: [['id', 'ASC']],
         attributes: ['id', 'productTitle', 'genre', 'isVerify'],
         offset,
@@ -64,6 +67,7 @@ export const getDataById = async (id: number) => {
             {
                 model: db.File,
                 required: false,
+                as: 'files',
                 attributes: ['id', 'src', 'uniqueName'],
             }
         ],
@@ -76,12 +80,14 @@ export const getDataById = async (id: number) => {
 
 const checkAndInsertAuthors = async (authors: string): Promise<number[]> => {
     const authorsIds = [];
-    const authorsName = authors.split(' - ');
+    const authorsName = authors.split('<->');
 
     for (const authorName of authorsName) {
-        const isAuthor = (await db.Author.findOne({ where: { name: authorName, }, }))?.dataValues;
+        const _authorName = authorName.trim();
+
+        const isAuthor = (await db.Author.findOne({ where: { name: _authorName, }, }))?.dataValues;
         if (!isAuthor) {
-            const author = (await db.Author.create({ name: authorName, }))?.dataValues;
+            const author = (await db.Author.create({ name: _authorName, }))?.dataValues;
             authorsIds.push(author.id);
             continue;
         }
@@ -99,8 +105,17 @@ const insertProductAuthors = async (productId: number, authorsId: number[]): Pro
     }
 };
 
+const insertProductFiles = async (productId: number, filesId: number[]): Promise<void> => {
+    for (const fileId of filesId) {
+        await db.ProductFile.create({
+            productId,
+            fileId,
+        });
+    }
+};
 
-export const create = async ({ author, productTitle, genre, }) => {
+
+export const create = async ({ author, productTitle, genre, filesId, }) => {
     const existingProduct = (await db.Product.findOne({ where: { productTitle, }, }))?.dataValues;
     if (existingProduct) {
         return updateMessage(MESSAGES.PRODUCT_ALREADY_EXIST, 403);
@@ -109,6 +124,10 @@ export const create = async ({ author, productTitle, genre, }) => {
     const authorsId = await checkAndInsertAuthors(author);
 
     const create = (await db.Product.create({ productTitle, genre, }))?.dataValues;
+
+    if (filesId?.length) {
+        await insertProductFiles(create.id, filesId);
+    }
 
     await insertProductAuthors(create.id, authorsId);
 
@@ -127,6 +146,6 @@ export const update = async (id, { author, productTitle, }) => {
 
 export const remove = async (id) => {
     const data = []// await Book.findByPk(id);
-    return data
+    return data;
     // return data.destroy(); // To Do adding isDelete of True
 };

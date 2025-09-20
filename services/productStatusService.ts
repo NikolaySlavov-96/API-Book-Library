@@ -22,6 +22,8 @@ export const getAllDate = async ({ statusId, userId, offset, limit, filterOperat
                 include: [
                     {
                         model: db.File,
+                        required: false,
+                        as: 'files',
                         attributes: ['id', 'src', 'uniqueName'],
                     },
                     {

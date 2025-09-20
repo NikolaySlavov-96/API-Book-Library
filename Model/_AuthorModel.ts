@@ -7,7 +7,6 @@ import { IAuthorAttributes, } from './ModelsInterfaces';
 class Author extends Model<IAuthorAttributes> implements IAuthorAttributes {
     declare id: number;
     name!: string;
-    image: string;
     genre: string;
     declare isVerify: boolean;
 }
@@ -23,9 +22,6 @@ export const AuthorFactory = (sequelize: Sequelize): typeof Author => {
         name: {
             type: DataTypes.STRING(60),
             // require: true,
-        },
-        image: {
-            type: DataTypes.STRING(145),
         },
         genre: {
             type: DataTypes.STRING(45),

@@ -7,10 +7,11 @@ import { SYSTEM_FILE_DIRECTORY, } from '../../constants';
 const FILE_PATH = BE_URL + SYSTEM_FILE_DIRECTORY.UPLOAD + '/';
 
 const fileModel = (data) => {
+    const firstFile = data[0];
     return {
-        fileUrl: FILE_PATH + (data.uniqueName ?? 'productNotFound.png'),
-        fileSrc: data.src ?? 'Stay happy',
-        fileId: data?.id ?? 'missing',
+        fileUrl: FILE_PATH + (firstFile?.uniqueName ?? 'productNotFound.png'),
+        fileSrc: firstFile?.src ?? 'Stay happy',
+        fileId: firstFile?.id ?? 'missing',
     };
 };
 
