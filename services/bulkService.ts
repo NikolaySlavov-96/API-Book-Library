@@ -6,13 +6,11 @@ import { cacheKeys, } from '../constants';
 export const createBulkProducts = async ({ products, }) => {
     const productsId = [];
     for (const product of products) {
-        try {
-            const productResponse = await productService.create(product);
-            if (productResponse.statusCode) {
-                continue;
-            }
-            productsId.push(productResponse.id);
-        } catch (err) { }
+        const productResponse = await productService.create(product);
+        if (productResponse.statusCode) {
+            continue;
+        }
+        productsId.push(productResponse.id);
     }
 
     await deleteKeysWithPrefix(cacheKeys.ALL_PRODUCTS);

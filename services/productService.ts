@@ -117,7 +117,7 @@ const insertProductFiles = async (productId: number, filesId: number[]): Promise
 
 export const create = async ({ author, productTitle, genre, filesId, }) => {
     const modTitle = productTitle.trim();
-    const modGenre = genre.trim();
+    const modGenre = genre?.trim();
 
     const existingProduct = (await db.Product.findOne({
         where: {
