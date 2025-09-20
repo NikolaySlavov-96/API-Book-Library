@@ -46,5 +46,4 @@ product.post('/status/',
     productStatusController.createProductStatus
 );
 
-
 export default product;

@@ -116,14 +116,22 @@ const insertProductFiles = async (productId: number, filesId: number[]): Promise
 
 
 export const create = async ({ author, productTitle, genre, filesId, }) => {
-    const existingProduct = (await db.Product.findOne({ where: { productTitle, }, }))?.dataValues;
+    const modTitle = productTitle.trim();
+    const modGenre = genre.trim();
+
+    const existingProduct = (await db.Product.findOne({
+        where: {
+            productTitle: { [Op.iLike]: modTitle, },
+        },
+    }))?.dataValues;
+
     if (existingProduct) {
         return updateMessage(MESSAGES.PRODUCT_ALREADY_EXIST, 403);
     }
 
     const authorsId = await checkAndInsertAuthors(author);
 
-    const create = (await db.Product.create({ productTitle, genre, }))?.dataValues;
+    const create = (await db.Product.create({ productTitle: modTitle, genre: modGenre, }))?.dataValues;
 
     if (filesId?.length) {
         await insertProductFiles(create.id, filesId);
