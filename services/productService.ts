@@ -116,9 +116,12 @@ const insertProductFiles = async (productId: number, filesId: number[]): Promise
 
 
 export const create = async ({ author, productTitle, genre, filesId, }) => {
+    const modTitle = productTitle.trim();
+    const modGenre = genre.trim();
+
     const existingProduct = (await db.Product.findOne({
         where: {
-            productTitle: { [Op.iLike]: productTitle, },
+            productTitle: { [Op.iLike]: modTitle, },
         },
     }))?.dataValues;
 
@@ -128,7 +131,7 @@ export const create = async ({ author, productTitle, genre, filesId, }) => {
 
     const authorsId = await checkAndInsertAuthors(author);
 
-    const create = (await db.Product.create({ productTitle, genre, }))?.dataValues;
+    const create = (await db.Product.create({ productTitle: modTitle, genre: modGenre, }))?.dataValues;
 
     if (filesId?.length) {
         await insertProductFiles(create.id, filesId);
