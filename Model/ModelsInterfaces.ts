@@ -10,7 +10,6 @@ export interface IAuthorFileAttributes {
 export interface IAuthorAttributes {
     id: number;
     name: string;
-    image: string;
     genre: string;
     isVerify: boolean;
 }
