@@ -1,4 +1,5 @@
 const ModelName = {
+    AUTHOR_FILE: 'authorFile',
     AUTHOR: 'author',
     FILE: 'file',
     MESSAGE_STATUS: 'messageStatus',

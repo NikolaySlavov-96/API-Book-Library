@@ -1,6 +1,12 @@
 import { Document, } from 'mongoose';
 
 // SQL Models
+export interface IAuthorFileAttributes {
+    id: number;
+    authorId: number;
+    fileId: number;
+}
+
 export interface IAuthorAttributes {
     id: number;
     name: string;
