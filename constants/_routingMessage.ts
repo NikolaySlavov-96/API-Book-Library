@@ -19,7 +19,6 @@ const routing = {
     TOKE_IS_REQUIRED: 'Verify token is required',
     YEARS_IS_REQUIRED: 'Years is requited',
     PRODUCT_TITLE_REQUIRED: 'Product title is required',
-    PRODUCTS_REQUIRED: 'Products is required',
     PRODUCT_ID_IS_REQUIRED: 'Product ID is required',
     PRODUCT_COLLECTION_TYPE: 'Please insert correct collection type',
 };

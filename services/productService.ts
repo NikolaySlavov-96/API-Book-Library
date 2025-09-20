@@ -116,7 +116,12 @@ const insertProductFiles = async (productId: number, filesId: number[]): Promise
 
 
 export const create = async ({ author, productTitle, genre, filesId, }) => {
-    const existingProduct = (await db.Product.findOne({ where: { productTitle, }, }))?.dataValues;
+    const existingProduct = (await db.Product.findOne({
+        where: {
+            productTitle: { [Op.iLike]: productTitle, },
+        },
+    }))?.dataValues;
+
     if (existingProduct) {
         return updateMessage(MESSAGES.PRODUCT_ALREADY_EXIST, 403);
     }
@@ -148,17 +153,4 @@ export const remove = async (id) => {
     const data = []// await Book.findByPk(id);
     return data;
     // return data.destroy(); // To Do adding isDelete of True
-};
-
-export const createBulk = async ({ products, }) => {
-    const productsId = [];
-    for (const product of products) {
-        const productResponse = await create(product);
-        if (productResponse.statusCode) {
-            continue;
-        }
-        productsId.push(productResponse.id);
-    }
-
-    return productsId;
 };

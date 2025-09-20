@@ -109,27 +109,3 @@ export const deleteProduct = async (req, res, next) => {
         next();
     }
 };
-
-export const createProductBulk = async (req, res, next) => {
-    try {
-        const userId = req.user._id;
-        const checkAccount = await getUserVerificationStatus(userId);
-        if (!checkAccount) {
-            res.status(RESPONSE_STATUS_CODE.UNAUTHORIZED).json(updateMessage(MESSAGES.ACCOUNT_IS_NOT_VERIFY).user);
-            return;
-        }
-        // TODO: Extract the "role" property into an enumeration for better type safety and maintainability
-        if (checkAccount?.role !== 'admin') {
-            res.status(RESPONSE_STATUS_CODE.UNAUTHORIZED).json(updateMessage(MESSAGES.PERMISSION).user);
-            return;
-        }
-
-        const result = await productService.createBulk(req.body);
-
-        res.status(200).json(result);
-
-        await deleteKeysWithPrefix(cacheKeys.ALL_PRODUCTS);
-    } catch (err) {
-        next(err);
-    }
-};
