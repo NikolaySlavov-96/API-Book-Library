@@ -20,10 +20,12 @@ export const getAllDate = async ({ statusId, userId, offset, limit, filterOperat
                 attributes: ['id', 'productTitle', 'genre', 'isVerify'],
                 as: 'Product',
                 include: [
-                    // {
-                    //     model: db.File,
-                    //     attributes: ['id', 'src', 'uniqueName'],
-                    // },
+                    {
+                        model: db.File,
+                        required: false,
+                        as: 'files',
+                        attributes: ['id', 'src', 'uniqueName'],
+                    },
                     {
                         model: db.Author,
                         as: 'authors',

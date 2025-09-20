@@ -18,11 +18,13 @@ export const getProductsByEmail = async ({ email, offset, limit, }) => {
                                 model: db.Author,
                                 as: 'authors',
                                 attributes: ['name', 'image', 'genre', 'isVerify'],
+                            },
+                            {
+                                model: db.File,
+                                required: false,
+                                as: 'files',
+                                attributes: ['id', 'src', 'uniqueName'],
                             }
-                            // {
-                            //     model: db.File,
-                            //     attributes: ['id', 'src', 'uniqueName'],
-                            // }
                         ],
                     }
                 ],
