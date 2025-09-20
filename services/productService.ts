@@ -20,11 +20,12 @@ export const getAllData = async ({ offset, limit, filterOperator, searchContent,
             // where: searchContent ? {
             //     name: { [queryOperator]: searchContent, },
             // } : {},
-        },
-        {
-            model: db.File,
-            attributes: ['id', 'src', 'uniqueName'],
-        }],
+        }
+            // {
+            //     model: db.File,
+            //     attributes: ['id', 'src', 'uniqueName'],
+            // }
+        ],
         order: [['id', 'ASC']],
         attributes: ['id', 'productTitle', 'genre', 'isVerify'],
         offset,
@@ -60,12 +61,12 @@ export const getDataById = async (id: number) => {
                 as: 'authors',
                 attributes: ATTRIBUTES,
                 required: false,
-            },
-            {
-                model: db.File,
-                required: false,
-                attributes: ['id', 'src', 'uniqueName'],
             }
+            // {
+            //     model: db.File,
+            //     required: false,
+            //     attributes: ['id', 'src', 'uniqueName'],
+            // }
         ],
     });
 

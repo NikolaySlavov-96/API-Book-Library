@@ -18,6 +18,7 @@ import { ProductStatusFactory, } from './_ProductStatusModel';
 import { MessageFactory, } from './_MessageModel';
 import { MessageStatusFactory, } from './_MessageStatus';
 import { ProductAuthorFactory, } from './_ProductAuthorModel';
+import { ProductFileFactory, } from './_ProductFileModel';
 
 const db: any = {};
 
@@ -34,6 +35,7 @@ db.ProductStatus = ProductStatusFactory(sequelize);
 db.Message = MessageFactory(sequelize);
 db.MessageStatus = MessageStatusFactory(sequelize);
 db.ProductAuthor = ProductAuthorFactory(sequelize);
+db.ProductFile = ProductFileFactory(sequelize);
 
 // Association
 db.User.hasMany(db.ProductStatus, { foreignKey: 'userId', });
@@ -42,7 +44,6 @@ db.ProductStatus.belongsTo(db.State, { foreignKey: 'statusId', });
 db.ProductStatus.belongsTo(db.Product, { foreignKey: 'productId', });
 db.Product.hasMany(db.ProductStatus, { foreignKey: 'productId', });
 
-
 db.User.hasOne(db.SessionModel, {
     foreignKey: 'userId',
     constraints: false,
@@ -50,17 +51,27 @@ db.User.hasOne(db.SessionModel, {
 db.SessionModel.belongsTo(db.User, {
     foreignKey: 'userId',
 });
-
-db.Product.hasMany(db.File, {
-    foreignKey: 'productId',
-});
-db.File.belongsTo(db.Product, {
-    foreignKey: 'productId',
-});
-
-
 db.SessionModel.hasMany(db.Message, { foreignKey: 'senderId', sourceKey: 'connectId', });
 db.MessageStatus.belongsTo(db.Message, { foreignKey: 'messageId', });
+
+db.Product.belongsToMany(db.File, {
+    through: db.ProductFile,
+    foreignKey: 'productId',
+    otherKey: 'fileId',
+    as: 'files',
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+});
+db.File.belongsToMany(db.Product, {
+    through: db.ProductFile,
+    foreignKey: 'fileId',
+    otherKey: 'productId',
+    as: 'products',
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+});
+db.ProductFile.belongsTo(db.Product, { foreignKey: 'productId', onDelete: 'CASCADE', });
+db.ProductFile.belongsTo(db.File, { foreignKey: 'fileId', onDelete: 'CASCADE', });
 
 db.Author.belongsToMany(db.Product, {
     through: db.ProductAuthor,

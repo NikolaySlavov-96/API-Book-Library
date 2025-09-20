@@ -37,6 +37,12 @@ export interface IProductAuthorAttributes {
     authorId: number;
 }
 
+export interface IProductFileAttributes {
+    id: number;
+    productId: number;
+    fileId: number;
+}
+
 export interface ISessionModelAttributes {
     id: number;
     connectId: string;

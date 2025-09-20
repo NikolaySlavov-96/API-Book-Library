@@ -4,6 +4,7 @@ const ModelName = {
     MESSAGE_STATUS: 'messageStatus',
     MESSAGE: 'message',
     PRODUCT_AUTHOR: 'productAuthor',
+    PRODUCT_FILE: 'productFile',
     PRODUCT_STATUS: 'productStatus',
     PRODUCT: 'product',
     SESSION: 'session',
