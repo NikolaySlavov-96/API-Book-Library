@@ -38,12 +38,15 @@ db.ProductAuthor = ProductAuthorFactory(sequelize);
 // Association
 db.User.hasMany(db.ProductStatus, { foreignKey: 'userId', });
 db.ProductStatus.belongsTo(db.User, { foreignKey: 'userId', });
+db.ProductStatus.belongsTo(db.State, { foreignKey: 'statusId', });
+db.ProductStatus.belongsTo(db.Product, { foreignKey: 'productId', });
+db.Product.hasMany(db.ProductStatus, { foreignKey: 'productId', });
+
 
 db.User.hasOne(db.SessionModel, {
     foreignKey: 'userId',
     constraints: false,
 });
-
 db.SessionModel.belongsTo(db.User, {
     foreignKey: 'userId',
 });
@@ -55,11 +58,6 @@ db.File.belongsTo(db.Product, {
     foreignKey: 'productId',
 });
 
-db.ProductStatus.belongsTo(db.State, { foreignKey: 'statusId', });
-
-
-db.ProductStatus.belongsTo(db.Product, { foreignKey: 'productId', });
-db.Product.hasMany(db.ProductStatus, { foreignKey: 'productId', });
 
 db.SessionModel.hasMany(db.Message, { foreignKey: 'senderId', sourceKey: 'connectId', });
 db.MessageStatus.belongsTo(db.Message, { foreignKey: 'messageId', });
