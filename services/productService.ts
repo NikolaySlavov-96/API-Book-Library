@@ -76,12 +76,14 @@ export const getDataById = async (id: number) => {
 
 const checkAndInsertAuthors = async (authors: string): Promise<number[]> => {
     const authorsIds = [];
-    const authorsName = authors.split(' - ');
+    const authorsName = authors.split('<->');
 
     for (const authorName of authorsName) {
-        const isAuthor = (await db.Author.findOne({ where: { name: authorName, }, }))?.dataValues;
+        const _authorName = authorName.trim();
+
+        const isAuthor = (await db.Author.findOne({ where: { name: _authorName, }, }))?.dataValues;
         if (!isAuthor) {
-            const author = (await db.Author.create({ name: authorName, }))?.dataValues;
+            const author = (await db.Author.create({ name: _authorName, }))?.dataValues;
             authorsIds.push(author.id);
             continue;
         }
