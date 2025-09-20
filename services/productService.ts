@@ -149,3 +149,16 @@ export const remove = async (id) => {
     return data;
     // return data.destroy(); // To Do adding isDelete of True
 };
+
+export const createBulk = async ({ products, }) => {
+    const productsId = [];
+    for (const product of products) {
+        const productResponse = await create(product);
+        if (productResponse.statusCode) {
+            continue;
+        }
+        productsId.push(productResponse.id);
+    }
+
+    return productsId;
+};
