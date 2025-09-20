@@ -9,7 +9,7 @@ const productModel = (data) => {
         }
         authorsName += a.name;
     });
-    const updatedFile = fileModel(data?.Files);
+    const updatedFile = fileModel(data?.files);
 
     return {
         productId: data.id,

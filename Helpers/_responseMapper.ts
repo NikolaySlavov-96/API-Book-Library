@@ -12,7 +12,7 @@ export const _mappedSingleObject = (result, type: _EMappedType) => {
     }
 
     if (type === _EMappedType.PRODUCT) {
-        return productModel(result);
+        return productModel(result.toJSON());
     }
 
     if (type === _EMappedType.PRODUCT_SEARCH) {
