@@ -102,8 +102,17 @@ const insertProductAuthors = async (productId: number, authorsId: number[]): Pro
     }
 };
 
+const insertProductFiles = async (productId: number, filesId: number[]): Promise<void> => {
+    for (const fileId of filesId) {
+        await db.ProductFile.create({
+            productId,
+            fileId,
+        });
+    }
+};
 
-export const create = async ({ author, productTitle, genre, }) => {
+
+export const create = async ({ author, productTitle, genre, filesId, }) => {
     const existingProduct = (await db.Product.findOne({ where: { productTitle, }, }))?.dataValues;
     if (existingProduct) {
         return updateMessage(MESSAGES.PRODUCT_ALREADY_EXIST, 403);
@@ -112,6 +121,10 @@ export const create = async ({ author, productTitle, genre, }) => {
     const authorsId = await checkAndInsertAuthors(author);
 
     const create = (await db.Product.create({ productTitle, genre, }))?.dataValues;
+
+    if (filesId?.length) {
+        await insertProductFiles(create.id, filesId);
+    }
 
     await insertProductAuthors(create.id, authorsId);
 
@@ -130,6 +143,6 @@ export const update = async (id, { author, productTitle, }) => {
 
 export const remove = async (id) => {
     const data = []// await Book.findByPk(id);
-    return data
+    return data;
     // return data.destroy(); // To Do adding isDelete of True
 };
