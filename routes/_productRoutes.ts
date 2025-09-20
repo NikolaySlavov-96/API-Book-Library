@@ -46,5 +46,12 @@ product.post('/status/',
     productStatusController.createProductStatus
 );
 
+product.post('/bulk',
+    isAuthenticated(),
+    body('products').isArray({ min: 1, }).withMessage(ROUTING_MESSAGES.PRODUCTS_REQUIRED),
+    expressValidator,
+    productController.createProductBulk
+);
+
 
 export default product;
