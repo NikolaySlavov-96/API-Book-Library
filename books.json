@@ -814,6 +814,564 @@
     {
       "productTitle": "What If?: Serious Scientific Answers to Absurd Hypothetical",
       "author": "Randall Munroe"
+    },
+    { "productTitle": "Never eat alone", "author": "Keith Ferrazzi" },
+    { "productTitle": "Алхимикът", "author": "Паулу Коелю" },
+    { "productTitle": "Цифрова крепост", "author": "Дан Браун" },
+    { "productTitle": "Неочакваният гост", "author": "Агата Кристи" },
+    {
+      "productTitle": "Време да се живее и време да се мре",
+      "author": "Ерих Мария Ремарк"
+    },
+    {
+      "productTitle": "Аз съм добър, ти си добър",
+      "author": "Томас А. Харис"
+    },
+    { "productTitle": "The secret", "author": "Rhonda Byrne" },
+    { "productTitle": "On Writing Well", "author": "William Zinsser" },
+    {
+      "productTitle": "От люлката до люлка",
+      "author": "Браунгарт, М<->Уилям Макдона "
+    },
+    {
+      "productTitle": "Without the Hot Air - Sustainable Energy",
+      "author": "Дейвид Маккей"
+    },
+    { "productTitle": "Организация на поведението", "author": "Доналд Хеб" },
+    {
+      "productTitle": "Сенките на идеите ( Платоновата теория за идеите )",
+      "author": "Джордано Бруно "
+    },
+    {
+      "productTitle": "12-томния труд 'Изследване на историята'",
+      "author": "Арнълд Тойнби"
+    },
+    {
+      "productTitle": "Встъпление ( труд )",
+      "author": "Абу Заид Андер Рахман ибн Мохамед ибн Халдун ел Хадрами"
+    },
+    {
+      "productTitle": "Градината на истината (11 000 стиха )",
+      "author": "Хаким Абул Маджд Мадждул ибн Адам Синаи Газнави "
+    },
+    {
+      "productTitle": "Касидата на Хаджи Абу ел Йезди",
+      "author": "Ричард Хрансис Бъртън"
+    },
+    {
+      "productTitle": "Чистият стартъп: Как съвременните предприемачи използват, иновациите за да създават невероятно успешни компании",
+      "author": "Ерик Райс"
+    },
+    {
+      "productTitle": "От нула до едно. Размисли върху стартъпите или как да изградим бъдещето",
+      "author": "Питър Тийн"
+    },
+    {
+      "productTitle": "Да усвоим навиците на Рокфелер: Какво трябва да направите, за да повишите стойността на разрастваща ви се компания",
+      "author": "Върне Харниш"
+    },
+    {
+      "productTitle": "Стълбата на успеха: Как да превърнем семейната фирма в просперираща компания",
+      "author": "Ерик Фламхолц<->Ивон Рандъл "
+    },
+    {
+      "productTitle": "Пътят на Toyota: 14 управленски принципа от най-големия производител в света",
+      "author": "Джефри Лайкър"
+    },
+    {
+      "productTitle": "Мащабиране: Как някои компании успяват… и защо другите не успяват",
+      "author": "Върне Харниш"
+    },
+    {
+      "productTitle": "Сцепление: Поемете контрола върху бизнеса си",
+      "author": "Джино Уикман "
+    },
+    {
+      "productTitle": "Създай и продай: Как да изградим бизнес, който да процъфтява без нас",
+      "author": "Джон Уорилоу"
+    },
+    { "productTitle": "Managing Oneself", "author": "Peter F. Drucker" },
+    { "productTitle": "Shutup and Listen!", "author": "Tilman J. Fertitta " },
+    { "productTitle": "Evolutionary Psychology", "author": "David M. Buss" },
+    { "productTitle": "Никомахова етика", "author": "Аристотел " },
+    {
+      "productTitle": "Поток: Психология на оптималното преживяване",
+      "author": "Михай Чиксентмихай "
+    },
+    {
+      "productTitle": "Рокфелер: Животът на Джон Д. Рокфелер-баща",
+      "author": "Рон Черноу"
+    },
+    { "productTitle": "Боен клуб", "author": "Чък Паланюк" },
+    {
+      "productTitle": "Шотландската хималайска експедиция",
+      "author": "У.Х. Мъри"
+    },
+    {
+      "productTitle": "Създадени вечни",
+      "author": "Джим Колинс<->Джери Порас"
+    },
+    {
+      "productTitle": "Психология на сомочувствието",
+      "author": "Натаниъл Брендън "
+    },
+    { "productTitle": "Million Dollar Weekend", "author": "Noah Kagan " },
+    { "productTitle": "4 часовата работна седмица", "author": "Тимъти Ферис" },
+    {
+      "productTitle": "Духовно освобождение. Да реализираш потенциала на душата си.",
+      "author": "Майкъл Бърнард Бекуит "
+    },
+    { "productTitle": "Не може да ме нарани", "author": "Дейвид Гогинс" },
+    { "productTitle": "Живот в скалите", "author": "Мария Лалева " },
+    { "productTitle": "Квадратите на Кови", "author": "Стивън Кови" },
+    { "productTitle": "Трудните разговори", "author": "Дъглас Стоун" },
+    { "productTitle": "Mагията на подреждането", "author": "Мари Кондо" },
+    {
+      "productTitle": "Седемте навика на високоефективните хора",
+      "author": "Стивън Кови"
+    },
+    {
+      "productTitle": "Интелигентният инвеститор",
+      "author": "Бенджамин Греъм "
+    },
+    {
+      "productTitle": "Актове на спонтанна доброта в безцелна красота",
+      "author": "Ан Хърбърт"
+    },
+    {
+      "productTitle": "Дървото на стихотворенията",
+      "author": "Хайку Алберт Либерман ( Франсеск Миралес )"
+    },
+    { "productTitle": "Мемоари", "author": "Ричард Файнман" },
+    {
+      "productTitle": "Уолдън или Живот в гората",
+      "author": "Хенри Дейвид Торо"
+    },
+    {
+      "productTitle": "Изграждане на благосъстояние",
+      "author": "Лестър Търоу "
+    },
+    { "productTitle": "Дигитална диета", "author": "Даниел Сиберг" },
+    {
+      "productTitle": "Островът на 5 те фара",
+      "author": "Феран Роман-Кортес "
+    },
+    { "productTitle": "Синята Икономика", "author": "Гюнтер Паули " },
+    { "productTitle": "Цитагела", "author": "Антоан дьо Сент-Екзюпери " },
+    { "productTitle": "Златния Кръг", "author": "Саймън Синек" },
+    { "productTitle": "Самвел", "author": "Раффи " },
+    {
+      "productTitle": "Предимството на хипоманията: Връзката между (леката) лудост и (големия) успех в Америка",
+      "author": "Джон Гартнър"
+    },
+    {
+      "productTitle": "Първокласна лудост: Разкриване на връзките между доброто лидерство и умствените заболявания",
+      "author": "Насир Гаеми"
+    },
+    {
+      "productTitle": "Силата на етичния мениджмънт",
+      "author": "Кен Бланшард"
+    },
+    {
+      "productTitle": "Победителите никога не мамят: Ежедневните ценности",
+      "author": "Джон Хънтсман"
+    },
+    { "productTitle": "48-те закона на властта", "author": "Робърт Грийн " },
+    { "productTitle": "33-те стратегии за войната", "author": "Робърт Грийн" },
+    {
+      "productTitle": "Големият залог: Машината на Страшния съд отвътре",
+      "author": "Майкъл Луис"
+    },
+    {
+      "productTitle": "Петте езика на любовта. Тайната на трайната любов",
+      "author": "Гари Чапмън"
+    },
+    { "productTitle": "Божественост", "author": "Исак Нютон" },
+    { "productTitle": "Майсторството", "author": "Грийн Робърт" },
+    {
+      "productTitle": "Високоефективният мениджмънт",
+      "author": "Андрю Гроув"
+    },
+    { "productTitle": "Принципи", "author": "Рей Далио" },
+    { "productTitle": "Фердинанд", "author": "Питър Дракър" },
+    { "productTitle": "Хронология", "author": "Исак Нютон" },
+    { "productTitle": "Оптика", "author": "Исак Нютон" },
+    {
+      "productTitle": "Philosophiae Naturalis Principia Mathematica",
+      "author": "Исак Нютон"
+    },
+    {
+      "productTitle": "Кешбол: Изкуството как да спечелим нечестна игра",
+      "author": "Майкъл Луис"
+    },
+    {
+      "productTitle": "Уинстън Чърчил (биография)",
+      "author": "Уилям Манчестър"
+    },
+    { "productTitle": "Към себе си", "author": "Аврелий, Марк" },
+    { "productTitle": "За щастието", "author": "Епикур" },
+    { "productTitle": "Мощ срещу сила", "author": "Дейвид Хокинг" },
+    {
+      "productTitle": "Създадени вечни: Успешните практики на вечните компании",
+      "author": "Джеймс Колинс<->Джери Порас"
+    },
+    {
+      "productTitle": "Как да преодолеем безпокойството и да се радваме на живота",
+      "author": "Дейл Карнеги"
+    },
+    {
+      "productTitle": "Силни: Изграждане на свободна и отговорна фирмена култура",
+      "author": "Пати Маккорд"
+    },
+    {
+      "productTitle": "Пари и власт: как Goldman Sachs завладя света",
+      "author": "Уилям Коан"
+    },
+    { "productTitle": "Пътят от не към да", "author": "Уилям Ури" },
+    { "productTitle": "Дарът на провала", "author": "Джесика Лейхи" },
+    {
+      "productTitle": "Как да отгледаме възрастен",
+      "author": "Джули Литкот-Хеймс"
+    },
+    { "productTitle": "Актуализации", "author": "Стюард Емъри" },
+    { "productTitle": "Don’t make me think", "author": "Стив Круг" },
+    { "productTitle": "Изкуството да общуваме", "author": "д-р. Рей Хъл" },
+    { "productTitle": "Изкуството да очароваш", "author": "Гай Кавазаки" },
+    {
+      "productTitle": "Седемте изкуства на промяната",
+      "author": "Дейвид Шейнър"
+    },
+    { "productTitle": "Разговорът", "author": "д-р. Тиодор Зелдин" },
+    {
+      "productTitle": "Не може да ръководиш с крака на Бюрото",
+      "author": "Ед Фулар"
+    },
+    {
+      "productTitle": "Айкидо във всекидневието",
+      "author": "Тери Добсън<->Виктор Милър"
+    },
+    { "productTitle": "Птичият събор", "author": "Фарид ад дин Аттар" },
+    { "productTitle": "Човекът в търсене на себе си", "author": "Роло Мей" },
+    { "productTitle": "Не насилвай реката", "author": "Бари Стивънс" },
+    { "productTitle": "Дерайлиране", "author": "Тим Ъруин" },
+    { "productTitle": "Излекувай живота си", "author": "Луиз Хей" },
+    {
+      "productTitle": "The 7 Habits of Highly Effective People",
+      "author": "Stephen Covey"
+    },
+    {
+      "productTitle": "The Capital of the tycoon",
+      "author": "сър. Ръдърфорд Алкок"
+    },
+    { "productTitle": "Свръхестественият човек", "author": "Джо Диспенза" },
+    {
+      "productTitle": "Разчупете навика да бъдете себе си",
+      "author": "Джо Диспенза"
+    },
+    { "productTitle": "The book of five rings", "author": "Миямото Мусаши" },
+    { "productTitle": "Престъпление и наказание", "author": "Достоевски" },
+    { "productTitle": "Добрият шеф, лошият шеф", "author": "Робърт Сътън" },
+    { "productTitle": "Отворено Лидерско", "author": "Чарлийн Ли" },
+    { "productTitle": "Афективно програмине", "author": "Розалинд Пикард" },
+    {
+      "productTitle": "21 неоспорими закона на лидерството",
+      "author": "Джон Максуел"
+    },
+    { "productTitle": "Лидерството е изкуство", "author": "Макс Депри" },
+    {
+      "productTitle": "Лицето: Естествена История",
+      "author": "Даниъл Макнийл"
+    },
+    { "productTitle": "Убийство на продажбите", "author": " Тод Дънкан" },
+    { "productTitle": "Упълномощени", "author": "Джон Берноф<->Тед Шадлер " },
+    { "productTitle": "Икономиката “Благодаря”", "author": "Гари Вайнерчук" },
+    {
+      "productTitle": "Седемте изкуства на промяната",
+      "author": "Дейвид Шейнър "
+    },
+    {
+      "productTitle": "Проповедника и президентите",
+      "author": "Нанси Гибс<->Майкъл Дъфи"
+    },
+    { "productTitle": "Любов и воля", "author": "Роло Мей" },
+    { "productTitle": "Мястото на душата", "author": "Гуру Зукав" },
+    { "productTitle": "Силата на Навиците", "author": "Чарлс Дюиг" },
+    { "productTitle": "Етика", "author": "Спиноза" },
+    { "productTitle": "Кайзен", "author": "Сара Харви" },
+    { "productTitle": "Безкрайната игра", "author": "Саймън Синек" },
+    { "productTitle": "Правилото 10х", "author": "Гранд Карбон " },
+    { "productTitle": "48 те закона на властта", "author": "Робърт Грийн " },
+    { "productTitle": "Спринт към победата", "author": "Джо Фостър" },
+    { "productTitle": "Галилео Галилей", "author": "Атле Нес" },
+    { "productTitle": "Леонардо да Винчи", "author": "Уолтър Айзъксън" },
+    {
+      "productTitle": "Там, където никога не съм пътувал, с радост отвъд",
+      "author": "Е. Е. Къмингс"
+    },
+    { "productTitle": "Clean Architecture", "author": "Robert Martin" },
+    { "productTitle": "Building Microservices", "author": "Sam Newman" },
+    { "productTitle": "Unit Testing", "author": "Vladimir Khorikov" },
+    { "productTitle": "Domain Driven Desing", "author": "Eric Evans" },
+    {
+      "productTitle": "Мъжът от Константинопол",
+      "author": "Жозе Родригеш, Душ Сантуш"
+    },
+    {
+      "productTitle": "Милионерът в Лисабон",
+      "author": "Жозе Родригеш, Душ Сантуш"
+    },
+    {
+      "productTitle": "Изкуство и страх",
+      "author": "Дейвид Бейлс<->Тед Орланд"
+    },
+    { "productTitle": "Един изстрел", "author": "Лий Чайлд" },
+    {
+      "productTitle": "Смелостта да не те харесват",
+      "author": "Ичиро Кишими"
+    },
+    {
+      "productTitle": "Pragmatic Thinking and Learning: Refactor your wetware",
+      "author": "Andy Hunt"
+    },
+    {
+      "productTitle": "How to live on 24 hours a Day",
+      "author": "Arnold Bennett"
+    },
+    {
+      "productTitle": "Уолдън или живот в гората",
+      "author": "Хенри Дейвид Торо"
+    },
+    {
+      "productTitle": "Stephen Covey",
+      "author": "The 7 Habits of Highly Effective People"
+    },
+    {
+      "productTitle": "Петте рани, които пречат да бъдеш какъвто си",
+      "author": "от Брата"
+    },
+    {
+      "productTitle": "Играчът на рулетка. Из записките на един млад мъж.",
+      "author": "от Брата"
+    },
+    {
+      "productTitle": "Practical Exercises in English",
+      "author": "Huber Gray Buehler"
+    },
+    { "productTitle": "English Fairy Tales", "author": "Flora Annie Steel" },
+    { "productTitle": "Love Songs", "author": "Sara Teasdale " },
+    { "productTitle": "Love, Live & Work", "author": "Elbert Hubbard" },
+    { "productTitle": "How to Study", "author": "George Fillmore Swain" },
+    { "productTitle": "As a Man Thinketh", "author": "James Allen" },
+    { "productTitle": "Grimm’s Fairy Stories", "author": "Jacob Grimm" },
+    { "productTitle": "Diary of a Nobody", "author": "George Grossmith" },
+    { "productTitle": "Mother", "author": "Maksim Gorky" },
+    { "productTitle": "Cinderella", "author": "Richart Harding Davis" },
+    { "productTitle": "Adventures of Pinocchio", "author": "Carlo Collodi" },
+    {
+      "productTitle": "The Truth About Woman",
+      "author": "Catherine Gasquoine Hartley"
+    },
+    { "productTitle": "Abraham Lincoln", "author": "James Russell Lowell" },
+    {
+      "productTitle": "How to Write Clearly",
+      "author": "Edwin Abbott Abbott"
+    },
+    { "productTitle": "Lover of Friend", "author": "Rosa Nouchette Carey" },
+    {
+      "productTitle": "Getting to Plan B: Breaking through to a better business model",
+      "author": "John Mullins"
+    },
+    {
+      "productTitle": "How to start a business without any Money",
+      "author": "Rachel Bridge"
+    },
+    { "productTitle": "Marcus Aurelius", "author": "Meditations" },
+    {
+      "productTitle": "Deep Work ( rules for focused success in a distracted world )",
+      "author": "Cal Newport "
+    },
+    {
+      "productTitle": "The Richest Man in Babylon",
+      "author": "George S. Clason"
+    },
+    { "productTitle": "The 5 AM club", "author": "Robin Sharma " },
+    { "productTitle": "Thinking Fast and Slow", "author": "Daniel Kahneman" },
+    {
+      "productTitle": "The man who sold his ferrari",
+      "author": "Robin Sharma"
+    },
+    {
+      "productTitle": "The Autobiography of Yogi",
+      "author": "Paramahansa Yoganande "
+    },
+    { "productTitle": "Can’t hurt me", "author": "David Goggins" },
+    {
+      "productTitle": "The go-giver",
+      "author": "Bob Burg<->John David Mann"
+    },
+    { "productTitle": "Why we sleep", "author": "Matthew Walter, PhD" },
+    { "productTitle": "Fact Ful Ness", "author": "Hans Rosling " },
+    { "productTitle": "The Psychology of Money", "author": "Morgan House" },
+    {
+      "productTitle": "The Innovatior’s Dilemma",
+      "author": "Clayton M. Christensen"
+    },
+    { "productTitle": "Bult to Last", "author": "Jim Collins " },
+    { "productTitle": "The black swan", "author": "Nassim Nicholas Tableb " },
+    { "productTitle": "Goot to Great", "author": "Jim Collinse " },
+    { "productTitle": "Siddhartha", "author": "Hermann Hesse " },
+    {
+      "productTitle": "How to Win friends & Influence people",
+      "author": "Dale Carnegie"
+    },
+    { "productTitle": "The art of the goor Life", "author": "Rolf Dobelli" },
+    { "productTitle": "The Alchemist", "author": "Paulo Coelho " },
+    { "productTitle": "The secret", "author": "Rhonda Byrne" },
+    { "productTitle": "The Obstacle is the way", "author": "Ryan Holiday" },
+    {
+      "productTitle": "Hacking - The art of Exploitation",
+      "author": "Jon Erickson"
+    },
+    {
+      "productTitle": "Penetration Testing (A hands-on introduction to hacking)",
+      "author": "Georgia Weidman"
+    },
+    { "productTitle": "Кибер Войната", "author": "Никол Пърлрот" },
+    { "productTitle": "Принципи", "author": "Рей Далио " },
+    { "productTitle": "Устойчиви на стрес", "author": "д-р сам Акбар " },
+    {
+      "productTitle": "Магията на мащабното мислене",
+      "author": "Дейвид Шуорц"
+    },
+    {
+      "productTitle": "Духовният път към богатството",
+      "author": "Дийпар Чопра"
+    },
+    { "productTitle": "Прибери първо печалбата", "author": "Микалоуиц" },
+    { "productTitle": "Cashvertising", "author": "Drew Eric Whitman" },
+    {
+      "productTitle": "Алманахът на Навал Равикант",
+      "author": "Ерик Йоргенсън"
+    },
+    {
+      "productTitle": "Маркетинговият план от 1 страница",
+      "author": "Алан Дил"
+    },
+    {
+      "productTitle": "Как да станете успешен ръководител",
+      "author": "Дейл Карнеги"
+    },
+    {
+      "productTitle": "Влиянието (Психология на убеждението)",
+      "author": "Робин Чалдини"
+    },
+    {
+      "productTitle": "Престъпление в Театъра",
+      "author": "Фернандо Гарсия Балестерос"
+    },
+    { "productTitle": "Мълчание на цвета", "author": "Нарине Абгарян " },
+    {
+      "productTitle": "Рудолф Хес: Тайният план на Чърчил",
+      "author": "Александър Сосновски"
+    },
+    { "productTitle": "Тук с мен", "author": "Саманта Йънг" },
+    { "productTitle": "The intelligence  Trap", "author": "David Robson" },
+    { "productTitle": "Surrounded by Idiots", "author": "Thomas Erikson" },
+    { "productTitle": "Thinking again", "author": "Adam Grant" },
+    {
+      "productTitle": "The art of Thinking Clearly",
+      "author": "Rolf Dobelli"
+    },
+    { "productTitle": "Fact Fulness", "author": "Hans Rosling " },
+    {
+      "productTitle": "How to react a book",
+      "author": "Mortimer J. Adler and Charles Van Doren"
+    },
+    { "productTitle": "How to talk to anyone", "author": "Leil Lowndes" },
+    {
+      "productTitle": "Extreme Ownership",
+      "author": "How U.S. Navy seals Lead and Win "
+    },
+    { "productTitle": "Listen", "author": "Kathryn Mannix" },
+    { "productTitle": "Hit it off", "author": "Joe Brocato" },
+    {
+      "productTitle": "The communication book (44. Ideas for better conversations every day.)",
+      "author": "Mikael Kroger’s<->Roman Tschappeler"
+    },
+    {
+      "productTitle": "How to become a people magnet",
+      "author": "Marc Reklau"
+    },
+    {
+      "productTitle": "The art of Dealing with people",
+      "author": "Les Giblin"
+    },
+    {
+      "productTitle": "Книгата която искате родителите ви да бяха прочели",
+      "author": "Филипе Пери"
+    },
+    { "productTitle": "Изгубената тетрадка", "author": "Луис Дъглас" },
+    { "productTitle": "Тайната на Шанел", "author": "Лорна Кук" },
+    { "productTitle": "Последното Кралство", "author": "Стив Бери" },
+    { "productTitle": "Тройна Игра", "author": "Кен Фолет" },
+    {
+      "productTitle": "Ненастината молекула на желанието",
+      "author": "Даниъл Либерман Майкъл Лонг"
+    },
+    { "productTitle": "Psycho-cybernetics", "author": "Maxwell Malt" },
+    { "productTitle": "The law of Success", "author": "Napoleon Hill" },
+    { "productTitle": "Бизнесът и План формите", "author": "Майкъл Кусумано" },
+    {
+      "productTitle": "Rols Royce - Историята на Чарлс Ролс",
+      "author": "Брус Лосън"
+    },
+    {
+      "productTitle": "Ферари - Мъжът, автомобилите, състезанията, машината",
+      "author": "Брок Йейтс"
+    },
+    {
+      "productTitle": "Несвършващо Време - Спомени",
+      "author": "Петък Стоянович"
+    },
+    {
+      "productTitle": "Стефан Данаилов - Игра на живот",
+      "author": "Георги Тошев"
+    },
+    {
+      "productTitle": "Науката в кулинарията. Отговорите на въпроси, които разкриват тайните в готвенето",
+      "author": "Стюарт Фаримонд"
+    },
+    { "productTitle": "Няма далечни места", "author": "Франко Фаджани" },
+    {
+      "productTitle": "The hard thing about hard things",
+      "author": "Ben Horowitz"
+    },
+    { "productTitle": "Modern Achievement", "author": "Asheesh Advani " },
+    {
+      "productTitle": "The diary of a CEO - The 33 Laws of Business & Life",
+      "author": "Steven Bartlett"
+    },
+    { "productTitle": "How to love sales", "author": "Paul Kesig" },
+    { "productTitle": "The personal MBA", "author": "Josh Kaufman" },
+    {
+      "productTitle": "The magic of thinking big",
+      "author": "David Schwartz, PhD"
+    },
+    { "productTitle": "Mindset", "author": "DR Carol S. Dweck" },
+    {
+      "productTitle": "The power of your Subconscious mind",
+      "author": "DR Joseph Murphy"
+    },
+    { "productTitle": "Unfuck your mind", "author": "Janna Johnson" },
+    {
+      "productTitle": "How to stop worrying & start living",
+      "author": "Dale Carnegie "
+    },
+    { "productTitle": "The Pragmatic Programmer", "author": "David Thomas" },
+    { "productTitle": "Етика", "author": "Спиноза" },
+    {
+      "productTitle": "Graphic Design Reference & Specification Book: Everything Graphic designers nee to know every day",
+      "author": "Poppy Evans"
     }
   ]
 }
