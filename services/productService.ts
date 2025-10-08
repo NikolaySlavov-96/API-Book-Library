@@ -6,7 +6,7 @@ const Op = db?.Sequelize?.Op;
 
 import { updateMessage, } from '../util';
 
-const ATTRIBUTES = ['name', 'image', 'genre', 'isVerify'];
+const ATTRIBUTES = ['name', 'genre', 'isVerify'];
 
 export const getAllData = async ({ offset, limit, filterOperator, searchContent, }) => {
     const queryOperator = Op[filterOperator];
