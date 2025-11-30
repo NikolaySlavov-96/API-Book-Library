@@ -1,7 +1,7 @@
 {
   "name": "api-book",
-  "version": "0.5.5",
-  "buildNumber": 26,
+  "version": "0.5.6",
+  "buildNumber": 27,
   "description": "",
   "main": "index.js",
   "scripts": {
