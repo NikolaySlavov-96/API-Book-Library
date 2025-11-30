@@ -16,7 +16,7 @@ const jwtSign = (payload, expires?: string): any => {
     if (!JWT_SECRET) {
         throw ('Missing token');
     }
-    return sign(payload, JWT_SECRET, expires && { expiresIn: expires, });
+    return sign(payload, JWT_SECRET, expires && { expiresIn: Number(expires), });
 };
 
 

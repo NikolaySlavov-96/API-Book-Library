@@ -45,7 +45,6 @@
   },
   "devDependencies": {
     "@stylistic/eslint-plugin-ts": "4.4.1",
-    "@types/bcryptjs": "3.0.0",
     "@types/express": "5.0.5",
     "@types/express-fileupload": "1.5.1",
     "@types/express-validator": "3.0.2",
