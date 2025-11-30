@@ -27,7 +27,7 @@ import { emitEventToSocket, } from './_SocketEmitters';
 
 import { notifySupportsOfNewUser, } from '../Helpers';
 
-import { updateMessage, } from '../util';
+import { normalizeInputData, updateMessage, } from '../util';
 
 interface IMessageResponseJoinToChat {
     message: string;
@@ -193,11 +193,12 @@ const _socketEvents = (io) => {
                 const resultFromRoom = await isRoomExist({ roomName: data.roomName, });
                 if (resultFromRoom.roomName) {
                     // Mark conversation is completed
-                    emitEventToSocket(resultFromRoom.roomName, ESendEvents.COMPLETE_ISSUE,
+                    const roomName = normalizeInputData(resultFromRoom.roomName);
+                    emitEventToSocket(roomName, ESendEvents.COMPLETE_ISSUE,
                         { message: 'Complete', issue: resultFromRoom.roomName, }
                     );
 
-                    await deleteRoom({ roomName: resultFromRoom.roomName, });
+                    await deleteRoom({ roomName });
 
                     socket.leave(resultFromRoom.roomName);
                     return;
@@ -226,13 +227,14 @@ const _socketEvents = (io) => {
 
             try {
                 const resultFromRoom = await isRoomExist({ roomName: data.roomName, });
-                if (!resultFromRoom?.roomName) {
+                const roomName = normalizeInputData(resultFromRoom?.roomName);
+                if (!roomName) {
                     socket.emit(ESendEvents.ERROR, updateMessage(MESSAGES.SELECTED_ROOM_NOT_FOUND).user);
                     return;
                 }
 
-                const result = await insertMessage({ resultFromRoom, data, connectId, });
-                emitEventToSocket(resultFromRoom.roomName, ESendEvents.SUPPORT_MESSAGE, { ...result, 'status': null, });
+                const result = await insertMessage({ resultFromRoom: { roomName }, data, connectId, });
+                emitEventToSocket(roomName, ESendEvents.SUPPORT_MESSAGE, { ...result, 'status': null, });
             } catch (err) {
                 socket.emit(ESendEvents.ERROR, updateMessage(MESSAGES.ERROR_FROM_SERVER).user);
                 console.log('SocketRoute Event ∞ SUPPORT_MESSAGE', err);
@@ -259,7 +261,8 @@ const _socketEvents = (io) => {
                     return;
                 }
 
-                emitEventToSocket(resultFromRoom.roomName, ESendEvents.SUPPORT_ACTIVITY, { connectId, });
+                const roomNameIn = normalizeInputData(resultFromRoom.roomName);
+                emitEventToSocket(roomNameIn, ESendEvents.SUPPORT_ACTIVITY, { connectId, });
             } catch (err) {
                 socket.emit(ESendEvents.ERROR, updateMessage(MESSAGES.ERROR_FROM_SERVER).user);
                 console.log('SocketRoute Event ∞ SUPPORT_ACTIVITY', err);

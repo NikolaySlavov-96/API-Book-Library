@@ -1,6 +1,7 @@
 import { redisClient, } from '../config';
 
 import { cacheTimes, } from '../constants';
+import { normalizeInputData } from '../util';
 
 // Store and manage cached data using Redis for
 // improved performance and quick data retrieval
@@ -40,12 +41,12 @@ export const deleteKeysWithPrefix = async (prefix) => {
     try {
         let cursorCount = 0;
         do {
-            const { cursor, keys, } = await redisClient.scan(cursorCount, {
+            const { cursor, keys, } = await redisClient.scan(cursorCount.toString(), {
                 MATCH: `${prefix}*`,
                 COUNT: 20,
             });
-
-            cursorCount = cursor;
+            const dataString = normalizeInputData(cursor);
+            cursorCount = Number(dataString);
 
             if (keys.length > 0) {
                 await deleteCacheEntry(keys);

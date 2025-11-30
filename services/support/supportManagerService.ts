@@ -1,4 +1,5 @@
 import { cacheKeys, } from '../../constants';
+import { normalizeInputData } from '../../util';
 
 import {
     addedDataToList,
@@ -31,7 +32,8 @@ export const unassignSupport = async (connectId: string) => {
 export const getAllWaitingUsers = async () => {
     const userQueue = await fetchListMembers(cacheKeys.USER_QUEUE);
     const result = userQueue.map(uq => {
-        const parseUser = JSON.parse(uq) as IAllConnectedUsers;
+        const dataString = normalizeInputData(uq);
+        const parseUser = JSON.parse(dataString) as IAllConnectedUsers;
         return parseUser;
     });
     return result;
@@ -43,12 +45,14 @@ export const assignUserToQueue = async (data) => {
 export const isUserInQueue = async (data: { connectId: string }) => {
     const result = await fetchListMembers(cacheKeys.USER_QUEUE);
     const userExist = result.find(u => {
-        const parseUser = JSON.parse(u) as IAllConnectedUsers;
+        const dataString = normalizeInputData(u);
+        const parseUser = JSON.parse(dataString) as IAllConnectedUsers;
         if (parseUser.connectId === data.connectId) {
             return parseUser;
         }
     });
-    const parseAgain = JSON.parse(userExist);
+    const dataString = normalizeInputData(userExist);
+    const parseAgain = JSON.parse(dataString);
     return parseAgain as IAllConnectedUsers;
 };
 
@@ -56,7 +60,9 @@ export const unassignUserFromQueue = async (connectId: string) => {
     const list = await fetchListMembers(cacheKeys.USER_QUEUE);
     let hasUser = false;
     for (const e of list) {
-        const parseE = JSON.parse(e);
+        const dataString = normalizeInputData(e);
+        const parseE = JSON.parse(dataString);
+
         if (parseE.connectId === connectId) {
             await removeElementFromList(cacheKeys.USER_QUEUE, e);
             hasUser = true;
