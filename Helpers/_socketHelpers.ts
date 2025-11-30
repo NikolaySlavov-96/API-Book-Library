@@ -3,6 +3,7 @@ import { ESendEvents, } from '../constants';
 import { emitEventToSocket, } from '../Events/_SocketEmitters';
 
 import { getAllOnlineSupports, getAllWaitingUsers, } from '../services/support/supportManagerService';
+import { normalizeInputData } from '../util';
 
 export const notifySupportsOfNewUser = async (connectId: string) => {
     const supports = await getAllOnlineSupports();
@@ -13,6 +14,7 @@ export const notifySupportsOfNewUser = async (connectId: string) => {
             newUserSocketId: connectId,
             userQueue: usersInQueue,
         };
-        emitEventToSocket(support, ESendEvents.NOTIFY_ADMINS_OF_NEW_USER, payload);
+        const dataString = normalizeInputData(support);
+        emitEventToSocket(dataString, ESendEvents.NOTIFY_ADMINS_OF_NEW_USER, payload);
     });
 };

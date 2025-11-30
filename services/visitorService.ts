@@ -34,7 +34,7 @@ export const storeVisitorInfo = async (data) => {
 
         // Return only count of exist records in Array
         const uniqueIPs = await fetchSetSize(redisKey);
-        returnedData.dailyUsers = uniqueIPs;
+        returnedData.dailyUsers = Number(uniqueIPs);
         return returnedData;
     } catch (err) {
         console.log('Visitor Service ~ storeVisitorInfo ~ :', err);

@@ -9,3 +9,4 @@ export { _cryptHash as cryptHash, } from './_bcrypt';
 export { _unlinkFileFromSystem as unlinkFileFromSystem, } from './_fileSystem';
 export { _UUID as UUID, } from './_UUID';
 export { _verifyToken as verifyToken, } from './_token';
+export { normalizeInputData } from './_bufferResolver'; 

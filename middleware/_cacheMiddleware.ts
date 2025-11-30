@@ -5,7 +5,7 @@ import { MESSAGES, RESPONSE_STATUS_CODE, } from '../constants';
 
 import { fetchCacheData, } from '../services/cacheService';
 
-import { updateMessage, } from '../util';
+import { normalizeInputData, updateMessage, } from '../util';
 
 const _cacheMiddleware = (key: string) => {
     return async (req: Request, res: Response, next: NextFunction) => {
@@ -14,7 +14,8 @@ const _cacheMiddleware = (key: string) => {
 
             const data = await fetchCacheData(customKey);
             if (data !== null) {
-                res.status(RESPONSE_STATUS_CODE.OK).json(JSON.parse(data));
+                const dataString = normalizeInputData(data);
+                res.status(RESPONSE_STATUS_CODE.OK).json(JSON.parse(dataString));
                 // res.status(200).json({ source: 'cache', data: JSON.parse(data), });
             } else {
                 next();
