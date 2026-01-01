@@ -155,10 +155,6 @@
       "author": "Walter Isaacson"
     },
     {
-      "productTitle": "Започни със защо",
-      "author": "Саймън Синек"
-    },
-    {
       "productTitle": "Атомни Навици",
       "author": "Джеймс Клиър"
     },
@@ -1007,7 +1003,6 @@
       "productTitle": "Уинстън Чърчил (биография)",
       "author": "Уилям Манчестър"
     },
-    { "productTitle": "Към себе си", "author": "Аврелий, Марк" },
     { "productTitle": "За щастието", "author": "Епикур" },
     { "productTitle": "Мощ срещу сила", "author": "Дейвид Хокинг" },
     {
@@ -1453,10 +1448,6 @@
       "author": "У. Клемънт Стоун"
     },
     {
-      "productTitle": "Започни със Защо",
-      "author": "Саймън Синек"
-    },
-    {
       "productTitle": "Мисли и Забогатявай",
       "author": "Наполеон Хил"
     },
@@ -1503,10 +1494,6 @@
     {
       "productTitle": "Изкуството да съблазняваш",
       "author": "Робърт Грийн"
-    },
-    {
-      "productTitle": "Твоето Его е Врагът",
-      "author": "Райън Холидей"
     },
     {
       "productTitle": "Подсъзнанието може всичко",
@@ -2084,6 +2071,14 @@
     {
       "productTitle": "Extreme Ownership: How U.S. Navy seals Lead and Win",
       "author": "Jocko Willink<->Leif Babin"
+    },
+    {
+      "productTitle": "Всичко може да се договори (Библията на търговеце)",
+      "author": "Гевинг Кенеди"
+    },
+    {
+      "productTitle": "Парадокси (100 философски парадоска)",
+      "author": "Гарет Саутуел"
     }
   ]
 }
