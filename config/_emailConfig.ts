@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import mailjet from 'node-mailjet';
-import { createTransport, } from 'nodemailer';
+import nodemailer from 'nodemailer';
+const { createTransport, } = nodemailer;
 
 
 const {

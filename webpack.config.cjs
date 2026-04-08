@@ -2,7 +2,7 @@ const path = require('path');
 const webpack = require('webpack');
 
 module.exports = {
-    mode: 'production', // Set mode to 'production' or 'development'
+    mode: 'production',
     entry: './index.ts',
     module: {
         rules: [
@@ -19,21 +19,26 @@ module.exports = {
     output: {
         filename: 'bundle.js',
         path: path.resolve(__dirname, 'dist'),
+        module: true,
+        chunkFormat: 'module',
+    },
+    experiments: {
+        outputModule: true,
     },
     target: 'node',
     plugins: [
         new webpack.IgnorePlugin({
             resourceRegExp: /^\.\/.*$/,
-            contextRegExp: /@mapbox\/node-pre-gyp/
+            contextRegExp: /@mapbox\/node-pre-gyp/,
         }),
         new webpack.IgnorePlugin({
-            resourceRegExp: /pg-native/
+            resourceRegExp: /pg-native/,
         }),
         new webpack.IgnorePlugin({
-            resourceRegExp: /bufferutil/
+            resourceRegExp: /bufferutil/,
         }),
         new webpack.IgnorePlugin({
-            resourceRegExp: /utf-8-validate/
-        })
-    ]
+            resourceRegExp: /utf-8-validate/,
+        }),
+    ],
 };

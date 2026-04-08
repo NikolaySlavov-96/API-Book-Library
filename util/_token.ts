@@ -1,4 +1,5 @@
-import { sign, verify, } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
+const { sign, verify, } = jwt;
 
 const JWT_SECRET: string | undefined = process.env.JWT_SECRET;
 

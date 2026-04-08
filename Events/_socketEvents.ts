@@ -1,4 +1,6 @@
-import { isEmpty, isString, isUndefined, } from 'lodash';
+import isEmpty from 'lodash/isEmpty.js';
+import isString from 'lodash/isString.js';
+import isUndefined from 'lodash/isUndefined.js';
 
 import { EReceiveEvents, ESendEvents, MESSAGES, } from '../constants';
 

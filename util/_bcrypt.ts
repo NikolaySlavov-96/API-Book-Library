@@ -1,4 +1,5 @@
-import { compare, hash, } from 'bcrypt';
+import bcrypt from 'bcrypt';
+const { compare, hash, } = bcrypt;
 
 const SOULT = 10;
 
