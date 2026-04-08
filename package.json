@@ -7,10 +7,8 @@
   "main": "index.js",
   "scripts": {
     "start": "node dist/bundle.js",
-    "start:old": "node dist/index.js",
     "dev": "tsx watch index.ts",
-    "build": "webpack --config webpack.config.cjs",
-    "build:old": "npx tsc",
+    "build": "esbuild index.ts --bundle --platform=node --format=esm --outfile=dist/bundle.js --external:bcrypt --external:pg --external:pg-hstore --minify",
     "lint": "npx eslint . --fix"
   },
   "repository": {
@@ -57,15 +55,13 @@
     "@types/uuid": "11.0.0",
     "@typescript-eslint/eslint-plugin": "8.48.0",
     "@typescript-eslint/parser": "8.48.0",
+    "esbuild": "^0.28.0",
     "eslint": "9.39.1",
     "eslint-config-prettier": "10.1.8",
     "eslint-plugin-prettier": "5.5.4",
     "nodemon": "3.1.11",
     "prettier": "3.7.3",
-    "ts-loader": "9.5.4",
     "tsx": "^4.21.0",
-    "typescript": "5.9.3",
-    "webpack": "5.103.0",
-    "webpack-cli": "6.0.1"
+    "typescript": "5.9.3"
   }
 }
