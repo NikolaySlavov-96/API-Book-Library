@@ -8,7 +8,7 @@
   "scripts": {
     "start": "node dist/bundle.js",
     "dev": "tsx watch index.ts",
-    "build": "esbuild index.ts --bundle --platform=node --format=esm --outfile=dist/bundle.js --external:bcrypt --external:pg --external:pg-hstore --minify",
+    "build": "esbuild index.ts --bundle --platform=node --format=esm --outfile=dist/bundle.js --external:bcrypt --external:pg --external:pg-hstore --minify --banner:js=\"import { createRequire } from 'module'; const require = createRequire(import.meta.url);\"",
     "lint": "npx eslint . --fix"
   },
   "repository": {
