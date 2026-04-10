@@ -5,6 +5,7 @@ const JWT_SECRET: string | undefined = process.env.JWT_SECRET;
 
 import { IPayload, } from '../Types/verification';
 
+type TExpire = jwt.SignOptions['expiresIn'];
 
 const jwtVerify = (token: string): any => {
     if (!JWT_SECRET) {
@@ -13,11 +14,11 @@ const jwtVerify = (token: string): any => {
     return verify(token, JWT_SECRET);
 };
 
-const jwtSign = (payload, expires?: string): any => {
+const jwtSign = (payload, expires?: TExpire): any => {
     if (!JWT_SECRET) {
         throw ('Missing token');
     }
-    return sign(payload, JWT_SECRET, expires && { expiresIn: Number(expires), });
+    return sign(payload, JWT_SECRET, expires && { expiresIn: expires, });
 };
 
 
@@ -35,7 +36,7 @@ export const _verifyToken = (token: string): IVerifyToken | { error: string } =>
     }
 };
 
-export const _createToken = (data: any, expire?: string) => {
+export const _createToken = (data: any, expire?: TExpire) => {
     const payload: IPayload = {
         _id: data.id,
         email: data.email,
