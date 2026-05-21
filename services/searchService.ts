@@ -24,7 +24,7 @@ export const getProductsByEmail = async ({ email, offset, limit, }) => {
                             {
                                 model: db.Author,
                                 as: 'authors',
-                                attributes: ['name', 'image', 'genre', 'isVerify'],
+                                attributes: ['name', 'genre', 'isVerify'],
                             },
                             {
                                 model: db.File,

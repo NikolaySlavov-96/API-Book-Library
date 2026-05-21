@@ -33,7 +33,7 @@ export const getAllDate = async ({ statusId, userId, offset, limit, filterOperat
                     {
                         model: db.Author,
                         as: 'authors',
-                        attributes: ['name', 'image', 'isVerify', 'genre'],
+                        attributes: ['name', 'isVerify', 'genre'],
                     }
                 ],
                 where: hasSearchContent ? {
