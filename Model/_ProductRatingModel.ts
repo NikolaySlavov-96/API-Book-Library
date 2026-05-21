@@ -5,7 +5,6 @@ import ModelName from './modelNames';
 import { IProductRatingAttributes, } from './ModelsInterfaces';
 
 interface IProductRatingCreationAttributes extends Optional<IProductRatingAttributes, 'id'> { }
-// eslint-disable-next-line max-len
 class ProductRating extends Model<IProductRatingAttributes, IProductRatingCreationAttributes> implements IProductRatingAttributes {
     declare id: number;
     userId: number;
