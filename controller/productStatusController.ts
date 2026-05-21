@@ -20,6 +20,16 @@ export const getAllStatus = async (req, res, next) => {
     }
 };
 
+export const getStatusCounts = async (req, res, next) => {
+    try {
+        const userId = req?.user?._id;
+        const result = await productStatusService.getStatusCounts(userId);
+        res.status(RESPONSE_STATUS_CODE.OK).json(result);
+    } catch (err) {
+        next(err);
+    }
+};
+
 export const getAllProductsByStatus = async (req, res, next) => {
     const { limit, offset, } = pageParser(req?.query);
     const { searchContent, } = searchParser(req?.query);
@@ -71,6 +81,36 @@ export const createProductStatus = async (req, res, next) => {
 
         res.status(RESPONSE_STATUS_CODE.CREATED).json(
             updateMessage(MESSAGES.SUCCESSFULLY_ADDED_PRODUCT_IN_COLLECTION).user
+        );
+    } catch (err) {
+        next(err);
+    }
+};
+
+export const deleteProductStatus = async (req, res, next) => {
+    try {
+        const userId = req.user._id;
+        const checkAccount = await getUserVerificationStatus(userId);
+        if (!checkAccount) {
+            res.status(RESPONSE_STATUS_CODE.UNAUTHORIZED).json(updateMessage(MESSAGES.ACCOUNT_IS_NOT_VERIFY).user);
+            return;
+        }
+
+        const productId = parseInt(req.params.productId);
+        const removed = await productStatusService.removeProductStatus(userId, productId);
+
+        if (!removed) {
+            res.status(RESPONSE_STATUS_CODE.BAD_REQUEST).json(
+                updateMessage(MESSAGES.PRODUCT_NOT_IN_COLLECTION).user
+            );
+            return;
+        }
+
+        const key = buildCacheKey(cacheKeys.PRODUCT_STATUS_ID, req);
+        await deleteCacheEntry(key);
+
+        res.status(RESPONSE_STATUS_CODE.OK).json(
+            updateMessage(MESSAGES.SUCCESSFULLY_REMOVED_PRODUCT_FROM_COLLECTION).user
         );
     } catch (err) {
         next(err);

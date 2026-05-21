@@ -15,6 +15,7 @@ import { FileFactory, } from './_FileModel';
 import { SessionModelFactory, } from './_SessionModel';
 import { ProductFactory, } from './_ProductModel';
 import { ProductStatusFactory, } from './_ProductStatusModel';
+import { ProductRatingFactory, } from './_ProductRatingModel';
 import { MessageFactory, } from './_MessageModel';
 import { MessageStatusFactory, } from './_MessageStatus';
 import { ProductAuthorFactory, } from './_ProductAuthorModel';
@@ -33,6 +34,7 @@ db.File = FileFactory(sequelize);
 db.SessionModel = SessionModelFactory(sequelize);
 db.Product = ProductFactory(sequelize);
 db.ProductStatus = ProductStatusFactory(sequelize);
+db.ProductRating = ProductRatingFactory(sequelize);
 db.Message = MessageFactory(sequelize);
 db.MessageStatus = MessageStatusFactory(sequelize);
 db.ProductAuthor = ProductAuthorFactory(sequelize);
@@ -45,6 +47,13 @@ db.ProductStatus.belongsTo(db.User, { foreignKey: 'userId', });
 db.ProductStatus.belongsTo(db.State, { foreignKey: 'statusId', });
 db.ProductStatus.belongsTo(db.Product, { foreignKey: 'productId', });
 db.Product.hasMany(db.ProductStatus, { foreignKey: 'productId', });
+
+db.User.hasMany(db.ProductRating, { foreignKey: 'userId', });
+db.ProductRating.belongsTo(db.User, { foreignKey: 'userId', });
+db.Product.hasMany(db.ProductRating, { foreignKey: 'productId', });
+db.ProductRating.belongsTo(db.Product, { foreignKey: 'productId', });
+
+db.User.belongsTo(db.File, { foreignKey: 'avatarFileId', as: 'avatar', constraints: false, });
 
 db.User.hasOne(db.SessionModel, {
     foreignKey: 'userId',

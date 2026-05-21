@@ -2,7 +2,7 @@ import { Request as expressRequest, } from 'express';
 
 import { Request as customRequest, } from '../Types/expressType';
 
-import { pageParser, searchParser, } from '.';
+import { pageParser, searchParser, statusParser, } from '.';
 
 import { cacheKeys, } from '../constants';
 
@@ -16,14 +16,15 @@ const _buildCacheKey = (key, req) => {
         customKey += req.params.id;
     }
     if (key === cacheKeys.PRODUCT_STATUS_ID) {
-        const productId = req.params.id || req.body.productId;
+        const productId = req.params.id || req.params.productId || req.body.productId;
         customKey += `${productId}-${req?.user?._id}`;
     }
     if (key === cacheKeys.ALL_PRODUCTS) {
         const { limit, offset, } = pageParser(req?.query);
         const { searchContent, } = searchParser(req?.query);
+        const { statusId, } = statusParser(req?.query);
 
-        customKey += `${limit}-${offset}-${searchContent}`;
+        customKey += `${limit}-${offset}-${searchContent}-${statusId}-${req?.user?._id}`;
     }
 
     return customKey;

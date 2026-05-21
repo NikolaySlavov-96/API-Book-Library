@@ -1,12 +1,13 @@
 import 'dotenv/config';
 
 import { emailConfig, } from '../config';
-import { registryTemplate, } from '../templates';
+import { registryTemplate, magicLinkTemplate, } from '../templates';
 import { EMAIL, } from '../constants';
 
 
 const templates = {
     [EMAIL.REGISTER_CONFIRM]: (data) => registryTemplate(data),
+    [EMAIL.MAGIC_LINK]: (data) => magicLinkTemplate(data),
 };
 
 

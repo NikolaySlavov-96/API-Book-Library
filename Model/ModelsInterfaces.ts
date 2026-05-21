@@ -27,6 +27,16 @@ export interface IProductAttributes {
     productTitle: string;
     genre: string;
     isVerify: string;
+    pages?: number;
+    publishedYear?: number;
+    description?: string;
+}
+
+export interface IProductRatingAttributes {
+    id: number;
+    userId: number;
+    productId: number;
+    rating: number;
 }
 
 export interface IProductStatusAttributes {
@@ -70,6 +80,10 @@ export interface IUserAttributes {
     password: string;
     year: number;
     role: string;
+    readingGoal?: number;
+    displayName?: string;
+    avatarFileId?: number;
+    notifyByEmail?: boolean;
 }
 
 export interface IMessageAttributes {

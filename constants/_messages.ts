@@ -40,6 +40,10 @@ const messages: IMessageType = {
     SUCCESSFULLY_ADDED_PRODUCT_IN_COLLECTION: {
         message: 'Successfully added book in your collection', messageCode: 'book-0003',
     },
+    SUCCESSFULLY_REMOVED_PRODUCT_FROM_COLLECTION: {
+        message: 'Successfully removed book from your collection', messageCode: 'book-0008',
+    },
+    PRODUCT_NOT_IN_COLLECTION: { message: 'Book is not in your collection', messageCode: 'book-0009', },
     PLEASE_ADDED_FILE: { message: 'Please added file', messageCode: 'book-0004', },
     FILE_DOES_NOT_EXIT: { message: 'A file that does not exist', messageCode: 'book-0005', },
     UN_SUCCESS_REMOVE_FILE: { message: 'Unsuccessfully remove file', messageCode: 'book-0006', },

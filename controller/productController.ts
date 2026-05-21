@@ -2,7 +2,7 @@ import { MESSAGES, ESendEvents, queryOperators, cacheKeys, RESPONSE_STATUS_CODE,
 
 import { emitToSocketEvent, } from '../Events';
 
-import { buildCacheKey, pageParser, searchParser, } from '../Helpers';
+import { buildCacheKey, pageParser, searchParser, statusParser, } from '../Helpers';
 
 import * as productService from '../services/productService';
 import {
@@ -19,11 +19,17 @@ import {
 export const getAllProducts = async (req, res, next) => {
     const { limit, offset, } = pageParser(req?.query);
     const { searchContent, } = searchParser(req?.query);
+    const { statusId, } = statusParser(req?.query);
 
     const filterOperator = queryOperators.LIKE;
 
+    // Status filtering only makes sense for a logged-in user (reads token if present)
+    const userId = req?.user?._id;
+
     try {
-        const result = await productService.getAllData({ offset, limit, filterOperator, searchContent, });
+        const result = await productService.getAllData({
+            offset, limit, filterOperator, searchContent, statusId, userId,
+        });
 
         const key = buildCacheKey(cacheKeys.ALL_PRODUCTS, req);
         await cacheDataWithExpiration(key, result);

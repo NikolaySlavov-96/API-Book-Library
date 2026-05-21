@@ -11,6 +11,9 @@ class Product extends Model<IProductAttributes, IProductCreationAttributes> impl
     productTitle: string;
     genre: string;
     declare isVerify: string;
+    declare pages: number;
+    declare publishedYear: number;
+    declare description: string;
 }
 
 export const ProductFactory = (sequelize: Sequelize): typeof Product => {
@@ -29,6 +32,18 @@ export const ProductFactory = (sequelize: Sequelize): typeof Product => {
         isVerify: {
             type: DataTypes.BOOLEAN,
             defaultValue: false,
+        },
+        pages: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+        },
+        publishedYear: {
+            type: DataTypes.SMALLINT,
+            allowNull: true,
+        },
+        description: {
+            type: DataTypes.TEXT,
+            allowNull: true,
         },
     }, {
         sequelize,

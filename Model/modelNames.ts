@@ -7,6 +7,7 @@ const ModelName = {
     PRODUCT_AUTHOR: 'productAuthor',
     PRODUCT_FILE: 'productFile',
     PRODUCT_STATUS: 'productStatus',
+    PRODUCT_RATING: 'productRating',
     PRODUCT: 'product',
     SESSION: 'session',
     STATE: 'state',

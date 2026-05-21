@@ -11,8 +11,12 @@ export const getAllDate = async ({ statusId, userId, offset, limit, filterOperat
     const queryOperator = Op[filterOperator];
     const hasSearchContent = !!searchContent;
 
+    // statusId 0 / falsy → "all" tab: return every shelf item for the user
+    const numericStatusId = parseInt(statusId);
+    const statusFilter = numericStatusId ? { statusId: numericStatusId, } : {};
+
     const query = {
-        where: { statusId, userId, },
+        where: { ...statusFilter, userId, isDelete: false, },
         include: [
             {
                 model: db.Product,
@@ -68,11 +72,34 @@ export const getAllDate = async ({ statusId, userId, offset, limit, filterOperat
     return mappedResponse;
 };
 
+export const getStatusCounts = async (userId) => {
+    const rows = await db.ProductStatus.findAll({
+        where: { userId, isDelete: false, },
+        attributes: [
+            'statusId',
+            [db.sequelize.fn('COUNT', db.sequelize.col('statusId')), 'count']
+        ],
+        group: ['statusId'],
+        raw: true,
+    });
+
+    return rows.map((r) => ({ statusId: Number(r.statusId), count: Number(r.count), }));
+};
+
 export const getInfoFromProductStatus = async (productId, userId) => {
     return await db.ProductStatus.findOne({
         where: { productId, userId, isDelete: false, },
         attributes: ['statusId'],
     });
+};
+
+export const removeProductStatus = async (userId, productId) => {
+    const row = await db.ProductStatus.findOne({ where: { productId, userId, isDelete: false, }, });
+    if (!row) {
+        return null;
+    }
+    row.isDelete = true;
+    return await row.save();
 };
 
 export const addingNewProductStatus = async (userId, { productId, statusId, }) => {

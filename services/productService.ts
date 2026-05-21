@@ -1,6 +1,8 @@
 import { MESSAGES, } from '../constants';
 import { responseMapper, EMappedType, mappedSingleObject, } from '../Helpers';
 
+import { getRatingAggregate, } from './productRatingService';
+
 import db from '../Model';
 const Op = db?.Sequelize?.Op;
 
@@ -8,28 +10,40 @@ import { updateMessage, } from '../util';
 
 const ATTRIBUTES = ['name', 'genre', 'isVerify'];
 
-export const getAllData = async ({ offset, limit, filterOperator, searchContent, }) => {
+export const getAllData = async ({ offset, limit, filterOperator, searchContent, statusId, userId, }) => {
     const queryOperator = Op[filterOperator];
 
+    const include: any[] = [{
+        model: db.Author,
+        required: false,
+        as: 'authors',
+        attributes: ATTRIBUTES,
+        // where: searchContent ? {
+        //     name: { [queryOperator]: searchContent, },
+        // } : {},
+    },
+    {
+        model: db.File,
+        required: false,
+        as: 'files',
+        attributes: ['id', 'src', 'uniqueName'],
+    }
+    ];
+
+    // Filter the catalog by the logged-in user's shelf status when requested
+    if (statusId && userId) {
+        include.push({
+            model: db.ProductStatus,
+            required: true,
+            attributes: [],
+            where: { userId, statusId, isDelete: false, },
+        });
+    }
+
     const query = {
-        include: [{
-            model: db.Author,
-            required: false,
-            as: 'authors',
-            attributes: ATTRIBUTES,
-            // where: searchContent ? {
-            //     name: { [queryOperator]: searchContent, },
-            // } : {},
-        },
-        {
-            model: db.File,
-            required: false,
-            as: 'files',
-            attributes: ['id', 'src', 'uniqueName'],
-        }
-        ],
+        include,
         order: [['id', 'ASC']],
-        attributes: ['id', 'productTitle', 'genre', 'isVerify'],
+        attributes: ['id', 'productTitle', 'genre', 'isVerify', 'pages', 'publishedYear', 'description'],
         offset,
         limit,
         distinct: true,
@@ -75,6 +89,12 @@ export const getDataById = async (id: number) => {
 
     const mappedResponse = mappedSingleObject(result, EMappedType.PRODUCT);
 
+    if (mappedResponse) {
+        const aggregate = await getRatingAggregate(id);
+        mappedResponse.ratingAverage = aggregate.average;
+        mappedResponse.ratingCount = aggregate.count;
+    }
+
     return mappedResponse;
 };
 
@@ -115,7 +135,7 @@ const insertProductFiles = async (productId: number, filesId: number[]): Promise
 };
 
 
-export const create = async ({ author, productTitle, genre, filesId, }) => {
+export const create = async ({ author, productTitle, genre, filesId, pages, publishedYear, description, }) => {
     const modTitle = productTitle.trim();
     const modGenre = genre?.trim();
 
@@ -131,7 +151,13 @@ export const create = async ({ author, productTitle, genre, filesId, }) => {
 
     const authorsId = await checkAndInsertAuthors(author);
 
-    const create = (await db.Product.create({ productTitle: modTitle, genre: modGenre, }))?.dataValues;
+    const create = (await db.Product.create({
+        productTitle: modTitle,
+        genre: modGenre,
+        pages,
+        publishedYear,
+        description: description?.trim(),
+    }))?.dataValues;
 
     if (filesId?.length) {
         await insertProductFiles(create.id, filesId);

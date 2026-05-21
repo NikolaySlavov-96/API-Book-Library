@@ -7,6 +7,7 @@ export default async (user, condition) => {
 
     const objectWithCondition = {
         'verify': (token) => `/auth/verify/${token}`,
+        'magic': (token) => `/auth/magic/${token}`,
     };
 
     return `${process.env.WEB_URI}${objectWithCondition[condition](token)}`;
@@ -18,7 +19,8 @@ const createToken = async (user, condition) => {
         address: user.email,
         token: tokenId,
     };
-    if (condition === 'verify') {
-        return await generateEmailToken(payload, 15, 'minute');
+    if (condition === 'verify' || condition === 'magic') {
+        await generateEmailToken(payload, 15, 'minute');
+        return tokenId;
     }
 };

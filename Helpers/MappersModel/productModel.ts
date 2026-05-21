@@ -16,6 +16,9 @@ const productModel = (data) => {
         productType: data.genre,
         productStatus: data.isVerify, // IsVerify
         productTitle: data.productTitle,
+        pages: data.pages ?? null,
+        publishedYear: data.publishedYear ?? null,
+        description: data.description ?? null,
         authorName: authorsName, // author.name,
         authorImage: undefined, // author.image,
         authorGenre: undefined, // author.genre,

@@ -15,6 +15,10 @@ class User extends Model<IUserAttributes, IUserCreationAttributes> implements IU
     declare password: string;
     declare year: number;
     declare role: string;
+    declare readingGoal: number;
+    declare displayName: string;
+    declare avatarFileId: number;
+    declare notifyByEmail: boolean;
 }
 
 export const UserFactory = (sequelize: Sequelize): typeof User => {
@@ -47,6 +51,22 @@ export const UserFactory = (sequelize: Sequelize): typeof User => {
         role: {
             type: DataTypes.STRING(20),
             defaultValue: 'user',
+        },
+        readingGoal: {
+            type: DataTypes.INTEGER,
+            defaultValue: 12,
+        },
+        displayName: {
+            type: DataTypes.STRING(60),
+            allowNull: true,
+        },
+        avatarFileId: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+        },
+        notifyByEmail: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: true,
         },
     }, {
         sequelize,
