@@ -1,4 +1,6 @@
 export { _addTokenResponse as addTokenResponse, } from './tokenHelpers';
+export { _getUserId as getUserId, } from './getUserId';
+export { _getAuthContext as getAuthContext, } from './getUserId';
 export { _globalErrorHandling as globalErrorHandling, } from './_errorHandling';
 export { _mappedSingleObject as mappedSingleObject, } from './_responseMapper';
 export { default as buildCacheKey, } from './_buildCacheKey';

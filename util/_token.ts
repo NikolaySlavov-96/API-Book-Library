@@ -25,6 +25,8 @@ const jwtSign = (payload, expires?: TExpire): any => {
 interface IVerifyToken {
     _id: string;
     email: string;
+    isVerify: boolean;
+    role: string;
     iat?: number;
 }
 
@@ -37,10 +39,10 @@ export const _verifyToken = (token: string): IVerifyToken | { error: string } =>
 };
 
 export const _createToken = (data: any, expire?: TExpire) => {
+    // Identity claims only. `year` is profile data and is fetched via /profile.
     const payload: IPayload = {
         _id: data.id,
         email: data.email,
-        year: data.year,
         isVerify: data.isVerify,
         role: data.role,
     };

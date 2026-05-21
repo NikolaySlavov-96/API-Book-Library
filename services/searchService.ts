@@ -6,6 +6,13 @@ export const getProductsByEmail = async ({ email, offset, limit, }) => {
     const result = await db.User.findAndCountAll({
         include: [
             {
+                // `year` lives on the profile now; pull it in for the response mapper
+                model: db.Profile,
+                as: 'profile',
+                required: false,
+                attributes: ['year'],
+            },
+            {
                 model: db.ProductStatus,
                 attributes: ['id', 'productId'],
                 include: [
@@ -31,7 +38,7 @@ export const getProductsByEmail = async ({ email, offset, limit, }) => {
             }
         ],
         where: { email, },
-        attributes: ['id', 'email', 'year', 'isVerify'],
+        attributes: ['id', 'email', 'isVerify'],
         order: [['id', 'ASC']],
         distinct: true,
         offset,

@@ -2,7 +2,7 @@ import { MESSAGES, ESendEvents, queryOperators, cacheKeys, RESPONSE_STATUS_CODE,
 
 import { emitToSocketEvent, } from '../Events';
 
-import { buildCacheKey, pageParser, searchParser, statusParser, } from '../Helpers';
+import { buildCacheKey, getAuthContext, pageParser, searchParser, statusParser, } from '../Helpers';
 
 import * as productService from '../services/productService';
 import {
@@ -12,9 +12,6 @@ import {
 } from '../services/cacheService';
 
 import { updateMessage, } from '../util';
-import {
-    getUserVerificationStatus,
-} from '../services/getUserVerificationStatus';
 
 export const getAllProducts = async (req, res, next) => {
     const { limit, offset, } = pageParser(req?.query);
@@ -62,14 +59,13 @@ export const getProductById = async (req, res, next) => {
 
 export const createProduct = async (req, res, next) => {
     try {
-        const userId = req.user._id;
-        const checkAccount = await getUserVerificationStatus(userId);
-        if (!checkAccount) {
+        const auth = getAuthContext(req);
+        if (!auth?.isVerify) {
             res.status(RESPONSE_STATUS_CODE.UNAUTHORIZED).json(updateMessage(MESSAGES.ACCOUNT_IS_NOT_VERIFY).user);
             return;
         }
         // TODO: Extract the "role" property into an enumeration for better type safety and maintainability
-        if (checkAccount?.role !== 'support') {
+        if (auth.role !== 'support') {
             res.status(RESPONSE_STATUS_CODE.UNAUTHORIZED).json(updateMessage(MESSAGES.PERMISSION).user);
             return;
         }

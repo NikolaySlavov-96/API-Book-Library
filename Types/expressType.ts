@@ -3,6 +3,8 @@ import { NextFunction, Request as EXReq, Response, } from 'express';
 interface IUser {
     email: string;
     _id: string;
+    isVerify?: boolean;
+    role?: string;
     organisation?: string;
 }
 

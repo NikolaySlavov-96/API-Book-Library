@@ -2,7 +2,9 @@ import 'dotenv/config';
 
 import { NextFunction, Request, Response, } from '../../Types/expressType';
 
-import { updateMessage, verifyToken, } from '../../util';
+import { updateMessage, } from '../../util';
+
+import { authProvider, } from '../../services/auth';
 
 import { MESSAGES, RESPONSE_STATUS_CODE, } from '../../constants';
 
@@ -12,7 +14,7 @@ export default () => async (req: Request, res: Response, next: NextFunction) => 
 
     if (token) {
         try {
-            const payload = await verifyToken(token);
+            const payload = await authProvider.verifyAccessToken(token);
             if ('error' in payload) {
                 res.status(RESPONSE_STATUS_CODE.UNAUTHORIZED).json(
                     updateMessage(MESSAGES.INVALID_AUTHORIZE_TOKEN).user

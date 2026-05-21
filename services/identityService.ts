@@ -1,89 +1,16 @@
 import 'dotenv/config';
 
-import { MESSAGES, RESPONSE_STATUS_CODE, SYSTEM_FILE_DIRECTORY, } from '../constants';
+import { MESSAGES, RESPONSE_STATUS_CODE, } from '../constants';
 
 import { cryptCompare, cryptHash, updateMessage, } from '../util';
 import { addTokenResponse, generateDateForDB, } from '../Helpers';
 
 import db from '../Model';
-import { registerNewVisitor, } from './connectManagerService';
 
-const { BE_URL, } = process.env;
-const AVATAR_PATH = BE_URL + SYSTEM_FILE_DIRECTORY.UPLOAD + '/';
-
-const PROFILE_FIELDS = ['id', 'email', 'year', 'role', 'isVerify', 'readingGoal', 'displayName', 'notifyByEmail'];
-
-const serializeProfile = (user) => {
-    const avatar = user?.avatar;
-
-    return {
-        id: user.id,
-        email: user.email,
-        year: user.year,
-        role: user.role,
-        isVerify: user.isVerify,
-        readingGoal: user.readingGoal,
-        displayName: user.displayName ?? null,
-        notifyByEmail: user.notifyByEmail,
-        avatarFileId: user.avatarFileId ?? null,
-        avatarUrl: avatar?.uniqueName ? AVATAR_PATH + avatar.uniqueName : null,
-        avatarSrc: avatar?.src ?? null,
-    };
-};
-
-export const getProfile = async (userId) => {
-    const user = await db.User.findOne({
-        where: { id: userId, },
-        attributes: PROFILE_FIELDS.concat(['avatarFileId']),
-        include: [
-            {
-                model: db.File,
-                as: 'avatar',
-                required: false,
-                attributes: ['id', 'src', 'uniqueName'],
-            }
-        ],
-    });
-
-    if (!user) {
-        return updateMessage(MESSAGES.INVALID_USER, RESPONSE_STATUS_CODE.UNAUTHORIZED);
-    }
-
-    return serializeProfile(user.toJSON());
-};
-
-export const updateProfile = async (userId, body) => {
-    const user = await db.User.findByPk(userId);
-    if (!user) {
-        return updateMessage(MESSAGES.INVALID_USER, RESPONSE_STATUS_CODE.UNAUTHORIZED);
-    }
-
-    // Allowlist the fields a user may change on their own profile
-    if (body.readingGoal !== undefined) {
-        user.readingGoal = body.readingGoal;
-    }
-    if (body.displayName !== undefined) {
-        user.displayName = body.displayName?.trim() || null;
-    }
-    if (body.avatarFileId !== undefined) {
-        user.avatarFileId = body.avatarFileId;
-    }
-    if (body.notifyByEmail !== undefined) {
-        user.notifyByEmail = body.notifyByEmail;
-    }
-
-    await user.save();
-
-    return await getProfile(userId);
-};
-
-export const updateReadingGoal = async (userId, goal) => {
-    return await updateProfile(userId, { readingGoal: goal, });
-};
-
-// Address for verify Email
-// change password
-// BlackListTokenModel
+// Identity / authentication service.
+// Everything here is a candidate to be replaced by an external auth provider.
+// It deliberately knows nothing about profile data beyond creating the initial
+// profile row on registration.
 
 export const register = async (query) => {
     query.email = query.email.toLowerCase();
@@ -95,9 +22,14 @@ export const register = async (query) => {
     }
 
     const hashedPassword = await cryptHash(query.password);
-    await db.User.create({
+    const user = await db.User.create({
         email: query.email,
         password: hashedPassword,
+    });
+
+    // Seed the application-owned profile for the new identity.
+    await db.Profile.create({
+        userId: user.id,
         year: query.year,
     });
 
@@ -118,7 +50,7 @@ export const login = async (body) => {
         return updateMessage(MESSAGES.DELETED_PROFILE, RESPONSE_STATUS_CODE.BAD_REQUEST);
     }
 
-    const { stayLogin, password, connectId, } = body;
+    const { password, connectId, } = body;
 
     const matchPassword = await cryptCompare(password, existingEmail.password);
     if (!matchPassword) {
@@ -167,14 +99,11 @@ export const logout = async (data) => {
         });
     }
 
-    // const request = await BlackListTokenModel.create({
-    // inActivateToken: token,
-    // });
     return;
 };
 
 export const checkFieldInDB = async (email) => {
-    const existingEmail = (await db.User.findAndCountAll({ where: { email, }, })).dataValues; // TODO Verify
+    const existingEmail = (await db.User.findAndCountAll({ where: { email, }, })).dataValues;
     return existingEmail.rows.length ? true : false;
 };
 

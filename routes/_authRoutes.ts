@@ -3,7 +3,7 @@ import { body, } from 'express-validator';
 
 const auth = Router();
 
-import { expressValidator, isAuthenticated, } from '../middleware';
+import { expressValidator, } from '../middleware';
 
 import * as authController from '../controller/authController';
 import { PASSWORD_PATTERN, ROUTING_MESSAGES, } from '../constants';
@@ -44,19 +44,6 @@ auth.post('/magic-link/verify',
     body('token').notEmpty().withMessage(ROUTING_MESSAGES.TOKE_IS_REQUIRED),
     expressValidator,
     authController.verifyMagicLink
-);
-
-auth.get('/profile', isAuthenticated(), authController.getProfile);
-
-auth.patch('/profile',
-    isAuthenticated(),
-    body('readingGoal').optional().isInt({ min: 1, max: 999, }).withMessage(ROUTING_MESSAGES.READING_GOAL_RANGE),
-    body('displayName').optional({ nullable: true }).isLength({ max: 60, })
-        .withMessage(ROUTING_MESSAGES.DISPLAY_NAME_LENGTH),
-    body('avatarFileId').optional({ nullable: true }).isInt(),
-    body('notifyByEmail').optional().isBoolean().withMessage(ROUTING_MESSAGES.NOTIFY_BY_EMAIL_BOOL),
-    expressValidator,
-    authController.updateProfile
 );
 
 export default auth;

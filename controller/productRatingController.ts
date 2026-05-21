@@ -1,9 +1,8 @@
 import { MESSAGES, cacheKeys, RESPONSE_STATUS_CODE, } from '../constants';
 
-import { buildCacheKey, } from '../Helpers';
+import { buildCacheKey, getAuthContext, getUserId, } from '../Helpers';
 
 import * as productRatingService from '../services/productRatingService';
-import { getUserVerificationStatus, } from '../services/getUserVerificationStatus';
 import { deleteCacheEntry, } from '../services/cacheService';
 
 import { updateMessage, } from '../util';
@@ -11,7 +10,7 @@ import { updateMessage, } from '../util';
 export const getProductRating = async (req, res, next) => {
     try {
         const productId = parseInt(req.params.id);
-        const userId = req?.user?._id;
+        const userId = getUserId(req);
 
         const aggregate = await productRatingService.getRatingAggregate(productId);
         const userRating = userId ? await productRatingService.getUserRating(userId, productId) : 0;
@@ -24,12 +23,12 @@ export const getProductRating = async (req, res, next) => {
 
 export const rateProduct = async (req, res, next) => {
     try {
-        const userId = req.user._id;
-        const checkAccount = await getUserVerificationStatus(userId);
-        if (!checkAccount) {
+        const auth = getAuthContext(req);
+        if (!auth?.isVerify) {
             res.status(RESPONSE_STATUS_CODE.UNAUTHORIZED).json(updateMessage(MESSAGES.ACCOUNT_IS_NOT_VERIFY).user);
             return;
         }
+        const userId = auth.id;
 
         const productId = parseInt(req.params.id);
         const { rating, } = req.body;

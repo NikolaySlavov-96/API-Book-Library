@@ -13,6 +13,7 @@ const ModelName = {
     STATE: 'state',
     USER_DATA: 'userData',
     USER: 'user',
+    PROFILE: 'profile',
     VERIFY_TOKEN: 'verifyToken',
 };
 

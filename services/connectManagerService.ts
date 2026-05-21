@@ -2,10 +2,10 @@ import { generateDateForDB, } from '../Helpers';
 
 import db from '../Model';
 
-import { verifyToken, } from '../util';
+import { authProvider, } from './auth';
 
 export const registerNewVisitor = async (socketId, token?: string) => {
-    const payload = token ? await verifyToken(token) : null;
+    const payload = token ? await authProvider.verifyAccessToken(token) : null;
     const hasPayload = payload && '_id' in payload;
 
     const currentTime = generateDateForDB();

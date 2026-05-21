@@ -1,6 +1,6 @@
 import { EMAIL, MESSAGES, RESPONSE_STATUS_CODE, } from '../constants';
 
-import * as authService from '../services/authService';
+import * as identityService from '../services/identityService';
 import * as tokenService from '../services/tokenService';
 import verifyAccount from '../services/mailService';
 
@@ -10,7 +10,7 @@ export const createUser = async (req, res, next) => {
     try {
         const body = req.body;
 
-        const result = await authService.register(body);
+        const result = await identityService.register(body);
 
         if (result.statusCode) {
             res.status(result.statusCode).json(result.user);
@@ -28,7 +28,7 @@ export const createUser = async (req, res, next) => {
 
 export const getUser = async (req, res, next) => {
     try {
-        const token = await authService.login(req.body);
+        const token = await identityService.login(req.body);
         res.status(token?.statusCode || RESPONSE_STATUS_CODE.OK).json(token?.user || token);
     } catch (err) {
         next(err);
@@ -37,7 +37,7 @@ export const getUser = async (req, res, next) => {
 
 export const exitUser = async (req, res, next) => {
     try {
-        await authService.logout(req.body);
+        await identityService.logout(req.body);
         res.status(RESPONSE_STATUS_CODE.NO_CONTENT);
     } catch (err) {
         next(err);
@@ -47,7 +47,7 @@ export const exitUser = async (req, res, next) => {
 export const checkFields = async (req, res, next) => {
     const { email, } = req.query;
     try {
-        const result = await authService.checkFieldInDB(email);
+        const result = await identityService.checkFieldInDB(email);
         res.json(result);
     } catch (err) {
         next(err);
@@ -58,7 +58,7 @@ export const requestMagicLink = async (req, res, next) => {
     try {
         const { email, } = req.body;
 
-        const emailExists = await authService.checkFieldInDB(email);
+        const emailExists = await identityService.checkFieldInDB(email);
         if (emailExists) {
             const emailData = [{ type: EMAIL.MAGIC_LINK, }];
             verifyAccount({ email, }, emailData);
@@ -85,40 +85,8 @@ export const verifyMagicLink = async (req, res, next) => {
 
         await tokenService.changeEmailTokenStatus(token);
 
-        const loginResult = await authService.loginViaMagic(email);
+        const loginResult = await identityService.loginViaMagic(email);
         res.status(loginResult?.statusCode || RESPONSE_STATUS_CODE.OK).json(loginResult?.user || loginResult);
-    } catch (err) {
-        next(err);
-    }
-};
-
-export const getProfile = async (req, res, next) => {
-    try {
-        const userId = req.user._id;
-        const result = await authService.getProfile(userId);
-
-        if (result?.statusCode) {
-            res.status(result.statusCode).json(result.user);
-            return;
-        }
-
-        res.status(RESPONSE_STATUS_CODE.OK).json(result);
-    } catch (err) {
-        next(err);
-    }
-};
-
-export const updateProfile = async (req, res, next) => {
-    try {
-        const userId = req.user._id;
-        const result = await authService.updateProfile(userId, req.body);
-
-        if (result?.statusCode) {
-            res.status(result.statusCode).json(result.user);
-            return;
-        }
-
-        res.status(RESPONSE_STATUS_CODE.OK).json(result);
     } catch (err) {
         next(err);
     }
@@ -134,7 +102,7 @@ export const verifyUser = async (req, res, next) => {
         }
 
         const userAddressValue = 'address' in userAddress && userAddress.address;
-        const verifyState = await authService.verifyTokenFormUser(userAddressValue);
+        const verifyState = await identityService.verifyTokenFormUser(userAddressValue);
 
         await tokenService.changeEmailTokenStatus(verifyToken);
 

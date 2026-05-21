@@ -9,6 +9,7 @@ import { initNewConnection, } from '../config';
 const sequelize = initNewConnection();
 
 import { UserFactory, } from './_UserModel';
+import { ProfileFactory, } from './_ProfileModel';
 import { AuthorFactory, } from './_AuthorModel';
 import { StateFactory, } from './_States';
 import { FileFactory, } from './_FileModel';
@@ -28,6 +29,7 @@ db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
 db.User = UserFactory(sequelize);
+db.Profile = ProfileFactory(sequelize);
 db.Author = AuthorFactory(sequelize);
 db.State = StateFactory(sequelize);
 db.File = FileFactory(sequelize);
@@ -53,7 +55,12 @@ db.ProductRating.belongsTo(db.User, { foreignKey: 'userId', });
 db.Product.hasMany(db.ProductRating, { foreignKey: 'productId', });
 db.ProductRating.belongsTo(db.Product, { foreignKey: 'productId', });
 
-db.User.belongsTo(db.File, { foreignKey: 'avatarFileId', as: 'avatar', constraints: false, });
+// Identity <-> Profile (one profile per identity, linked by userId)
+db.User.hasOne(db.Profile, { foreignKey: 'userId', as: 'profile', constraints: false, });
+db.Profile.belongsTo(db.User, { foreignKey: 'userId', constraints: false, });
+
+// Avatar belongs to the profile, not to the identity
+db.Profile.belongsTo(db.File, { foreignKey: 'avatarFileId', as: 'avatar', constraints: false, });
 
 db.User.hasOne(db.SessionModel, {
     foreignKey: 'userId',

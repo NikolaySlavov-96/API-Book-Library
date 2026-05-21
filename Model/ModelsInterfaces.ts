@@ -72,14 +72,21 @@ export interface IStateAttributes {
     symbol: string;
 }
 
+// Identity / authentication only.
 export interface IUserAttributes {
     id: number;
     email: string;
     isDelete: boolean;
     isVerify: boolean;
     password: string;
-    year: number;
     role: string;
+}
+
+// Application-owned user data, linked to the identity key via `userId`.
+export interface IProfileAttributes {
+    id: number;
+    userId: number;
+    year: number;
     readingGoal?: number;
     displayName?: string;
     avatarFileId?: number;

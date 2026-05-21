@@ -6,19 +6,16 @@ import { IUserAttributes, } from './ModelsInterfaces';
 
 interface IUserCreationAttributes extends Optional<IUserAttributes, 'id'> { }
 
-
+// Identity only. Everything that is NOT authentication lives in the Profile model,
+// so the whole identity layer can later be moved to an external auth provider
+// without touching profile/domain code.
 class User extends Model<IUserAttributes, IUserCreationAttributes> implements IUserAttributes {
     declare id: number;
     declare email: string;
     declare isDelete: boolean;
     declare isVerify: boolean;
     declare password: string;
-    declare year: number;
     declare role: string;
-    declare readingGoal: number;
-    declare displayName: string;
-    declare avatarFileId: number;
-    declare notifyByEmail: boolean;
 }
 
 export const UserFactory = (sequelize: Sequelize): typeof User => {
@@ -36,10 +33,6 @@ export const UserFactory = (sequelize: Sequelize): typeof User => {
         password: {
             type: DataTypes.STRING(60),
         },
-        year: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-        },
         isVerify: {
             type: DataTypes.BOOLEAN,
             defaultValue: false,
@@ -51,22 +44,6 @@ export const UserFactory = (sequelize: Sequelize): typeof User => {
         role: {
             type: DataTypes.STRING(20),
             defaultValue: 'user',
-        },
-        readingGoal: {
-            type: DataTypes.INTEGER,
-            defaultValue: 12,
-        },
-        displayName: {
-            type: DataTypes.STRING(60),
-            allowNull: true,
-        },
-        avatarFileId: {
-            type: DataTypes.INTEGER,
-            allowNull: true,
-        },
-        notifyByEmail: {
-            type: DataTypes.BOOLEAN,
-            defaultValue: true,
         },
     }, {
         sequelize,

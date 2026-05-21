@@ -1,11 +1,8 @@
 import { MESSAGES, queryOperators, cacheKeys, RESPONSE_STATUS_CODE, } from '../constants';
 
-import { buildCacheKey, pageParser, searchParser, } from '../Helpers';
+import { buildCacheKey, getAuthContext, getUserId, pageParser, searchParser, } from '../Helpers';
 
 import * as productStatusService from '../services/productStatusService';
-import {
-    getUserVerificationStatus,
-} from '../services/getUserVerificationStatus';
 import { cacheDataWithExpiration, deleteCacheEntry, } from '../services/cacheService';
 
 import { updateMessage, } from '../util';
@@ -22,7 +19,7 @@ export const getAllStatus = async (req, res, next) => {
 
 export const getStatusCounts = async (req, res, next) => {
     try {
-        const userId = req?.user?._id;
+        const userId = getUserId(req);
         const result = await productStatusService.getStatusCounts(userId);
         res.status(RESPONSE_STATUS_CODE.OK).json(result);
     } catch (err) {
@@ -36,7 +33,7 @@ export const getAllProductsByStatus = async (req, res, next) => {
 
     const filterOperator = queryOperators.LIKE;
 
-    const userId = req?.user?._id;
+    const userId = getUserId(req);
     const statusId = req.params.statusId;
 
     try {
@@ -53,7 +50,7 @@ export const getAllProductsByStatus = async (req, res, next) => {
 export const getProductStatusById = async (req, res, next) => {
     try {
         const productId = parseInt(req.params.id);
-        const userId = req?.user?._id;
+        const userId = getUserId(req);
 
         const data = await productStatusService.getInfoFromProductStatus(productId, userId);
 
@@ -68,13 +65,13 @@ export const getProductStatusById = async (req, res, next) => {
 
 export const createProductStatus = async (req, res, next) => {
     try {
-        const userId = req.user._id;
-        const checkAccount = await getUserVerificationStatus(userId);
-        if (!checkAccount) {
+        const auth = getAuthContext(req);
+        if (!auth?.isVerify) {
             res.status(RESPONSE_STATUS_CODE.UNAUTHORIZED).json(updateMessage(MESSAGES.ACCOUNT_IS_NOT_VERIFY).user);
+            return;
         }
 
-        await productStatusService.addingNewProductStatus(userId, req.body);
+        await productStatusService.addingNewProductStatus(auth.id, req.body);
 
         const key = buildCacheKey(cacheKeys.PRODUCT_STATUS_ID, req);
         await deleteCacheEntry(key);
@@ -89,15 +86,14 @@ export const createProductStatus = async (req, res, next) => {
 
 export const deleteProductStatus = async (req, res, next) => {
     try {
-        const userId = req.user._id;
-        const checkAccount = await getUserVerificationStatus(userId);
-        if (!checkAccount) {
+        const auth = getAuthContext(req);
+        if (!auth?.isVerify) {
             res.status(RESPONSE_STATUS_CODE.UNAUTHORIZED).json(updateMessage(MESSAGES.ACCOUNT_IS_NOT_VERIFY).user);
             return;
         }
 
         const productId = parseInt(req.params.productId);
-        const removed = await productStatusService.removeProductStatus(userId, productId);
+        const removed = await productStatusService.removeProductStatus(auth.id, productId);
 
         if (!removed) {
             res.status(RESPONSE_STATUS_CODE.BAD_REQUEST).json(
