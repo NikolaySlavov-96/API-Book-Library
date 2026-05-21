@@ -30,13 +30,20 @@ export const getAllData = async ({ offset, limit, filterOperator, searchContent,
     }
     ];
 
-    // Filter the catalog by the logged-in user's shelf status when requested
-    if (statusId && userId) {
+    // Attach the logged-in user's current shelf status. Only isDelete=false rows are the
+    // active status; isDelete=true rows are history and never surface here. With a status
+    // filter the join is required (catalog shows just that section); without one it's a
+    // LEFT JOIN so un-shelved books still appear, carrying a null status.
+    if (userId) {
+        const statusWhere: any = { userId, isDelete: false, };
+        if (statusId) {
+            statusWhere.statusId = statusId;
+        }
         include.push({
             model: db.ProductStatus,
-            required: true,
-            attributes: [],
-            where: { userId, statusId, isDelete: false, },
+            required: !!statusId,
+            attributes: ['statusId'],
+            where: statusWhere,
         });
     }
 

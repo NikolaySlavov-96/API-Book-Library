@@ -3,7 +3,7 @@ import { MESSAGES, queryOperators, cacheKeys, RESPONSE_STATUS_CODE, } from '../c
 import { buildCacheKey, getAuthContext, getUserId, pageParser, searchParser, } from '../Helpers';
 
 import * as productStatusService from '../services/productStatusService';
-import { cacheDataWithExpiration, deleteCacheEntry, } from '../services/cacheService';
+import { cacheDataWithExpiration, deleteCacheEntry, deleteKeysWithPrefix, } from '../services/cacheService';
 
 import { updateMessage, } from '../util';
 
@@ -75,6 +75,9 @@ export const createProductStatus = async (req, res, next) => {
 
         const key = buildCacheKey(cacheKeys.PRODUCT_STATUS_ID, req);
         await deleteCacheEntry(key);
+        // The catalog now embeds the user's current status per product, so a status change
+        // invalidates those cached pages.
+        await deleteKeysWithPrefix(cacheKeys.ALL_PRODUCTS);
 
         res.status(RESPONSE_STATUS_CODE.CREATED).json(
             updateMessage(MESSAGES.SUCCESSFULLY_ADDED_PRODUCT_IN_COLLECTION).user
@@ -104,6 +107,8 @@ export const deleteProductStatus = async (req, res, next) => {
 
         const key = buildCacheKey(cacheKeys.PRODUCT_STATUS_ID, req);
         await deleteCacheEntry(key);
+        // Removing a shelf status changes what the catalog shows for this user.
+        await deleteKeysWithPrefix(cacheKeys.ALL_PRODUCTS);
 
         res.status(RESPONSE_STATUS_CODE.OK).json(
             updateMessage(MESSAGES.SUCCESSFULLY_REMOVED_PRODUCT_FROM_COLLECTION).user
