@@ -111,8 +111,8 @@ export const logout = async (data) => {
 };
 
 export const checkFieldInDB = async (email) => {
-    const existingEmail = (await db.User.findAndCountAll({ where: { email, }, })).dataValues;
-    return existingEmail.rows.length ? true : false;
+    const { count, } = await db.User.findAndCountAll({ where: { email, }, });
+    return count > 0;
 };
 
 export const verifyTokenFormUser = async (address) => {
