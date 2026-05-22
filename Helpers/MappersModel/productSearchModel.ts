@@ -1,15 +1,15 @@
 import productModel from './productModel';
 import userModel from './userModel';
 
+// `data` is a ProductStatus row: the owning User, the Product, and the real statusId.
 const productSearchModel = (data) => {
-    const updateUser = userModel(data);
-    // TODO: Nikolay -> Verify
-    const updateProduct = productModel(data.ProductStatuses[0].Product);
+    const updateUser = userModel(data.User);
+    const updateProduct = productModel(data.Product);
 
     return {
         ...updateUser,
         ...updateProduct,
-        stateId: data.id, // TODO
+        stateId: data.statusId,
     };
 };
 
