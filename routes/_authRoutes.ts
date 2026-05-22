@@ -25,6 +25,12 @@ auth.post('/register',
     authController.createUser
 );
 
+auth.post('/refresh',
+    body('refreshToken').notEmpty().withMessage(ROUTING_MESSAGES.TOKE_IS_REQUIRED),
+    expressValidator,
+    authController.refreshToken
+);
+
 auth.post('/logout', authController.exitUser);
 auth.get('/check', authController.checkFields);
 

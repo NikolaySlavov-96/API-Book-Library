@@ -2,6 +2,7 @@ import { EMAIL, MESSAGES, RESPONSE_STATUS_CODE, } from '../constants';
 
 import * as identityService from '../services/identityService';
 import * as tokenService from '../services/tokenService';
+import * as refreshTokenService from '../services/refreshTokenService';
 import verifyAccount from '../services/mailService';
 
 import { updateMessage, } from '../util';
@@ -30,6 +31,16 @@ export const getUser = async (req, res, next) => {
     try {
         const token = await identityService.login(req.body);
         res.status(token?.statusCode || RESPONSE_STATUS_CODE.OK).json(token?.user || token);
+    } catch (err) {
+        next(err);
+    }
+};
+
+export const refreshToken = async (req, res, next) => {
+    try {
+        const { refreshToken, } = req.body;
+        const result = await refreshTokenService.rotateRefreshToken(refreshToken);
+        res.status(result?.statusCode || RESPONSE_STATUS_CODE.OK).json(result?.user || result);
     } catch (err) {
         next(err);
     }

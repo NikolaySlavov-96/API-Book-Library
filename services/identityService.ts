@@ -5,6 +5,8 @@ import { MESSAGES, RESPONSE_STATUS_CODE, } from '../constants';
 import { cryptCompare, cryptHash, updateMessage, } from '../util';
 import { addTokenResponse, generateDateForDB, } from '../Helpers';
 
+import { revokeRefreshToken, } from './refreshTokenService';
+
 import db from '../Model';
 
 // Identity / authentication service.
@@ -98,6 +100,9 @@ export const logout = async (data) => {
             nest: true,
         });
     }
+
+    // End the refresh session so a leaked/rotated token can't be reused.
+    await revokeRefreshToken(data?.refreshToken);
 
     return;
 };

@@ -120,3 +120,15 @@ export interface IVerifyToken extends Document {
     createdAt: Date;
     updatedAt: Date;
 }
+
+// Refresh tokens are stored so they can be rotated and revoked.
+// `status: true` marks a token as consumed/revoked and no longer usable.
+export interface IRefreshToken extends Document {
+    token: string;
+    userId: string;
+    expireAt: number;
+    unit: string;
+    status: boolean;
+    createdAt: Date;
+    updatedAt: Date;
+}

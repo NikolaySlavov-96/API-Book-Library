@@ -15,6 +15,7 @@ const ModelName = {
     USER: 'user',
     PROFILE: 'profile',
     VERIFY_TOKEN: 'verifyToken',
+    REFRESH_TOKEN: 'refreshToken',
 };
 
 export default ModelName;
