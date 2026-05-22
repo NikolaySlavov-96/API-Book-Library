@@ -85,7 +85,10 @@ export const loginViaMagic = async (email) => {
         return updateMessage(MESSAGES.DELETED_PROFILE, RESPONSE_STATUS_CODE.BAD_REQUEST);
     }
     if (!existingEmail.isVerify) {
-        return updateMessage(MESSAGES.ACCOUNT_IS_NOT_VERIFY, RESPONSE_STATUS_CODE.UNAUTHORIZED);
+        // 403, not 401: the credentials are valid but the account isn't verified.
+        // 401 is reserved for an expired/invalid access token so the client's
+        // refresh-on-401 flow isn't triggered by a domain error like this one.
+        return updateMessage(MESSAGES.ACCOUNT_IS_NOT_VERIFY, RESPONSE_STATUS_CODE.FORBIDDEN);
     }
 
     return addTokenResponse(existingEmail, MESSAGES.SUCCESSFULLY_LOGIN);

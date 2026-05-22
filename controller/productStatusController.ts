@@ -67,7 +67,7 @@ export const createProductStatus = async (req, res, next) => {
     try {
         const auth = getAuthContext(req);
         if (!auth?.isVerify) {
-            res.status(RESPONSE_STATUS_CODE.UNAUTHORIZED).json(updateMessage(MESSAGES.ACCOUNT_IS_NOT_VERIFY).user);
+            res.status(RESPONSE_STATUS_CODE.FORBIDDEN).json(updateMessage(MESSAGES.ACCOUNT_IS_NOT_VERIFY).user);
             return;
         }
 
@@ -91,7 +91,7 @@ export const deleteProductStatus = async (req, res, next) => {
     try {
         const auth = getAuthContext(req);
         if (!auth?.isVerify) {
-            res.status(RESPONSE_STATUS_CODE.UNAUTHORIZED).json(updateMessage(MESSAGES.ACCOUNT_IS_NOT_VERIFY).user);
+            res.status(RESPONSE_STATUS_CODE.FORBIDDEN).json(updateMessage(MESSAGES.ACCOUNT_IS_NOT_VERIFY).user);
             return;
         }
 

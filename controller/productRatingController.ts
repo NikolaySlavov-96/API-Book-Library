@@ -25,7 +25,7 @@ export const rateProduct = async (req, res, next) => {
     try {
         const auth = getAuthContext(req);
         if (!auth?.isVerify) {
-            res.status(RESPONSE_STATUS_CODE.UNAUTHORIZED).json(updateMessage(MESSAGES.ACCOUNT_IS_NOT_VERIFY).user);
+            res.status(RESPONSE_STATUS_CODE.FORBIDDEN).json(updateMessage(MESSAGES.ACCOUNT_IS_NOT_VERIFY).user);
             return;
         }
         const userId = auth.id;
