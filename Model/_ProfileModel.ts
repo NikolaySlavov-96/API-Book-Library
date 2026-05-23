@@ -5,10 +5,6 @@ import { type IProfileAttributes } from './ModelsInterfaces';
 
 type IProfileCreationAttributes = Optional<IProfileAttributes, 'id'>;
 
-// Application-owned user data, kept separate from identity/authentication.
-// `userId` is the link to the identity key (today: User.id). When identity moves
-// to an external provider this column becomes the provider subject, and this table
-// stays exactly as the source of truth for everything the app owns about a user.
 class Profile extends Model<IProfileAttributes, IProfileCreationAttributes> implements IProfileAttributes {
     declare id: number;
     declare userId: number;

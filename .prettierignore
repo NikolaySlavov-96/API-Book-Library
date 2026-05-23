@@ -5,3 +5,15 @@ public
 uploads
 package-lock.json
 *.md5
+.github
+.vscode
+.idea
+.zed
+.claude
+ai-blueprint
+bash
+templates
+*.yml
+*.yaml
+*.md
+*.json

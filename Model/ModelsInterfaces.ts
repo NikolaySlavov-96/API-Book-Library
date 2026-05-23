@@ -1,6 +1,5 @@
 import { type Document } from 'mongoose';
 
-// SQL Models
 export interface IAuthorFileAttributes {
     id: number;
     authorId: number;
@@ -18,7 +17,7 @@ export interface IFileAttributes {
     id: number;
     extension: string;
     realFileName: string;
-    src: string; // Desire user name
+    src: string;
     uniqueName: string;
 }
 
@@ -72,7 +71,6 @@ export interface IStateAttributes {
     symbol: string;
 }
 
-// Identity / authentication only.
 export interface IUserAttributes {
     id: number;
     email: string;
@@ -82,7 +80,6 @@ export interface IUserAttributes {
     role: string;
 }
 
-// Application-owned user data, linked to the identity key via `userId`.
 export interface IProfileAttributes {
     id: number;
     userId: number;
@@ -121,8 +118,6 @@ export interface IVerifyToken extends Document {
     updatedAt: Date;
 }
 
-// Refresh tokens are stored so they can be rotated and revoked.
-// `status: true` marks a token as consumed/revoked and no longer usable.
 export interface IRefreshToken extends Document {
     token: string;
     userId: string;

@@ -10,7 +10,6 @@ export const getAllDate = async ({ statusId, userId, offset, limit, filterOperat
     const queryOperator = Op[filterOperator];
     const hasSearchContent = !!searchContent;
 
-    // statusId 0 / falsy → "all" tab: return every shelf item for the user
     const numericStatusId = parseInt(statusId);
     const statusFilter = numericStatusId ? { statusId: numericStatusId } : {};
 

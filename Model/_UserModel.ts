@@ -5,9 +5,6 @@ import { type IUserAttributes } from './ModelsInterfaces';
 
 type IUserCreationAttributes = Optional<IUserAttributes, 'id'>;
 
-// Identity only. Everything that is NOT authentication lives in the Profile model,
-// so the whole identity layer can later be moved to an external auth provider
-// without touching profile/domain code.
 class User extends Model<IUserAttributes, IUserCreationAttributes> implements IUserAttributes {
     declare id: number;
     declare email: string;

@@ -7,9 +7,6 @@ import { updateMessage } from '../util';
 const { BE_URL } = process.env;
 const AVATAR_PATH = BE_URL + SYSTEM_FILE_DIRECTORY.UPLOAD + '/';
 
-// Application-owned user data. Intentionally returns ONLY profile fields:
-// identity attributes (email, role, isVerify) are delivered by the auth layer
-// (login response / token), so this resource stays independent of the provider.
 const serializeProfile = (profile) => {
     const avatar = profile?.avatar;
 

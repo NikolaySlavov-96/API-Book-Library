@@ -43,7 +43,7 @@ const _responseMapper = (result, type: _EMappedType) => {
     }
 
     if (type === _EMappedType.PRODUCT_STATE) {
-        mappedResult.rows = result.rows.map((bs) => productStateModel(bs));
+        mappedResult.rows = result.rows.map((bs) => productStateModel(bs.toJSON()));
         return mappedResult;
     }
 
