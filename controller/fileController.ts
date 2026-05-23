@@ -1,10 +1,7 @@
-import { MESSAGES, RESPONSE_STATUS_CODE, } from '../constants';
-
+import { MESSAGES, RESPONSE_STATUS_CODE } from '../constants';
+import { getAuthContext } from '../Helpers';
 import * as fileService from '../services/fileService';
-
-import { getAuthContext, } from '../Helpers';
-
-import { updateMessage, } from '../util';
+import { updateMessage } from '../util';
 
 export const addFile = async (req, res, next) => {
     try {
@@ -20,7 +17,7 @@ export const addFile = async (req, res, next) => {
             res.status(RESPONSE_STATUS_CODE.BAD_REQUEST).json(updateMessage(MESSAGES.PLEASE_ADDED_FILE).user);
             return;
         }
-        const { deliverFile, } = req.files;
+        const { deliverFile } = req.files;
         const fileData = await fileService.addingFile(deliverFile, req.body);
 
         res.status(RESPONSE_STATUS_CODE.OK).json(fileData);

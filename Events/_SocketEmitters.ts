@@ -1,6 +1,6 @@
-import { Socket, } from 'socket.io';
+import { type Socket } from 'socket.io';
 
-import { ESendEvents, } from '../constants';
+import { type ESendEvents } from '../constants';
 
 let io: Socket;
 

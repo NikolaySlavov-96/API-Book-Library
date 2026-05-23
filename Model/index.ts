@@ -1,27 +1,27 @@
-import { Sequelize, } from 'sequelize';
+import { Sequelize } from 'sequelize';
 
 import * as ModelsInterfaces from './ModelsInterfaces';
 
-export { ModelsInterfaces, };
+export { ModelsInterfaces };
 
-import { initNewConnection, } from '../config';
+import { initNewConnection } from '../config';
 
 const sequelize = initNewConnection();
 
-import { UserFactory, } from './_UserModel';
-import { ProfileFactory, } from './_ProfileModel';
-import { AuthorFactory, } from './_AuthorModel';
-import { StateFactory, } from './_States';
-import { FileFactory, } from './_FileModel';
-import { SessionModelFactory, } from './_SessionModel';
-import { ProductFactory, } from './_ProductModel';
-import { ProductStatusFactory, } from './_ProductStatusModel';
-import { ProductRatingFactory, } from './_ProductRatingModel';
-import { MessageFactory, } from './_MessageModel';
-import { MessageStatusFactory, } from './_MessageStatus';
-import { ProductAuthorFactory, } from './_ProductAuthorModel';
-import { ProductFileFactory, } from './_ProductFileModel';
-import { AuthorFileFactory, } from './_AuthorFileModel';
+import { AuthorFileFactory } from './_AuthorFileModel';
+import { AuthorFactory } from './_AuthorModel';
+import { FileFactory } from './_FileModel';
+import { MessageFactory } from './_MessageModel';
+import { MessageStatusFactory } from './_MessageStatus';
+import { ProductAuthorFactory } from './_ProductAuthorModel';
+import { ProductFileFactory } from './_ProductFileModel';
+import { ProductFactory } from './_ProductModel';
+import { ProductRatingFactory } from './_ProductRatingModel';
+import { ProductStatusFactory } from './_ProductStatusModel';
+import { ProfileFactory } from './_ProfileModel';
+import { SessionModelFactory } from './_SessionModel';
+import { StateFactory } from './_States';
+import { UserFactory } from './_UserModel';
 
 const db: any = {};
 
@@ -44,23 +44,23 @@ db.ProductFile = ProductFileFactory(sequelize);
 db.AuthorFile = AuthorFileFactory(sequelize);
 
 // Association
-db.User.hasMany(db.ProductStatus, { foreignKey: 'userId', });
-db.ProductStatus.belongsTo(db.User, { foreignKey: 'userId', });
-db.ProductStatus.belongsTo(db.State, { foreignKey: 'statusId', });
-db.ProductStatus.belongsTo(db.Product, { foreignKey: 'productId', });
-db.Product.hasMany(db.ProductStatus, { foreignKey: 'productId', });
+db.User.hasMany(db.ProductStatus, { foreignKey: 'userId' });
+db.ProductStatus.belongsTo(db.User, { foreignKey: 'userId' });
+db.ProductStatus.belongsTo(db.State, { foreignKey: 'statusId' });
+db.ProductStatus.belongsTo(db.Product, { foreignKey: 'productId' });
+db.Product.hasMany(db.ProductStatus, { foreignKey: 'productId' });
 
-db.User.hasMany(db.ProductRating, { foreignKey: 'userId', });
-db.ProductRating.belongsTo(db.User, { foreignKey: 'userId', });
-db.Product.hasMany(db.ProductRating, { foreignKey: 'productId', });
-db.ProductRating.belongsTo(db.Product, { foreignKey: 'productId', });
+db.User.hasMany(db.ProductRating, { foreignKey: 'userId' });
+db.ProductRating.belongsTo(db.User, { foreignKey: 'userId' });
+db.Product.hasMany(db.ProductRating, { foreignKey: 'productId' });
+db.ProductRating.belongsTo(db.Product, { foreignKey: 'productId' });
 
 // Identity <-> Profile (one profile per identity, linked by userId)
-db.User.hasOne(db.Profile, { foreignKey: 'userId', as: 'profile', constraints: false, });
-db.Profile.belongsTo(db.User, { foreignKey: 'userId', constraints: false, });
+db.User.hasOne(db.Profile, { foreignKey: 'userId', as: 'profile', constraints: false });
+db.Profile.belongsTo(db.User, { foreignKey: 'userId', constraints: false });
 
 // Avatar belongs to the profile, not to the identity
-db.Profile.belongsTo(db.File, { foreignKey: 'avatarFileId', as: 'avatar', constraints: false, });
+db.Profile.belongsTo(db.File, { foreignKey: 'avatarFileId', as: 'avatar', constraints: false });
 
 db.User.hasOne(db.SessionModel, {
     foreignKey: 'userId',
@@ -69,8 +69,8 @@ db.User.hasOne(db.SessionModel, {
 db.SessionModel.belongsTo(db.User, {
     foreignKey: 'userId',
 });
-db.SessionModel.hasMany(db.Message, { foreignKey: 'senderId', sourceKey: 'connectId', });
-db.MessageStatus.belongsTo(db.Message, { foreignKey: 'messageId', });
+db.SessionModel.hasMany(db.Message, { foreignKey: 'senderId', sourceKey: 'connectId' });
+db.MessageStatus.belongsTo(db.Message, { foreignKey: 'messageId' });
 
 db.Product.belongsToMany(db.File, {
     through: db.ProductFile,
@@ -88,8 +88,8 @@ db.File.belongsToMany(db.Product, {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
 });
-db.ProductFile.belongsTo(db.Product, { foreignKey: 'productId', onDelete: 'CASCADE', });
-db.ProductFile.belongsTo(db.File, { foreignKey: 'fileId', onDelete: 'CASCADE', });
+db.ProductFile.belongsTo(db.Product, { foreignKey: 'productId', onDelete: 'CASCADE' });
+db.ProductFile.belongsTo(db.File, { foreignKey: 'fileId', onDelete: 'CASCADE' });
 
 db.Author.belongsToMany(db.File, {
     through: db.AuthorFile,
@@ -107,9 +107,8 @@ db.File.belongsToMany(db.Author, {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
 });
-db.AuthorFile.belongsTo(db.Author, { foreignKey: 'authorId', onDelete: 'CASCADE', });
-db.AuthorFile.belongsTo(db.File, { foreignKey: 'fileId', onDelete: 'CASCADE', });
-
+db.AuthorFile.belongsTo(db.Author, { foreignKey: 'authorId', onDelete: 'CASCADE' });
+db.AuthorFile.belongsTo(db.File, { foreignKey: 'fileId', onDelete: 'CASCADE' });
 
 db.Author.belongsToMany(db.Product, {
     through: db.ProductAuthor,
@@ -123,9 +122,9 @@ db.Product.belongsToMany(db.Author, {
     otherKey: 'authorId',
     as: 'authors',
 });
-db.Author.hasMany(db.ProductAuthor, { foreignKey: 'authorId', as: 'productAuthors', });
-db.Product.hasMany(db.ProductAuthor, { foreignKey: 'productId', as: 'productAuthors', });
-db.ProductAuthor.belongsTo(db.Author, { foreignKey: 'authorId', as: 'author', });
-db.ProductAuthor.belongsTo(db.Product, { foreignKey: 'productId', as: 'product', });
+db.Author.hasMany(db.ProductAuthor, { foreignKey: 'authorId', as: 'productAuthors' });
+db.Product.hasMany(db.ProductAuthor, { foreignKey: 'productId', as: 'productAuthors' });
+db.ProductAuthor.belongsTo(db.Author, { foreignKey: 'authorId', as: 'author' });
+db.ProductAuthor.belongsTo(db.Product, { foreignKey: 'productId', as: 'product' });
 
 export default db;

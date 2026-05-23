@@ -1,10 +1,9 @@
-import { Request as expressRequest, } from 'express';
+import { type Request as expressRequest } from 'express';
 
-import { Request as customRequest, } from '../Types/expressType';
+import { cacheKeys } from '../constants';
+import { type Request as customRequest } from '../Types/expressType';
 
-import { pageParser, searchParser, statusParser, } from '.';
-
-import { cacheKeys, } from '../constants';
+import { pageParser, searchParser, statusParser } from '.';
 
 type TRequest = expressRequest | customRequest;
 
@@ -20,9 +19,9 @@ const _buildCacheKey = (key, req) => {
         customKey += `${productId}-${req?.user?._id}`;
     }
     if (key === cacheKeys.ALL_PRODUCTS) {
-        const { limit, offset, } = pageParser(req?.query);
-        const { searchContent, } = searchParser(req?.query);
-        const { statusId, } = statusParser(req?.query);
+        const { limit, offset } = pageParser(req?.query);
+        const { searchContent } = searchParser(req?.query);
+        const { statusId } = statusParser(req?.query);
 
         customKey += `${limit}-${offset}-${searchContent}-${statusId}-${req?.user?._id}`;
     }

@@ -1,8 +1,6 @@
-import { NextFunction, Request, Response, } from '../../Types/expressType';
-
-import { MESSAGES, } from '../../constants';
-
-import { updateMessage, } from '../../util';
+import { MESSAGES } from '../../constants';
+import { type NextFunction, type Request, type Response } from '../../Types/expressType';
+import { updateMessage } from '../../util';
 
 const _isAuthenticated = () => {
     return (req: Request, res: Response, next: NextFunction) => {

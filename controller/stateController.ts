@@ -1,4 +1,4 @@
-import { getAllStates, } from '../services/productStatusService';
+import { getAllStates } from '../services/productStatusService';
 
 export const getStates = async (req, res, next) => {
     try {

@@ -1,14 +1,12 @@
 import fileModel from './fileModel';
 
 const productModel = (data) => {
-    const authors = data.authors;
-    let authorsName = '';
-    authors?.forEach(a => {
-        if (authorsName !== '') {
-            authorsName += ', ';
-        }
-        authorsName += a.name;
-    });
+    const { authors } = data;
+    const authorsName =
+        authors
+            ?.map((a) => a?.name)
+            .filter(Boolean)
+            .join(', ') ?? '';
     const updatedFile = fileModel(data?.files);
 
     // The user's current shelf status for this product, when the catalog query joined it

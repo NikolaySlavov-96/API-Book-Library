@@ -1,12 +1,10 @@
-import { Schema, model, } from 'mongoose';
+import { model, Schema } from 'mongoose';
 
 import ModelName from './modelNames';
-
-import { IUserData, } from './ModelsInterfaces';
-
+import { type IUserData } from './ModelsInterfaces';
 
 const userDataSchema = new Schema<IUserData>({
-    userAddress: { type: String, },
+    userAddress: { type: String },
 });
 
 export default model<IUserData>(ModelName.USER_DATA, userDataSchema);

@@ -1,6 +1,7 @@
+import { Client } from 'pg';
+import { Sequelize } from 'sequelize';
+
 import 'dotenv/config';
-import { Client, } from 'pg';
-import { Sequelize, } from 'sequelize';
 
 // Constants for login
 const DB_NAME = process.env.P_DB_NAME;
@@ -9,7 +10,6 @@ const DB_PASSWORD = process.env.P_DB_PASSWORD;
 const DB_ADDRESS = process.env.P_DB_ADDRESS;
 const DB_PORT = Number(process.env.P_DB_PORT);
 const DIALECT = 'postgres';
-
 
 // Function for create DB if it doesn't exits
 export const _checkDatabaseIfItExist = async () => {
@@ -35,16 +35,11 @@ export const _checkDatabaseIfItExist = async () => {
 };
 
 export default () => {
-    const sequelize = new Sequelize(
-        DB_NAME as string,
-        DB_USER as string,
-        DB_PASSWORD as string,
-        {
-            host: DB_ADDRESS,
-            port: DB_PORT,
-            dialect: DIALECT as 'postgres',
-        }
-    );
+    const sequelize = new Sequelize(DB_NAME, DB_USER, DB_PASSWORD, {
+        host: DB_ADDRESS,
+        port: DB_PORT,
+        dialect: DIALECT as 'postgres',
+    });
 
     return sequelize;
 };

@@ -1,14 +1,10 @@
-import { MESSAGES, RESPONSE_STATUS_CODE, } from '../constants';
-
-import { updateMessage, } from '../util';
-
+import { MESSAGES, RESPONSE_STATUS_CODE } from '../constants';
+import { calculateTimeDifference } from '../Helpers';
 import VerifyTokenModel from '../Model/VerifyTokenModel';
-
-import { calculateTimeDifference, } from '../Helpers';
-
+import { updateMessage } from '../util';
 
 export const verifyEmailToken = async (token: string) => {
-    const isExistToken = await VerifyTokenModel.findOne({ token, });
+    const isExistToken = await VerifyTokenModel.findOne({ token });
     if (!isExistToken) {
         return updateMessage(MESSAGES.TOKEN_DOES_NOT_EXIST, RESPONSE_STATUS_CODE.UNAUTHORIZED);
     }
@@ -27,7 +23,7 @@ export const verifyEmailToken = async (token: string) => {
 };
 
 export const verifyMagicToken = async (token: string) => {
-    const isExistToken = await VerifyTokenModel.findOne({ token, });
+    const isExistToken = await VerifyTokenModel.findOne({ token });
     if (!isExistToken) {
         return updateMessage(MESSAGES.TOKEN_DOES_NOT_EXIST, RESPONSE_STATUS_CODE.UNAUTHORIZED);
     }
@@ -50,10 +46,10 @@ interface IGenerateEmailToken {
     address: string;
 }
 export const generateEmailToken = async (data: IGenerateEmailToken, expireAt: number, unit: 'minute') => {
-    const newData = { ...data, expireAt, unit, };
-    return await VerifyTokenModel.create(newData);
+    const newData = { ...data, expireAt, unit };
+    return VerifyTokenModel.create(newData);
 };
 
 export const changeEmailTokenStatus = async (token) => {
-    return await VerifyTokenModel.findOneAndUpdate({ token, }, { status: true, });
+    return VerifyTokenModel.findOneAndUpdate({ token }, { status: true });
 };

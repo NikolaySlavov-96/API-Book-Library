@@ -1,12 +1,8 @@
-import { MESSAGES, queryOperators, cacheKeys, RESPONSE_STATUS_CODE, } from '../constants';
-
-import { buildCacheKey, getAuthContext, getUserId, pageParser, searchParser, } from '../Helpers';
-
+import { cacheKeys, MESSAGES, queryOperators, RESPONSE_STATUS_CODE } from '../constants';
+import { buildCacheKey, getAuthContext, getUserId, pageParser, searchParser } from '../Helpers';
+import { cacheDataWithExpiration, deleteCacheEntry, deleteKeysWithPrefix } from '../services/cacheService';
 import * as productStatusService from '../services/productStatusService';
-import { cacheDataWithExpiration, deleteCacheEntry, deleteKeysWithPrefix, } from '../services/cacheService';
-
-import { updateMessage, } from '../util';
-
+import { updateMessage } from '../util';
 
 export const getAllStatus = async (req, res, next) => {
     try {
@@ -28,17 +24,22 @@ export const getStatusCounts = async (req, res, next) => {
 };
 
 export const getAllProductsByStatus = async (req, res, next) => {
-    const { limit, offset, } = pageParser(req?.query);
-    const { searchContent, } = searchParser(req?.query);
+    const { limit, offset } = pageParser(req?.query);
+    const { searchContent } = searchParser(req?.query);
 
     const filterOperator = queryOperators.LIKE;
 
     const userId = getUserId(req);
-    const statusId = req.params.statusId;
+    const { statusId } = req.params;
 
     try {
         const result = await productStatusService.getAllDate({
-            statusId, userId, offset, limit, searchContent, filterOperator,
+            statusId,
+            userId,
+            offset,
+            limit,
+            searchContent,
+            filterOperator,
         });
 
         res.status(RESPONSE_STATUS_CODE.OK).json(result);
@@ -80,7 +81,7 @@ export const createProductStatus = async (req, res, next) => {
         await deleteKeysWithPrefix(cacheKeys.ALL_PRODUCTS);
 
         res.status(RESPONSE_STATUS_CODE.CREATED).json(
-            updateMessage(MESSAGES.SUCCESSFULLY_ADDED_PRODUCT_IN_COLLECTION).user
+            updateMessage(MESSAGES.SUCCESSFULLY_ADDED_PRODUCT_IN_COLLECTION).user,
         );
     } catch (err) {
         next(err);
@@ -99,9 +100,7 @@ export const deleteProductStatus = async (req, res, next) => {
         const removed = await productStatusService.removeProductStatus(auth.id, productId);
 
         if (!removed) {
-            res.status(RESPONSE_STATUS_CODE.BAD_REQUEST).json(
-                updateMessage(MESSAGES.PRODUCT_NOT_IN_COLLECTION).user
-            );
+            res.status(RESPONSE_STATUS_CODE.BAD_REQUEST).json(updateMessage(MESSAGES.PRODUCT_NOT_IN_COLLECTION).user);
             return;
         }
 
@@ -111,7 +110,7 @@ export const deleteProductStatus = async (req, res, next) => {
         await deleteKeysWithPrefix(cacheKeys.ALL_PRODUCTS);
 
         res.status(RESPONSE_STATUS_CODE.OK).json(
-            updateMessage(MESSAGES.SUCCESSFULLY_REMOVED_PRODUCT_FROM_COLLECTION).user
+            updateMessage(MESSAGES.SUCCESSFULLY_REMOVED_PRODUCT_FROM_COLLECTION).user,
         );
     } catch (err) {
         next(err);

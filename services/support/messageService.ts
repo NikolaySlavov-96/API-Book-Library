@@ -1,14 +1,13 @@
 import db from '../../Model';
-
-import { ModelsInterfaces, } from '../../Model';
+import { type ModelsInterfaces } from '../../Model';
 
 interface IInsertMessage {
-    resultFromRoom: { roomName: string },
-    data: { message: string },
-    connectId: string
+    resultFromRoom: { roomName: string };
+    data: { message: string };
+    connectId: string;
 }
 export const insertMessage = async (inData: IInsertMessage): Promise<ModelsInterfaces.IMessageAttributes> => {
-    const { resultFromRoom, data, connectId, } = inData;
+    const { resultFromRoom, data, connectId } = inData;
 
     const messagePayload = {
         roomName: resultFromRoom.roomName,

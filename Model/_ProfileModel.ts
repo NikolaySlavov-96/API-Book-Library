@@ -1,10 +1,9 @@
-import { DataTypes, Model, Optional, Sequelize, } from 'sequelize';
+import { DataTypes, Model, type Optional, type Sequelize } from 'sequelize';
 
 import ModelName from './modelNames';
+import { type IProfileAttributes } from './ModelsInterfaces';
 
-import { IProfileAttributes, } from './ModelsInterfaces';
-
-interface IProfileCreationAttributes extends Optional<IProfileAttributes, 'id'> { }
+type IProfileCreationAttributes = Optional<IProfileAttributes, 'id'>;
 
 // Application-owned user data, kept separate from identity/authentication.
 // `userId` is the link to the identity key (today: User.id). When identity moves
@@ -21,41 +20,44 @@ class Profile extends Model<IProfileAttributes, IProfileCreationAttributes> impl
 }
 
 export const ProfileFactory = (sequelize: Sequelize): typeof Profile => {
-    Profile.init({
-        id: {
-            type: DataTypes.INTEGER,
-            primaryKey: true,
-            autoIncrement: true,
+    Profile.init(
+        {
+            id: {
+                type: DataTypes.INTEGER,
+                primaryKey: true,
+                autoIncrement: true,
+            },
+            userId: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+                unique: true,
+            },
+            year: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+            },
+            readingGoal: {
+                type: DataTypes.INTEGER,
+                defaultValue: 12,
+            },
+            displayName: {
+                type: DataTypes.STRING(60),
+                allowNull: true,
+            },
+            avatarFileId: {
+                type: DataTypes.INTEGER,
+                allowNull: true,
+            },
+            notifyByEmail: {
+                type: DataTypes.BOOLEAN,
+                defaultValue: true,
+            },
         },
-        userId: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-            unique: true,
+        {
+            sequelize,
+            tableName: ModelName.PROFILE,
         },
-        year: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-        },
-        readingGoal: {
-            type: DataTypes.INTEGER,
-            defaultValue: 12,
-        },
-        displayName: {
-            type: DataTypes.STRING(60),
-            allowNull: true,
-        },
-        avatarFileId: {
-            type: DataTypes.INTEGER,
-            allowNull: true,
-        },
-        notifyByEmail: {
-            type: DataTypes.BOOLEAN,
-            defaultValue: true,
-        },
-    }, {
-        sequelize,
-        tableName: ModelName.PROFILE,
-    });
+    );
 
     return Profile;
 };

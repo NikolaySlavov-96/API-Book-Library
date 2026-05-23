@@ -1,5 +1,5 @@
-import { EMAIL, } from '../constants';
-import { createLink, mailUtil, } from '../util';
+import { EMAIL } from '../constants';
+import { createLink, mailUtil } from '../util';
 
 const mailTitle = {
     [EMAIL.REGISTER_CONFIRM]: 'Verify Account -> Book',
@@ -11,10 +11,9 @@ const linkCondition = {
     [EMAIL.MAGIC_LINK]: 'magic',
 };
 
-
 export default async (existingUser, dataForEmail) => {
     const TYPE_OF_EMAIL = dataForEmail[0].type;
     const link = await createLink(existingUser, linkCondition[TYPE_OF_EMAIL]);
 
-    mailUtil(existingUser.email, TYPE_OF_EMAIL, mailTitle[TYPE_OF_EMAIL], { link, });
+    await mailUtil(existingUser.email, TYPE_OF_EMAIL, mailTitle[TYPE_OF_EMAIL], { link });
 };

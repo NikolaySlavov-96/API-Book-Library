@@ -1,6 +1,6 @@
-import { verifyToken, } from '../../util';
+import { verifyToken } from '../../util';
 
-import { IAuthProvider, TVerifyResult, } from './AuthProvider';
+import { type IAuthProvider, type TVerifyResult } from './AuthProvider';
 
 // Current implementation: tokens are issued and verified locally (HS256 JWT).
 // When migrating to a hosted provider, add a sibling adapter (e.g.

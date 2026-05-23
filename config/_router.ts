@@ -1,4 +1,4 @@
-import { search, auth, profile, product, file, bulk } from '../routes';
+import { auth, bulk, file, product, profile, search } from '../routes';
 
 const PREFIX = '';
 

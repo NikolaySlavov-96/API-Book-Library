@@ -6,8 +6,7 @@ const productStateModel = (data) => {
     const updateUser = userModel(data.User);
 
     return {
-        productStateId: data.status,
-        // productStateName: data.State.stateName,
+        productStateId: data.statusId,
         productStateStatus: data.isDelete, // IsDelete
         ...updatedProduct,
         ...updateUser,

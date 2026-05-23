@@ -1,26 +1,18 @@
-import 'dotenv/config';
+import { createAdapter } from '@socket.io/redis-adapter';
 import express from 'express';
 import fileUpload from 'express-fileupload';
 import server from 'http';
-import { Server as SocketIOServer, } from 'socket.io';
-import { createAdapter, } from '@socket.io/redis-adapter';
+import { Server as SocketIOServer } from 'socket.io';
 
-import {
-    checkDatabaseIfItExist,
-    expressConfig,
-    router,
-    mongoClient,
-    redisClient,
-} from './config';
+import 'dotenv/config';
 
-import { globalErrorHandling, } from './Helpers';
-
+import { checkDatabaseIfItExist, expressConfig, mongoClient, redisClient, router } from './config';
+import { initEmitters, socketEvents } from './Events';
+import { globalErrorHandling } from './Helpers';
 import db from './Model';
-import { initEmitters, socketEvents, } from './Events';
 
-const { APP_PORT, SOCKET_ADDRESS, DB_FORCE_STATUS, } = process.env;
+const { APP_PORT, SOCKET_ADDRESS, DB_FORCE_STATUS } = process.env;
 
-start();
 const app = express();
 
 const pubClient = redisClient;
@@ -48,7 +40,7 @@ async function start() {
     await db.sequelize.authenticate();
 
     const resetStatus = DB_FORCE_STATUS === 'true' ? true : false;
-    await db.sequelize.sync({ force: resetStatus, });
+    await db.sequelize.sync({ force: resetStatus });
 
     expressConfig(app, express, fileUpload);
 
@@ -61,3 +53,5 @@ async function start() {
 
     initServer.listen(APP_PORT, () => console.log('Application works on port ~: ', APP_PORT));
 }
+
+void start();

@@ -1,12 +1,10 @@
-import { MESSAGES, RESPONSE_STATUS_CODE, } from '../constants';
-
-import { createToken, updateMessage, UUID, } from '../util';
+import { MESSAGES, RESPONSE_STATUS_CODE } from '../constants';
 // Imported from the concrete module (not the Helpers barrel) to avoid a cyclic
 // import: tokenHelpers -> refreshTokenService -> Helpers/index -> tokenHelpers.
-import { calculateTimeDifference, } from '../Helpers/_Date';
-
+import { calculateTimeDifference } from '../Helpers/_Date';
 import db from '../Model';
 import RefreshTokenModel from '../Model/RefreshTokenModel';
+import { createToken, updateMessage, UUID } from '../util';
 
 // Token lifetimes. Access tokens are short-lived; the refresh token keeps the
 // session alive and is rotated on every use.
@@ -32,7 +30,7 @@ export const revokeRefreshToken = async (token?: string) => {
     if (!token) {
         return;
     }
-    await RefreshTokenModel.updateOne({ token, }, { status: true, });
+    await RefreshTokenModel.updateOne({ token }, { status: true });
 };
 
 // Validate the presented refresh token and, if good, rotate it: the old token
@@ -43,29 +41,29 @@ export const rotateRefreshToken = async (token?: string) => {
         return updateMessage(MESSAGES.INVALID_AUTHORIZE_TOKEN, RESPONSE_STATUS_CODE.UNAUTHORIZED);
     }
 
-    const stored = await RefreshTokenModel.findOne({ token, });
+    const stored = await RefreshTokenModel.findOne({ token });
     if (!stored || stored.status) {
         return updateMessage(MESSAGES.INVALID_AUTHORIZE_TOKEN, RESPONSE_STATUS_CODE.UNAUTHORIZED);
     }
 
     const tokenAge = calculateTimeDifference(stored.createdAt, stored.unit || REFRESH_TOKEN_UNIT);
     if (tokenAge >= stored.expireAt) {
-        await RefreshTokenModel.updateOne({ token, }, { status: true, });
+        await RefreshTokenModel.updateOne({ token }, { status: true });
         return updateMessage(MESSAGES.EXPIRED_TOKEN, RESPONSE_STATUS_CODE.UNAUTHORIZED);
     }
 
     const user = await db.User.findOne({
-        where: { id: stored.userId, },
+        where: { id: stored.userId },
         raw: true,
         nest: true,
     });
     if (!user || user.isDelete) {
-        await RefreshTokenModel.updateOne({ token, }, { status: true, });
+        await RefreshTokenModel.updateOne({ token }, { status: true });
         return updateMessage(MESSAGES.INVALID_USER, RESPONSE_STATUS_CODE.UNAUTHORIZED);
     }
 
     // Rotation: consume the presented token and mint a fresh pair.
-    await RefreshTokenModel.updateOne({ token, }, { status: true, });
+    await RefreshTokenModel.updateOne({ token }, { status: true });
     const accessToken = createToken(user, ACCESS_TOKEN_TTL);
     const refreshToken = await issueRefreshToken(user.id);
 

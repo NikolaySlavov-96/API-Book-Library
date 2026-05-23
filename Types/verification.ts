@@ -6,6 +6,6 @@ export interface IPayload {
 }
 
 export interface ICondition {
-    type: string,
-    security: string
+    type: string;
+    security: string;
 }

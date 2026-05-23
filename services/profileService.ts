@@ -1,12 +1,10 @@
 import 'dotenv/config';
 
-import { MESSAGES, RESPONSE_STATUS_CODE, SYSTEM_FILE_DIRECTORY, } from '../constants';
-
-import { updateMessage, } from '../util';
-
+import { MESSAGES, RESPONSE_STATUS_CODE, SYSTEM_FILE_DIRECTORY } from '../constants';
 import db from '../Model';
+import { updateMessage } from '../util';
 
-const { BE_URL, } = process.env;
+const { BE_URL } = process.env;
 const AVATAR_PATH = BE_URL + SYSTEM_FILE_DIRECTORY.UPLOAD + '/';
 
 // Application-owned user data. Intentionally returns ONLY profile fields:
@@ -29,14 +27,14 @@ const serializeProfile = (profile) => {
 
 export const getProfile = async (userId) => {
     const profile = await db.Profile.findOne({
-        where: { userId, },
+        where: { userId },
         include: [
             {
                 model: db.File,
                 as: 'avatar',
                 required: false,
                 attributes: ['id', 'src', 'uniqueName'],
-            }
+            },
         ],
     });
 
@@ -48,7 +46,7 @@ export const getProfile = async (userId) => {
 };
 
 export const updateProfile = async (userId, body) => {
-    const profile = await db.Profile.findOne({ where: { userId, }, });
+    const profile = await db.Profile.findOne({ where: { userId } });
     if (!profile) {
         return updateMessage(MESSAGES.INVALID_USER, RESPONSE_STATUS_CODE.UNAUTHORIZED);
     }
@@ -69,9 +67,9 @@ export const updateProfile = async (userId, body) => {
 
     await profile.save();
 
-    return await getProfile(userId);
+    return getProfile(userId);
 };
 
 export const updateReadingGoal = async (userId, goal) => {
-    return await updateProfile(userId, { readingGoal: goal, });
+    return updateProfile(userId, { readingGoal: goal });
 };

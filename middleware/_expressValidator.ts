@@ -1,12 +1,12 @@
-import { validationResult, } from 'express-validator';
+import { validationResult } from 'express-validator';
 
-import { NextFunction, Request, Response, } from '../Types/expressType';
+import { type NextFunction, type Request, type Response } from '../Types/expressType';
 
 export default (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
-        res.status(400).json({ message: errorParser(errors), });
+        res.status(400).json({ message: errorParser(errors) });
         return;
     }
 

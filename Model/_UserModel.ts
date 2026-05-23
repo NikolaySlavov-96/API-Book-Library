@@ -1,10 +1,9 @@
-import { DataTypes, Model, Optional, Sequelize, } from 'sequelize';
+import { DataTypes, Model, type Optional, type Sequelize } from 'sequelize';
 
 import ModelName from './modelNames';
+import { type IUserAttributes } from './ModelsInterfaces';
 
-import { IUserAttributes, } from './ModelsInterfaces';
-
-interface IUserCreationAttributes extends Optional<IUserAttributes, 'id'> { }
+type IUserCreationAttributes = Optional<IUserAttributes, 'id'>;
 
 // Identity only. Everything that is NOT authentication lives in the Profile model,
 // so the whole identity layer can later be moved to an external auth provider
@@ -19,36 +18,39 @@ class User extends Model<IUserAttributes, IUserCreationAttributes> implements IU
 }
 
 export const UserFactory = (sequelize: Sequelize): typeof User => {
-    User.init({
-        id: {
-            type: DataTypes.INTEGER,
-            primaryKey: true,
-            autoIncrement: true,
+    User.init(
+        {
+            id: {
+                type: DataTypes.INTEGER,
+                primaryKey: true,
+                autoIncrement: true,
+            },
+            email: {
+                type: DataTypes.STRING(80),
+                unique: true,
+                allowNull: false,
+            },
+            password: {
+                type: DataTypes.STRING(60),
+            },
+            isVerify: {
+                type: DataTypes.BOOLEAN,
+                defaultValue: false,
+            },
+            isDelete: {
+                type: DataTypes.BOOLEAN,
+                defaultValue: false,
+            },
+            role: {
+                type: DataTypes.STRING(20),
+                defaultValue: 'user',
+            },
         },
-        email: {
-            type: DataTypes.STRING(80),
-            unique: true,
-            allowNull: false,
+        {
+            sequelize,
+            tableName: ModelName.USER,
         },
-        password: {
-            type: DataTypes.STRING(60),
-        },
-        isVerify: {
-            type: DataTypes.BOOLEAN,
-            defaultValue: false,
-        },
-        isDelete: {
-            type: DataTypes.BOOLEAN,
-            defaultValue: false,
-        },
-        role: {
-            type: DataTypes.STRING(20),
-            defaultValue: 'user',
-        },
-    }, {
-        sequelize,
-        tableName: ModelName.USER,
-    });
+    );
 
     return User;
 };

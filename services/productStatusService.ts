@@ -1,5 +1,4 @@
-import { responseMapper, EMappedType, } from '../Helpers';
-
+import { EMappedType, responseMapper } from '../Helpers';
 import db from '../Model';
 const Op = db?.Sequelize?.Op;
 
@@ -7,16 +6,16 @@ export const getAllStates = async () => {
     return await db.State.findAll();
 };
 
-export const getAllDate = async ({ statusId, userId, offset, limit, filterOperator, searchContent, }) => {
+export const getAllDate = async ({ statusId, userId, offset, limit, filterOperator, searchContent }) => {
     const queryOperator = Op[filterOperator];
     const hasSearchContent = !!searchContent;
 
     // statusId 0 / falsy → "all" tab: return every shelf item for the user
     const numericStatusId = parseInt(statusId);
-    const statusFilter = numericStatusId ? { statusId: numericStatusId, } : {};
+    const statusFilter = numericStatusId ? { statusId: numericStatusId } : {};
 
     const query = {
-        where: { ...statusFilter, userId, isDelete: false, },
+        where: { ...statusFilter, userId, isDelete: false },
         include: [
             {
                 model: db.Product,
@@ -34,18 +33,20 @@ export const getAllDate = async ({ statusId, userId, offset, limit, filterOperat
                         model: db.Author,
                         as: 'authors',
                         attributes: ['name', 'isVerify', 'genre'],
-                    }
+                    },
                 ],
-                where: hasSearchContent ? {
-                    [Op.or]: [
-                        {
-                            productTitle: { [queryOperator]: searchContent, },
-                        },
-                        {
-                            genre: { [queryOperator]: searchContent, },
-                        }
-                    ],
-                } : {},
+                where: hasSearchContent
+                    ? {
+                          [Op.or]: [
+                              {
+                                  productTitle: { [queryOperator]: searchContent },
+                              },
+                              {
+                                  genre: { [queryOperator]: searchContent },
+                              },
+                          ],
+                      }
+                    : {},
             },
             {
                 model: db.User as 'user',
@@ -56,7 +57,7 @@ export const getAllDate = async ({ statusId, userId, offset, limit, filterOperat
                 model: db.State,
                 required: true,
                 attributes: ['stateName'],
-            }
+            },
         ],
         attributes: ['id', 'statusId', 'isDelete'],
         order: [['id', 'ASC']],
@@ -74,27 +75,24 @@ export const getAllDate = async ({ statusId, userId, offset, limit, filterOperat
 
 export const getStatusCounts = async (userId) => {
     const rows = await db.ProductStatus.findAll({
-        where: { userId, isDelete: false, },
-        attributes: [
-            'statusId',
-            [db.sequelize.fn('COUNT', db.sequelize.col('statusId')), 'count']
-        ],
+        where: { userId, isDelete: false },
+        attributes: ['statusId', [db.sequelize.fn('COUNT', db.sequelize.col('statusId')), 'count']],
         group: ['statusId'],
         raw: true,
     });
 
-    return rows.map((r) => ({ statusId: Number(r.statusId), count: Number(r.count), }));
+    return rows.map((r) => ({ statusId: Number(r.statusId), count: Number(r.count) }));
 };
 
 export const getInfoFromProductStatus = async (productId, userId) => {
     return await db.ProductStatus.findOne({
-        where: { productId, userId, isDelete: false, },
+        where: { productId, userId, isDelete: false },
         attributes: ['statusId'],
     });
 };
 
 export const removeProductStatus = async (userId, productId) => {
-    const row = await db.ProductStatus.findOne({ where: { productId, userId, isDelete: false, }, });
+    const row = await db.ProductStatus.findOne({ where: { productId, userId, isDelete: false } });
     if (!row) {
         return null;
     }
@@ -102,14 +100,14 @@ export const removeProductStatus = async (userId, productId) => {
     return await row.save();
 };
 
-export const addingNewProductStatus = async (userId, { productId, statusId, }) => {
-    const existingProduct = await db.ProductStatus.findOne({ where: { productId, userId, isDelete: false, }, });
+export const addingNewProductStatus = async (userId, { productId, statusId }) => {
+    const existingProduct = await db.ProductStatus.findOne({ where: { productId, userId, isDelete: false } });
 
     if (existingProduct) {
         existingProduct.statusId = statusId;
         return await existingProduct.save();
     }
 
-    const result = (await db.ProductStatus.create({ userId, productId, statusId, }))?.dataValues;
+    const result = (await db.ProductStatus.create({ userId, productId, statusId }))?.dataValues;
     return result;
 };

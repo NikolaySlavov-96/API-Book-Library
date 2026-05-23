@@ -1,9 +1,7 @@
-import { MESSAGES, RESPONSE_STATUS_CODE, } from '../constants';
-
+import { MESSAGES, RESPONSE_STATUS_CODE } from '../constants';
+import { getAuthContext } from '../Helpers';
 import * as bulkService from '../services/bulkService';
-
-import { updateMessage, } from '../util';
-import { getAuthContext, } from '../Helpers';
+import { updateMessage } from '../util';
 
 export const createBulk = async (req, res, next) => {
     try {
@@ -19,7 +17,7 @@ export const createBulk = async (req, res, next) => {
         }
 
         const resultIds = [];
-        const body = req.body;
+        const { body } = req;
         if (body?.products?.length >= 1) {
             const result = await bulkService.createBulkProducts(req.body);
             resultIds.push(...result);

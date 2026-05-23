@@ -1,10 +1,9 @@
-import { DataTypes, Model, Optional, Sequelize, } from 'sequelize';
+import { DataTypes, Model, type Optional, type Sequelize } from 'sequelize';
 
 import ModelName from './modelNames';
+import { type IMessageAttributes } from './ModelsInterfaces';
 
-import { IMessageAttributes, } from './ModelsInterfaces';
-
-interface IMessageCreationAttributes extends Optional<IMessageAttributes, 'id'> { }
+type IMessageCreationAttributes = Optional<IMessageAttributes, 'id'>;
 
 class Message extends Model<IMessageAttributes, IMessageCreationAttributes> implements IMessageAttributes {
     declare id: number;
@@ -15,31 +14,34 @@ class Message extends Model<IMessageAttributes, IMessageCreationAttributes> impl
 }
 
 export const MessageFactory = (sequelize: Sequelize): typeof Message => {
-    Message.init({
-        id: {
-            type: DataTypes.INTEGER,
-            primaryKey: true,
-            autoIncrement: true,
+    Message.init(
+        {
+            id: {
+                type: DataTypes.INTEGER,
+                primaryKey: true,
+                autoIncrement: true,
+            },
+            roomName: {
+                type: DataTypes.STRING(30),
+                allowNull: false,
+            },
+            senderId: {
+                type: DataTypes.STRING(50),
+                allowNull: false,
+            },
+            message: {
+                type: DataTypes.STRING(255),
+            },
+            isDelete: {
+                type: DataTypes.BOOLEAN,
+                defaultValue: false,
+            },
         },
-        roomName: {
-            type: DataTypes.STRING(30),
-            allowNull: false,
+        {
+            sequelize,
+            tableName: ModelName.MESSAGE,
         },
-        senderId: {
-            type: DataTypes.STRING(50),
-            allowNull: false,
-        },
-        message: {
-            type: DataTypes.STRING(255),
-        },
-        isDelete: {
-            type: DataTypes.BOOLEAN,
-            defaultValue: false,
-        },
-    }, {
-        sequelize,
-        tableName: ModelName.MESSAGE,
-    });
+    );
 
     return Message;
 };

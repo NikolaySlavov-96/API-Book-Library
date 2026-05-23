@@ -1,18 +1,17 @@
-import { EMappedType, responseMapper, } from '../Helpers';
-
+import { EMappedType, responseMapper } from '../Helpers';
 import db from '../Model';
 
-export const getProductsByEmail = async ({ email, offset, limit, }) => {
+export const getProductsByEmail = async ({ email, offset, limit }) => {
     // One row per shelved book (not per user): query the status table directly so every
     // book the user owns comes back, each with its real status. isDelete=true rows are
     // history and stay out.
     const result = await db.ProductStatus.findAndCountAll({
-        where: { isDelete: false, },
+        where: { isDelete: false },
         include: [
             {
                 model: db.User,
                 required: true,
-                where: { email, },
+                where: { email },
                 attributes: ['id', 'email', 'isVerify'],
                 include: [
                     {
@@ -21,7 +20,7 @@ export const getProductsByEmail = async ({ email, offset, limit, }) => {
                         as: 'profile',
                         required: false,
                         attributes: ['year'],
-                    }
+                    },
                 ],
             },
             {
@@ -40,9 +39,9 @@ export const getProductsByEmail = async ({ email, offset, limit, }) => {
                         required: false,
                         as: 'files',
                         attributes: ['id', 'src', 'uniqueName'],
-                    }
+                    },
                 ],
-            }
+            },
         ],
         attributes: ['id', 'statusId', 'productId'],
         order: [['id', 'ASC']],

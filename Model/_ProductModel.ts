@@ -1,10 +1,9 @@
-import { DataTypes, Model, Optional, Sequelize, } from 'sequelize';
+import { DataTypes, Model, type Optional, type Sequelize } from 'sequelize';
 
 import ModelName from './modelNames';
+import { type IProductAttributes } from './ModelsInterfaces';
 
-import { IProductAttributes, } from './ModelsInterfaces';
-
-interface IProductCreationAttributes extends Optional<IProductAttributes, 'id'> { }
+type IProductCreationAttributes = Optional<IProductAttributes, 'id'>;
 
 class Product extends Model<IProductAttributes, IProductCreationAttributes> implements IProductAttributes {
     declare id: number;
@@ -17,45 +16,47 @@ class Product extends Model<IProductAttributes, IProductCreationAttributes> impl
 }
 
 export const ProductFactory = (sequelize: Sequelize): typeof Product => {
-    Product.init({
-        id: {
-            type: DataTypes.INTEGER,
-            primaryKey: true,
-            autoIncrement: true,
+    Product.init(
+        {
+            id: {
+                type: DataTypes.INTEGER,
+                primaryKey: true,
+                autoIncrement: true,
+            },
+            productTitle: {
+                type: DataTypes.STRING(140),
+            },
+            genre: {
+                type: DataTypes.STRING(45),
+            },
+            isVerify: {
+                type: DataTypes.BOOLEAN,
+                defaultValue: false,
+            },
+            pages: {
+                type: DataTypes.INTEGER,
+                allowNull: true,
+            },
+            publishedYear: {
+                type: DataTypes.SMALLINT,
+                allowNull: true,
+            },
+            description: {
+                type: DataTypes.TEXT,
+                allowNull: true,
+            },
         },
-        productTitle: {
-            type: DataTypes.STRING(140),
+        {
+            sequelize,
+            tableName: ModelName.PRODUCT,
+            indexes: [
+                {
+                    unique: true,
+                    name: 'productTitle',
+                    fields: [sequelize.fn('lower', sequelize.col('productTitle'))],
+                },
+            ],
         },
-        genre: {
-            type: DataTypes.STRING(45),
-        },
-        isVerify: {
-            type: DataTypes.BOOLEAN,
-            defaultValue: false,
-        },
-        pages: {
-            type: DataTypes.INTEGER,
-            allowNull: true,
-        },
-        publishedYear: {
-            type: DataTypes.SMALLINT,
-            allowNull: true,
-        },
-        description: {
-            type: DataTypes.TEXT,
-            allowNull: true,
-        },
-    }, {
-        sequelize,
-        tableName: ModelName.PRODUCT,
-        indexes: [
-            {
-                unique: true,
-                name: 'productTitle',
-                fields: [sequelize.fn('lower', sequelize.col('productTitle'))],
-            }
-        ],
-    }
     );
 
     return Product;

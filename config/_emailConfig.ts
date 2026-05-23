@@ -1,19 +1,22 @@
-import 'dotenv/config';
 import mailjet from 'node-mailjet';
 import nodemailer from 'nodemailer';
-const { createTransport, } = nodemailer;
 
+import 'dotenv/config';
+const { createTransport } = nodemailer;
 
 const {
-    MJ_APIKEY_PUBLIC, MJ_APIKEY_PRIVATE, MAILJET_EMAIL,
-    SMTP_EMAIL, SMTP_USER, SMTP_PASSWORD, SMTP_PORT, SMTP_HOST,
+    MJ_APIKEY_PUBLIC,
+    MJ_APIKEY_PRIVATE,
+    MAILJET_EMAIL,
+    SMTP_EMAIL,
+    SMTP_USER,
+    SMTP_PASSWORD,
+    SMTP_PORT,
+    SMTP_HOST,
 } = process.env;
 
 const mailjetConnection = () => {
-    return mailjet.apiConnect(
-        MJ_APIKEY_PUBLIC,
-        MJ_APIKEY_PRIVATE
-    );
+    return mailjet.apiConnect(MJ_APIKEY_PUBLIC, MJ_APIKEY_PRIVATE);
 };
 
 const mailjetMessageBuilder = (config) => {
@@ -28,10 +31,10 @@ const mailjetMessageBuilder = (config) => {
                 Subject: config.subject,
                 TextPart: config.text,
                 HTMLPart: config.html,
-            }
+            },
         ],
     };
-    return mailjetConnection().post('sent', { version: 'v3.1', }).request(messageConfig);
+    return mailjetConnection().post('sent', { version: 'v3.1' }).request(messageConfig);
 };
 
 const sentWithNodemailer = () => {
@@ -50,8 +53,8 @@ const sentWithNodemailer = () => {
 
 const nodemailerMessageBuilder = (config) => {
     const constructTo = config.to
-        .filter(t => t.email && t.email.trim())
-        .map(t => t.email)
+        .filter((t) => t.email && t.email.trim())
+        .map((t) => t.email)
         .join(', ');
 
     const messageConfig = {
@@ -64,7 +67,6 @@ const nodemailerMessageBuilder = (config) => {
 
     return sentWithNodemailer().sendMail(messageConfig);
 };
-
 
 const sendEmail = (provider?: 'nodemailer' | 'mailjet') => {
     if (provider === 'mailjet') {

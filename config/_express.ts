@@ -1,8 +1,7 @@
-import { cors, auth, trimBody, checkClientIP, } from '../middleware';
+import { SYSTEM_FILE_DIRECTORY } from '../constants';
+import { auth, checkClientIP, cors, trimBody } from '../middleware';
 
-import { SYSTEM_FILE_DIRECTORY, } from '../constants';
-
-const { FILE_SIZE, } = process.env;
+const { FILE_SIZE } = process.env;
 
 export default (app, express, fileUpload) => {
     app.use(checkClientIP());
@@ -11,12 +10,14 @@ export default (app, express, fileUpload) => {
     app.use(`/${SYSTEM_FILE_DIRECTORY.UPLOAD}`, express.static(SYSTEM_FILE_DIRECTORY.UPLOAD));
     app.use(cors(''));
 
-    app.use(fileUpload({
-        limits: {
-            fieldSize: FILE_SIZE,
-        },
-        abortOnLimit: true,
-    }));
+    app.use(
+        fileUpload({
+            limits: {
+                fieldSize: FILE_SIZE,
+            },
+            abortOnLimit: true,
+        }),
+    );
 
     app.use(express.json());
 

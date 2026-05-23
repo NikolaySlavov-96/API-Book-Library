@@ -1,12 +1,6 @@
-import { cacheKeys, } from '../../constants';
+import { cacheKeys } from '../../constants';
 import { normalizeInputData } from '../../util';
-
-import {
-    addedDataToList,
-    addedStringToList,
-    fetchListMembers,
-    removeElementFromList,
-} from '../cacheService';
+import { addedDataToList, addedStringToList, fetchListMembers, removeElementFromList } from '../cacheService';
 
 interface IAllConnectedUsers {
     connectId: string;
@@ -27,11 +21,10 @@ export const unassignSupport = async (connectId: string) => {
     await removeElementFromList(cacheKeys.SUPPORT_AGENT, connectId);
 };
 
-
 // User
 export const getAllWaitingUsers = async () => {
     const userQueue = await fetchListMembers(cacheKeys.USER_QUEUE);
-    const result = userQueue.map(uq => {
+    const result = userQueue.map((uq) => {
         const dataString = normalizeInputData(uq);
         const parseUser = JSON.parse(dataString) as IAllConnectedUsers;
         return parseUser;
@@ -44,12 +37,10 @@ export const assignUserToQueue = async (data) => {
 
 export const isUserInQueue = async (data: { connectId: string }) => {
     const result = await fetchListMembers(cacheKeys.USER_QUEUE);
-    const userExist = result.find(u => {
+    const userExist = result.find((u) => {
         const dataString = normalizeInputData(u);
         const parseUser = JSON.parse(dataString) as IAllConnectedUsers;
-        if (parseUser.connectId === data.connectId) {
-            return parseUser;
-        }
+        return parseUser.connectId === data.connectId;
     });
     const dataString = normalizeInputData(userExist);
     const parseAgain = JSON.parse(dataString);

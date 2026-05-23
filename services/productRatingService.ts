@@ -1,23 +1,23 @@
 import db from '../Model';
 
-export const upsertRating = async (userId, { productId, rating, }) => {
-    const existing = await db.ProductRating.findOne({ where: { userId, productId, }, });
+export const upsertRating = async (userId, { productId, rating }) => {
+    const existing = await db.ProductRating.findOne({ where: { userId, productId } });
 
     if (existing) {
         existing.rating = rating;
         return await existing.save();
     }
 
-    const result = (await db.ProductRating.create({ userId, productId, rating, }))?.dataValues;
+    const result = (await db.ProductRating.create({ userId, productId, rating }))?.dataValues;
     return result;
 };
 
 export const getRatingAggregate = async (productId) => {
     const result: any = await db.ProductRating.findOne({
-        where: { productId, },
+        where: { productId },
         attributes: [
             [db.sequelize.fn('AVG', db.sequelize.col('rating')), 'average'],
-            [db.sequelize.fn('COUNT', db.sequelize.col('rating')), 'count']
+            [db.sequelize.fn('COUNT', db.sequelize.col('rating')), 'count'],
         ],
         raw: true,
     });
@@ -30,7 +30,7 @@ export const getRatingAggregate = async (productId) => {
 
 export const getUserRating = async (userId, productId) => {
     const result = await db.ProductRating.findOne({
-        where: { userId, productId, },
+        where: { userId, productId },
         attributes: ['rating'],
     });
 

@@ -1,8 +1,6 @@
-import { RESPONSE_STATUS_CODE, } from '../constants';
-
+import { RESPONSE_STATUS_CODE } from '../constants';
+import { getUserId } from '../Helpers';
 import * as profileService from '../services/profileService';
-
-import { getUserId, } from '../Helpers';
 
 export const getProfile = async (req, res, next) => {
     try {

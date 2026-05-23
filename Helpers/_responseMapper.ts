@@ -1,4 +1,4 @@
-import { productModel, productSearchModel, productStateModel, } from './MappersModel';
+import { productModel, productSearchModel, productStateModel } from './MappersModel';
 
 export enum _EMappedType {
     PRODUCT = 0,

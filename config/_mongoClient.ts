@@ -1,7 +1,8 @@
-import 'dotenv/config';
-import { connect, } from 'mongoose';
+import { connect } from 'mongoose';
 
-const { M_DB_ADDRESS, M_DB_PORT, M_DB_NAME, } = process.env;
+import 'dotenv/config';
+
+const { M_DB_ADDRESS, M_DB_PORT, M_DB_NAME } = process.env;
 
 const mongoURL = `mongodb://${M_DB_ADDRESS}:${M_DB_PORT}/${M_DB_NAME}`;
 

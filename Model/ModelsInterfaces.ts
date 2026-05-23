@@ -1,4 +1,4 @@
-import { Document, } from 'mongoose';
+import { type Document } from 'mongoose';
 
 // SQL Models
 export interface IAuthorFileAttributes {

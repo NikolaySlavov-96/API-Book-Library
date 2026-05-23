@@ -1,33 +1,33 @@
-import { MESSAGES, } from '../constants';
-import { responseMapper, EMappedType, mappedSingleObject, } from '../Helpers';
-
-import { getRatingAggregate, } from './productRatingService';
-
+import { MESSAGES } from '../constants';
+import { EMappedType, mappedSingleObject, responseMapper } from '../Helpers';
 import db from '../Model';
+
+import { getRatingAggregate } from './productRatingService';
 const Op = db?.Sequelize?.Op;
 
-import { updateMessage, } from '../util';
+import { updateMessage } from '../util';
 
 const ATTRIBUTES = ['name', 'genre', 'isVerify'];
 
-export const getAllData = async ({ offset, limit, filterOperator, searchContent, statusId, userId, }) => {
+export const getAllData = async ({ offset, limit, filterOperator, searchContent, statusId, userId }) => {
     const queryOperator = Op[filterOperator];
 
-    const include: any[] = [{
-        model: db.Author,
-        required: false,
-        as: 'authors',
-        attributes: ATTRIBUTES,
-        // where: searchContent ? {
-        //     name: { [queryOperator]: searchContent, },
-        // } : {},
-    },
-    {
-        model: db.File,
-        required: false,
-        as: 'files',
-        attributes: ['id', 'src', 'uniqueName'],
-    }
+    const include: any[] = [
+        {
+            model: db.Author,
+            required: false,
+            as: 'authors',
+            attributes: ATTRIBUTES,
+            // where: searchContent ? {
+            //     name: { [queryOperator]: searchContent, },
+            // } : {},
+        },
+        {
+            model: db.File,
+            required: false,
+            as: 'files',
+            attributes: ['id', 'src', 'uniqueName'],
+        },
     ];
 
     // Attach the logged-in user's current shelf status. Only isDelete=false rows are the
@@ -35,7 +35,7 @@ export const getAllData = async ({ offset, limit, filterOperator, searchContent,
     // filter the join is required (catalog shows just that section); without one it's a
     // LEFT JOIN so un-shelved books still appear, carrying a null status.
     if (userId) {
-        const statusWhere: any = { userId, isDelete: false, };
+        const statusWhere: any = { userId, isDelete: false };
         if (statusId) {
             statusWhere.statusId = statusId;
         }
@@ -57,17 +57,18 @@ export const getAllData = async ({ offset, limit, filterOperator, searchContent,
         where: {},
     };
 
-
-    !!searchContent && (query.where = {
-        [Op.or]: [
-            {
-                productTitle: { [queryOperator]: searchContent, },
-            },
-            {
-                genre: { [queryOperator]: searchContent, },
-            }
-        ],
-    });
+    if (searchContent) {
+        query.where = {
+            [Op.or]: [
+                {
+                    productTitle: { [queryOperator]: searchContent },
+                },
+                {
+                    genre: { [queryOperator]: searchContent },
+                },
+            ],
+        };
+    }
 
     const result = await db.Product.findAndCountAll(query);
 
@@ -90,7 +91,7 @@ export const getDataById = async (id: number) => {
                 required: false,
                 as: 'files',
                 attributes: ['id', 'src', 'uniqueName'],
-            }
+            },
         ],
     });
 
@@ -112,9 +113,9 @@ const checkAndInsertAuthors = async (authors: string): Promise<number[]> => {
     for (const authorName of authorsName) {
         const _authorName = authorName.trim();
 
-        const isAuthor = (await db.Author.findOne({ where: { name: _authorName, }, }))?.dataValues;
+        const isAuthor = (await db.Author.findOne({ where: { name: _authorName } }))?.dataValues;
         if (!isAuthor) {
-            const author = (await db.Author.create({ name: _authorName, }))?.dataValues;
+            const author = (await db.Author.create({ name: _authorName }))?.dataValues;
             authorsIds.push(author.id);
             continue;
         }
@@ -141,16 +142,17 @@ const insertProductFiles = async (productId: number, filesId: number[]): Promise
     }
 };
 
-
-export const create = async ({ author, productTitle, genre, filesId, pages, publishedYear, description, }) => {
+export const create = async ({ author, productTitle, genre, filesId, pages, publishedYear, description }) => {
     const modTitle = productTitle.trim();
     const modGenre = genre?.trim();
 
-    const existingProduct = (await db.Product.findOne({
-        where: {
-            productTitle: { [Op.iLike]: modTitle, },
-        },
-    }))?.dataValues;
+    const existingProduct = (
+        await db.Product.findOne({
+            where: {
+                productTitle: { [Op.iLike]: modTitle },
+            },
+        })
+    )?.dataValues;
 
     if (existingProduct) {
         return updateMessage(MESSAGES.PRODUCT_ALREADY_EXIST, 403);
@@ -158,13 +160,15 @@ export const create = async ({ author, productTitle, genre, filesId, pages, publ
 
     const authorsId = await checkAndInsertAuthors(author);
 
-    const create = (await db.Product.create({
-        productTitle: modTitle,
-        genre: modGenre,
-        pages,
-        publishedYear,
-        description: description?.trim(),
-    }))?.dataValues;
+    const create = (
+        await db.Product.create({
+            productTitle: modTitle,
+            genre: modGenre,
+            pages,
+            publishedYear,
+            description: description?.trim(),
+        })
+    )?.dataValues;
 
     if (filesId?.length) {
         await insertProductFiles(create.id, filesId);
@@ -175,8 +179,8 @@ export const create = async ({ author, productTitle, genre, filesId, pages, publ
     return create;
 };
 
-export const update = async (id, { author, productTitle, }) => {
-    const data: any = [] //await Book.findByPk(id);
+export const update = async (id, { author, productTitle }) => {
+    const data: any = []; //await Book.findByPk(id);
 
     // data.authorName = author; // To Do Adding editing author name
     data.productTitle = productTitle;
@@ -184,9 +188,8 @@ export const update = async (id, { author, productTitle, }) => {
     return result;
 };
 
-
 export const remove = async (id) => {
-    const data = []// await Book.findByPk(id);
+    const data = []; // await Book.findByPk(id);
     return data;
     // return data.destroy(); // To Do adding isDelete of True
 };

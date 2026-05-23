@@ -1,13 +1,11 @@
 import 'dotenv/config';
 
-import { MESSAGES, RESPONSE_STATUS_CODE, } from '../constants';
-
-import { cryptCompare, cryptHash, updateMessage, } from '../util';
-import { addTokenResponse, generateDateForDB, } from '../Helpers';
-
-import { revokeRefreshToken, } from './refreshTokenService';
-
+import { MESSAGES, RESPONSE_STATUS_CODE } from '../constants';
+import { addTokenResponse, generateDateForDB } from '../Helpers';
 import db from '../Model';
+import { cryptCompare, cryptHash, updateMessage } from '../util';
+
+import { revokeRefreshToken } from './refreshTokenService';
 
 // Identity / authentication service.
 // Everything here is a candidate to be replaced by an external auth provider.
@@ -17,7 +15,7 @@ import db from '../Model';
 export const register = async (query) => {
     query.email = query.email.toLowerCase();
 
-    const existingEmail = (await db.User.findOne({ where: { email: query.email, }, }))?.dataValues;
+    const existingEmail = (await db.User.findOne({ where: { email: query.email } }))?.dataValues;
 
     if (existingEmail) {
         return updateMessage(MESSAGES.EMAIL_IS_ALREADY_TAKEN, RESPONSE_STATUS_CODE.BAD_REQUEST);
@@ -40,7 +38,7 @@ export const register = async (query) => {
 
 export const login = async (body) => {
     const existingEmail = await db.User.findOne({
-        where: { email: body.email, },
+        where: { email: body.email },
         raw: true,
         nest: true,
     });
@@ -52,7 +50,7 @@ export const login = async (body) => {
         return updateMessage(MESSAGES.DELETED_PROFILE, RESPONSE_STATUS_CODE.BAD_REQUEST);
     }
 
-    const { password, connectId, } = body;
+    const { password, connectId } = body;
 
     const matchPassword = await cryptCompare(password, existingEmail.password);
     if (!matchPassword) {
@@ -61,11 +59,14 @@ export const login = async (body) => {
 
     if (connectId) {
         const currentTime = generateDateForDB();
-        await db.SessionModel.update({ userId: existingEmail.id, connectedAt: currentTime, }, {
-            where: { connectId: connectId, },
-            raw: true,
-            nest: true,
-        });
+        await db.SessionModel.update(
+            { userId: existingEmail.id, connectedAt: currentTime },
+            {
+                where: { connectId },
+                raw: true,
+                nest: true,
+            },
+        );
     }
 
     return addTokenResponse(existingEmail, MESSAGES.SUCCESSFULLY_LOGIN);
@@ -73,7 +74,7 @@ export const login = async (body) => {
 
 export const loginViaMagic = async (email) => {
     const existingEmail = await db.User.findOne({
-        where: { email, },
+        where: { email },
         raw: true,
         nest: true,
     });
@@ -97,11 +98,14 @@ export const loginViaMagic = async (email) => {
 export const logout = async (data) => {
     if (data?.connectId) {
         const currentTime = generateDateForDB();
-        await db.SessionModel.update({ disconnectedAt: currentTime, }, {
-            where: { connectId: data.connectId, },
-            raw: true,
-            nest: true,
-        });
+        await db.SessionModel.update(
+            { disconnectedAt: currentTime },
+            {
+                where: { connectId: data.connectId },
+                raw: true,
+                nest: true,
+            },
+        );
     }
 
     // End the refresh session so a leaked/rotated token can't be reused.
@@ -111,12 +115,12 @@ export const logout = async (data) => {
 };
 
 export const checkFieldInDB = async (email) => {
-    const { count, } = await db.User.findAndCountAll({ where: { email, }, });
+    const { count } = await db.User.findAndCountAll({ where: { email } });
     return count > 0;
 };
 
 export const verifyTokenFormUser = async (address) => {
-    const existingEmail = await db.User.findOne({ where: { email: address, }, });
+    const existingEmail = await db.User.findOne({ where: { email: address } });
     if (!existingEmail?.dataValues) {
         return updateMessage(MESSAGES.EMAIL_DOES_NOT_EXIST, RESPONSE_STATUS_CODE.UNAUTHORIZED);
     }

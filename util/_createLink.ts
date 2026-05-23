@@ -1,13 +1,13 @@
-import { UUID, } from '.';
+import { generateEmailToken } from '../services/tokenService';
 
-import { generateEmailToken, } from '../services/tokenService';
+import { UUID } from '.';
 
 export default async (user, condition) => {
     const token = await createToken(user, condition);
 
     const objectWithCondition = {
-        'verify': (token) => `/auth/verify/${token}`,
-        'magic': (token) => `/auth/magic/${token}`,
+        verify: (token) => `/auth/verify/${token}`,
+        magic: (token) => `/auth/magic/${token}`,
     };
 
     return `${process.env.WEB_URI}${objectWithCondition[condition](token)}`;
@@ -23,4 +23,6 @@ const createToken = async (user, condition) => {
         await generateEmailToken(payload, 15, 'minute');
         return tokenId;
     }
+
+    return undefined;
 };

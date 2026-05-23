@@ -1,22 +1,14 @@
-import { MESSAGES, ESendEvents, queryOperators, cacheKeys, RESPONSE_STATUS_CODE, } from '../constants';
-
-import { emitToSocketEvent, } from '../Events';
-
-import { buildCacheKey, getAuthContext, pageParser, searchParser, statusParser, } from '../Helpers';
-
+import { cacheKeys, ESendEvents, MESSAGES, queryOperators, RESPONSE_STATUS_CODE } from '../constants';
+import { emitToSocketEvent } from '../Events';
+import { buildCacheKey, getAuthContext, pageParser, searchParser, statusParser } from '../Helpers';
+import { cacheDataWithExpiration, deleteCacheEntry, deleteKeysWithPrefix } from '../services/cacheService';
 import * as productService from '../services/productService';
-import {
-    cacheDataWithExpiration,
-    deleteCacheEntry,
-    deleteKeysWithPrefix,
-} from '../services/cacheService';
-
-import { updateMessage, } from '../util';
+import { updateMessage } from '../util';
 
 export const getAllProducts = async (req, res, next) => {
-    const { limit, offset, } = pageParser(req?.query);
-    const { searchContent, } = searchParser(req?.query);
-    const { statusId, } = statusParser(req?.query);
+    const { limit, offset } = pageParser(req?.query);
+    const { searchContent } = searchParser(req?.query);
+    const { statusId } = statusParser(req?.query);
 
     const filterOperator = queryOperators.LIKE;
 
@@ -25,7 +17,12 @@ export const getAllProducts = async (req, res, next) => {
 
     try {
         const result = await productService.getAllData({
-            offset, limit, filterOperator, searchContent, statusId, userId,
+            offset,
+            limit,
+            filterOperator,
+            searchContent,
+            statusId,
+            userId,
         });
 
         const key = buildCacheKey(cacheKeys.ALL_PRODUCTS, req);
@@ -76,7 +73,7 @@ export const createProduct = async (req, res, next) => {
             emitToSocketEvent(ESendEvents.NEW_PRODUCT_ADDED, result);
         }
 
-        const requestRespond = result?.user ? result?.user : { productId: result.id, };
+        const requestRespond = result?.user ? result?.user : { productId: result.id };
         const statusCode = result?.statusCode ? result?.statusCode : RESPONSE_STATUS_CODE.CREATED;
         res.status(statusCode).json(requestRespond);
 
