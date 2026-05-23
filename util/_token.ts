@@ -1,30 +1,31 @@
 import jwt from 'jsonwebtoken';
-const { sign, verify, } = jwt;
+const { sign, verify } = jwt;
 
-const JWT_SECRET: string | undefined = process.env.JWT_SECRET;
+const { JWT_SECRET } = process.env;
 
-import { IPayload, } from '../Types/verification';
+import { type IPayload } from '../Types/verification';
 
 type TExpire = jwt.SignOptions['expiresIn'];
 
 const jwtVerify = (token: string): any => {
     if (!JWT_SECRET) {
-        throw ('Missing token');
+        throw 'Missing token';
     }
     return verify(token, JWT_SECRET);
 };
 
 const jwtSign = (payload, expires?: TExpire): any => {
     if (!JWT_SECRET) {
-        throw ('Missing token');
+        throw 'Missing token';
     }
-    return sign(payload, JWT_SECRET, expires && { expiresIn: expires, });
+    return sign(payload, JWT_SECRET, expires && { expiresIn: expires });
 };
-
 
 interface IVerifyToken {
     _id: string;
     email: string;
+    isVerify: boolean;
+    role: string;
     iat?: number;
 }
 
@@ -32,15 +33,15 @@ export const _verifyToken = (token: string): IVerifyToken | { error: string } =>
     try {
         return jwtVerify(token);
     } catch (err) {
-        return { error: err, };
+        return { error: err };
     }
 };
 
 export const _createToken = (data: any, expire?: TExpire) => {
+    // Identity claims only. `year` is profile data and is fetched via /profile.
     const payload: IPayload = {
         _id: data.id,
         email: data.email,
-        year: data.year,
         isVerify: data.isVerify,
         role: data.role,
     };
@@ -48,6 +49,6 @@ export const _createToken = (data: any, expire?: TExpire) => {
     const accessToken = jwtSign(payload, expire);
     return {
         ...payload,
-        accessToken: accessToken,
+        accessToken,
     };
 };

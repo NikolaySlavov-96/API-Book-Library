@@ -1,18 +1,19 @@
-import { MESSAGES, } from '../constants';
-import { responseMapper, EMappedType, mappedSingleObject, } from '../Helpers';
-
+import { MESSAGES } from '../constants';
+import { EMappedType, mappedSingleObject, responseMapper } from '../Helpers';
 import db from '../Model';
+
+import { getRatingAggregate } from './productRatingService';
 const Op = db?.Sequelize?.Op;
 
-import { updateMessage, } from '../util';
+import { updateMessage } from '../util';
 
 const ATTRIBUTES = ['name', 'genre', 'isVerify'];
 
-export const getAllData = async ({ offset, limit, filterOperator, searchContent, }) => {
+export const getAllData = async ({ offset, limit, filterOperator, searchContent, statusId, userId }) => {
     const queryOperator = Op[filterOperator];
 
-    const query = {
-        include: [{
+    const include: any[] = [
+        {
             model: db.Author,
             required: false,
             as: 'authors',
@@ -26,27 +27,44 @@ export const getAllData = async ({ offset, limit, filterOperator, searchContent,
             required: false,
             as: 'files',
             attributes: ['id', 'src', 'uniqueName'],
+        },
+    ];
+
+    if (userId) {
+        const statusWhere: any = { userId, isDelete: false };
+        if (statusId) {
+            statusWhere.statusId = statusId;
         }
-        ],
+        include.push({
+            model: db.ProductStatus,
+            required: !!statusId,
+            attributes: ['statusId'],
+            where: statusWhere,
+        });
+    }
+
+    const query = {
+        include,
         order: [['id', 'ASC']],
-        attributes: ['id', 'productTitle', 'genre', 'isVerify'],
+        attributes: ['id', 'productTitle', 'genre', 'isVerify', 'pages', 'publishedYear', 'description'],
         offset,
         limit,
         distinct: true,
         where: {},
     };
 
-
-    !!searchContent && (query.where = {
-        [Op.or]: [
-            {
-                productTitle: { [queryOperator]: searchContent, },
-            },
-            {
-                genre: { [queryOperator]: searchContent, },
-            }
-        ],
-    });
+    if (searchContent) {
+        query.where = {
+            [Op.or]: [
+                {
+                    productTitle: { [queryOperator]: searchContent },
+                },
+                {
+                    genre: { [queryOperator]: searchContent },
+                },
+            ],
+        };
+    }
 
     const result = await db.Product.findAndCountAll(query);
 
@@ -69,11 +87,17 @@ export const getDataById = async (id: number) => {
                 required: false,
                 as: 'files',
                 attributes: ['id', 'src', 'uniqueName'],
-            }
+            },
         ],
     });
 
     const mappedResponse = mappedSingleObject(result, EMappedType.PRODUCT);
+
+    if (mappedResponse) {
+        const aggregate = await getRatingAggregate(id);
+        mappedResponse.ratingAverage = aggregate.average;
+        mappedResponse.ratingCount = aggregate.count;
+    }
 
     return mappedResponse;
 };
@@ -85,9 +109,9 @@ const checkAndInsertAuthors = async (authors: string): Promise<number[]> => {
     for (const authorName of authorsName) {
         const _authorName = authorName.trim();
 
-        const isAuthor = (await db.Author.findOne({ where: { name: _authorName, }, }))?.dataValues;
+        const isAuthor = (await db.Author.findOne({ where: { name: _authorName } }))?.dataValues;
         if (!isAuthor) {
-            const author = (await db.Author.create({ name: _authorName, }))?.dataValues;
+            const author = (await db.Author.create({ name: _authorName }))?.dataValues;
             authorsIds.push(author.id);
             continue;
         }
@@ -114,16 +138,17 @@ const insertProductFiles = async (productId: number, filesId: number[]): Promise
     }
 };
 
-
-export const create = async ({ author, productTitle, genre, filesId, }) => {
+export const create = async ({ author, productTitle, genre, filesId, pages, publishedYear, description }) => {
     const modTitle = productTitle.trim();
     const modGenre = genre?.trim();
 
-    const existingProduct = (await db.Product.findOne({
-        where: {
-            productTitle: { [Op.iLike]: modTitle, },
-        },
-    }))?.dataValues;
+    const existingProduct = (
+        await db.Product.findOne({
+            where: {
+                productTitle: { [Op.iLike]: modTitle },
+            },
+        })
+    )?.dataValues;
 
     if (existingProduct) {
         return updateMessage(MESSAGES.PRODUCT_ALREADY_EXIST, 403);
@@ -131,7 +156,15 @@ export const create = async ({ author, productTitle, genre, filesId, }) => {
 
     const authorsId = await checkAndInsertAuthors(author);
 
-    const create = (await db.Product.create({ productTitle: modTitle, genre: modGenre, }))?.dataValues;
+    const create = (
+        await db.Product.create({
+            productTitle: modTitle,
+            genre: modGenre,
+            pages,
+            publishedYear,
+            description: description?.trim(),
+        })
+    )?.dataValues;
 
     if (filesId?.length) {
         await insertProductFiles(create.id, filesId);
@@ -142,8 +175,8 @@ export const create = async ({ author, productTitle, genre, filesId, }) => {
     return create;
 };
 
-export const update = async (id, { author, productTitle, }) => {
-    const data: any = [] //await Book.findByPk(id);
+export const update = async (id, { author, productTitle }) => {
+    const data: any = []; //await Book.findByPk(id);
 
     // data.authorName = author; // To Do Adding editing author name
     data.productTitle = productTitle;
@@ -151,9 +184,8 @@ export const update = async (id, { author, productTitle, }) => {
     return result;
 };
 
-
 export const remove = async (id) => {
-    const data = []// await Book.findByPk(id);
+    const data = []; // await Book.findByPk(id);
     return data;
     // return data.destroy(); // To Do adding isDelete of True
 };

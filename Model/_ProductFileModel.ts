@@ -1,13 +1,14 @@
-import { DataTypes, Model, Optional, Sequelize, } from 'sequelize';
+import { DataTypes, Model, type Optional, type Sequelize } from 'sequelize';
 
 import ModelName from './modelNames';
+import { type IProductFileAttributes } from './ModelsInterfaces';
 
-import { IProductFileAttributes, } from './ModelsInterfaces';
+type ProductFileCreationAttributes = Optional<IProductFileAttributes, 'id'>;
 
-interface ProductFileCreationAttributes extends Optional<IProductFileAttributes, 'id'> { }
-
-class ProductFile extends Model<IProductFileAttributes,
-    ProductFileCreationAttributes> implements IProductFileAttributes {
+class ProductFile
+    extends Model<IProductFileAttributes, ProductFileCreationAttributes>
+    implements IProductFileAttributes
+{
     declare id: number;
     declare productId: number;
     declare fileId: number;
@@ -38,9 +39,9 @@ export const ProductFileFactory = (sequelize: Sequelize): typeof ProductFile => 
                 {
                     unique: true,
                     fields: ['productId', 'fileId'],
-                }
+                },
             ],
-        }
+        },
     );
 
     return ProductFile;

@@ -1,8 +1,6 @@
-import { ESendEvents, } from '../constants';
-
-import { emitEventToSocket, } from '../Events/_SocketEmitters';
-
-import { getAllOnlineSupports, getAllWaitingUsers, } from '../services/support/supportManagerService';
+import { ESendEvents } from '../constants';
+import { emitEventToSocket } from '../Events/_SocketEmitters';
+import { getAllOnlineSupports, getAllWaitingUsers } from '../services/support/supportManagerService';
 import { normalizeInputData } from '../util';
 
 export const notifySupportsOfNewUser = async (connectId: string) => {

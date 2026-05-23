@@ -1,8 +1,10 @@
-import { NextFunction, Request as EXReq, Response, } from 'express';
+import { NextFunction, type Request as EXReq, Response } from 'express';
 
 interface IUser {
     email: string;
     _id: string;
+    isVerify?: boolean;
+    role?: string;
     organisation?: string;
 }
 
@@ -11,14 +13,9 @@ interface Request extends EXReq {
     token?: string;
     authenticated?: boolean;
     bonus?: {
-        prefId?: string,
-        rolles?: string[],
+        prefId?: string;
+        rolles?: string[];
     };
 }
 
-
-export {
-    NextFunction,
-    Request,
-    Response,
-};
+export { NextFunction, Request, Response };

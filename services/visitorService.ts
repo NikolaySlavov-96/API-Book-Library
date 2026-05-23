@@ -1,8 +1,7 @@
-import { getCurrentDate, calculateRelativeDate, } from '../Helpers';
-
+import { calculateRelativeDate, getCurrentDate } from '../Helpers';
 import UserDataModel from '../Model/UserDataModel';
 
-import { addDataToSet, deleteCacheEntry, fetchSetSize, } from './cacheService';
+import { addDataToSet, deleteCacheEntry, fetchSetSize } from './cacheService';
 
 export const storeVisitorInfo = async (data) => {
     const redisKey = getCurrentDate();
@@ -16,9 +15,9 @@ export const storeVisitorInfo = async (data) => {
 
     try {
         // Check and Insert in Mongo DB
-        const resultMongo = await UserDataModel.findOne({ userAddress: userIp, });
+        const resultMongo = await UserDataModel.findOne({ userAddress: userIp });
         if (!resultMongo) {
-            await UserDataModel.create({ userAddress: userIp, });
+            await UserDataModel.create({ userAddress: userIp });
         }
         const allUncialUser = await UserDataModel.countDocuments();
         returnedData.uncialUsers = allUncialUser;

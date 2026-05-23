@@ -5,7 +5,7 @@ const SPECIFIC_FORMAT = 'YYYY-MM-DDTHH:mm:ss.SSSZ';
 
 /**
  * @returns date string in format 'YYYY-MM-DD'
-*/
+ */
 export const getCurrentDate = () => {
     return moment().format(DATE_FORMAT);
 };
@@ -19,7 +19,7 @@ export const generateDateForDB = () => {
  * @param count - count
  * @param type - 'day'
  * @returns date string in format 'YYYY-MM-DD'
-*/
+ */
 export const calculateRelativeDate = (count: number, type: 'day') => {
     const currentDate = moment();
 

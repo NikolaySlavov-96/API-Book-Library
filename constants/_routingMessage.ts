@@ -21,6 +21,13 @@ const routing = {
     PRODUCT_TITLE_REQUIRED: 'Product title is required',
     PRODUCT_ID_IS_REQUIRED: 'Product ID is required',
     PRODUCT_COLLECTION_TYPE: 'Please insert correct collection type',
+    RATING_RANGE: 'Rating must be between 1 and 5',
+    READING_GOAL_RANGE: 'Reading goal must be between 1 and 999',
+    DISPLAY_NAME_LENGTH: 'Display name is too long',
+    NOTIFY_BY_EMAIL_BOOL: 'notifyByEmail must be a boolean',
+    PRODUCT_PAGES: 'Pages must be a positive integer',
+    PRODUCT_PUBLISHED_YEAR: 'Published year is not valid',
+    PRODUCT_DESCRIPTION: 'Description is too long',
 };
 
 export default routing;

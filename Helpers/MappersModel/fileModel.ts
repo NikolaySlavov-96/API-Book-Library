@@ -1,8 +1,8 @@
 import 'dotenv/config';
 
-const { BE_URL, } = process.env;
+const { BE_URL } = process.env;
 
-import { SYSTEM_FILE_DIRECTORY, } from '../../constants';
+import { SYSTEM_FILE_DIRECTORY } from '../../constants';
 
 const FILE_PATH = BE_URL + SYSTEM_FILE_DIRECTORY.UPLOAD + '/';
 

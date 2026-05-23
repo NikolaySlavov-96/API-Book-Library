@@ -1,13 +1,11 @@
-import { cacheKeys, } from '../../constants';
-
-import { UUID, } from '../../util';
-
-import { addedStringToList, fetchListMembers, removeElementFromList, } from '../cacheService';
+import { cacheKeys } from '../../constants';
+import { UUID } from '../../util';
+import { addedStringToList, fetchListMembers, removeElementFromList } from '../cacheService';
 
 const ISSUE_TICKET_NAME = 'IssTktTNum-';
 
 export const fetchAllRooms = async () => {
-    return await fetchListMembers(cacheKeys.CHAT_ROOM);
+    return fetchListMembers(cacheKeys.CHAT_ROOM);
 };
 
 export const initializeRoom = async () => {
@@ -24,7 +22,7 @@ export const initializeRoom = async () => {
 export const isRoomExist = async (data: { roomName: string }) => {
     const supportAgents = await fetchListMembers(cacheKeys.CHAT_ROOM);
     const roomName = supportAgents.find((r) => r === data.roomName);
-    return { roomName, };
+    return { roomName };
 };
 
 export const deleteRoom = async (data: { roomName: string }) => {

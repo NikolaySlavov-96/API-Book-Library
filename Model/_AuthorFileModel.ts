@@ -1,13 +1,11 @@
-import { DataTypes, Model, Optional, Sequelize, } from 'sequelize';
+import { DataTypes, Model, type Optional, type Sequelize } from 'sequelize';
 
 import ModelName from './modelNames';
+import { type IAuthorFileAttributes } from './ModelsInterfaces';
 
-import { IAuthorFileAttributes, } from './ModelsInterfaces';
+type AuthorFileCreationAttributes = Optional<IAuthorFileAttributes, 'id'>;
 
-interface AuthorFileCreationAttributes extends Optional<IAuthorFileAttributes, 'id'> { }
-
-class AuthorFile extends Model<IAuthorFileAttributes,
-    AuthorFileCreationAttributes> implements IAuthorFileAttributes {
+class AuthorFile extends Model<IAuthorFileAttributes, AuthorFileCreationAttributes> implements IAuthorFileAttributes {
     declare id: number;
     declare authorId: number;
     declare fileId: number;
@@ -38,9 +36,9 @@ export const AuthorFileFactory = (sequelize: Sequelize): typeof AuthorFile => {
                 {
                     unique: true,
                     fields: ['authorId', 'fileId'],
-                }
+                },
             ],
-        }
+        },
     );
 
     return AuthorFile;

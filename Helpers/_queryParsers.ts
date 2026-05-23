@@ -26,3 +26,11 @@ export const _searchParser = (query) => {
         searchContent,
     };
 };
+
+export const _statusParser = (query) => {
+    const statusId = parseInt(query?.status) || null;
+
+    return {
+        statusId,
+    };
+};

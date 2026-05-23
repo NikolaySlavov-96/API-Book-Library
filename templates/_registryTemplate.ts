@@ -1,6 +1,5 @@
-export default ({ link, }) => {
-    return (
-        `<html lang="en">
+export default ({ link }) => {
+    return `<html lang="en">
       <head>
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -43,6 +42,5 @@ export default ({ link, }) => {
           </tr>
         </table>
       </body>
-      </html>`
-    );
+      </html>`;
 };

@@ -9,11 +9,11 @@ interface IUserInfo extends IMessage {
 interface IUpdateMessage {
     user: IUserInfo;
     statusCode?: number;
-    options?: object
+    options?: object;
 }
 
 export default (messages: IMessage, statusCode?: number, options?: object): IUpdateMessage => {
-    const { message, messageCode, } = messages;
+    const { message, messageCode } = messages;
 
     const data = {
         user: {
@@ -25,7 +25,9 @@ export default (messages: IMessage, statusCode?: number, options?: object): IUpd
     };
 
     // Modifies userInfo with incoming Type
-    options !== undefined && (data.user.userInfo = options);
+    if (options !== undefined) {
+        data.user.userInfo = options;
+    }
 
     return data;
 };

@@ -1,11 +1,9 @@
-import { DataTypes, Model, Optional, Sequelize, } from 'sequelize';
+import { DataTypes, Model, type Optional, type Sequelize } from 'sequelize';
 
 import ModelName from './modelNames';
+import { type IUserAttributes } from './ModelsInterfaces';
 
-import { IUserAttributes, } from './ModelsInterfaces';
-
-interface IUserCreationAttributes extends Optional<IUserAttributes, 'id'> { }
-
+type IUserCreationAttributes = Optional<IUserAttributes, 'id'>;
 
 class User extends Model<IUserAttributes, IUserCreationAttributes> implements IUserAttributes {
     declare id: number;
@@ -13,45 +11,43 @@ class User extends Model<IUserAttributes, IUserCreationAttributes> implements IU
     declare isDelete: boolean;
     declare isVerify: boolean;
     declare password: string;
-    declare year: number;
     declare role: string;
 }
 
 export const UserFactory = (sequelize: Sequelize): typeof User => {
-    User.init({
-        id: {
-            type: DataTypes.INTEGER,
-            primaryKey: true,
-            autoIncrement: true,
+    User.init(
+        {
+            id: {
+                type: DataTypes.INTEGER,
+                primaryKey: true,
+                autoIncrement: true,
+            },
+            email: {
+                type: DataTypes.STRING(80),
+                unique: true,
+                allowNull: false,
+            },
+            password: {
+                type: DataTypes.STRING(60),
+            },
+            isVerify: {
+                type: DataTypes.BOOLEAN,
+                defaultValue: false,
+            },
+            isDelete: {
+                type: DataTypes.BOOLEAN,
+                defaultValue: false,
+            },
+            role: {
+                type: DataTypes.STRING(20),
+                defaultValue: 'user',
+            },
         },
-        email: {
-            type: DataTypes.STRING(80),
-            unique: true,
-            allowNull: false,
+        {
+            sequelize,
+            tableName: ModelName.USER,
         },
-        password: {
-            type: DataTypes.STRING(60),
-        },
-        year: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-        },
-        isVerify: {
-            type: DataTypes.BOOLEAN,
-            defaultValue: false,
-        },
-        isDelete: {
-            type: DataTypes.BOOLEAN,
-            defaultValue: false,
-        },
-        role: {
-            type: DataTypes.STRING(20),
-            defaultValue: 'user',
-        },
-    }, {
-        sequelize,
-        tableName: ModelName.USER,
-    });
+    );
 
     return User;
 };

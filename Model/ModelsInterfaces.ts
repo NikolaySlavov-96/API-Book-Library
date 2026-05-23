@@ -1,6 +1,5 @@
-import { Document, } from 'mongoose';
+import { type Document } from 'mongoose';
 
-// SQL Models
 export interface IAuthorFileAttributes {
     id: number;
     authorId: number;
@@ -18,7 +17,7 @@ export interface IFileAttributes {
     id: number;
     extension: string;
     realFileName: string;
-    src: string; // Desire user name
+    src: string;
     uniqueName: string;
 }
 
@@ -27,6 +26,16 @@ export interface IProductAttributes {
     productTitle: string;
     genre: string;
     isVerify: string;
+    pages?: number;
+    publishedYear?: number;
+    description?: string;
+}
+
+export interface IProductRatingAttributes {
+    id: number;
+    userId: number;
+    productId: number;
+    rating: number;
 }
 
 export interface IProductStatusAttributes {
@@ -68,8 +77,17 @@ export interface IUserAttributes {
     isDelete: boolean;
     isVerify: boolean;
     password: string;
-    year: number;
     role: string;
+}
+
+export interface IProfileAttributes {
+    id: number;
+    userId: number;
+    year: number;
+    readingGoal?: number;
+    displayName?: string;
+    avatarFileId?: number;
+    notifyByEmail?: boolean;
 }
 
 export interface IMessageAttributes {
@@ -93,6 +111,16 @@ export interface IUserData {
 export interface IVerifyToken extends Document {
     token: string;
     address: string;
+    expireAt: number;
+    unit: string;
+    status: boolean;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+export interface IRefreshToken extends Document {
+    token: string;
+    userId: string;
     expireAt: number;
     unit: string;
     status: boolean;

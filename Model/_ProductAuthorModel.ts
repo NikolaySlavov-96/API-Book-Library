@@ -1,13 +1,14 @@
-import { DataTypes, Model, Optional, Sequelize, } from 'sequelize';
+import { DataTypes, Model, type Optional, type Sequelize } from 'sequelize';
 
 import ModelName from './modelNames';
+import { type IProductAuthorAttributes } from './ModelsInterfaces';
 
-import { IProductAuthorAttributes, } from './ModelsInterfaces';
+type ProductAuthorCreationAttributes = Optional<IProductAuthorAttributes, 'id'>;
 
-interface ProductAuthorCreationAttributes extends Optional<IProductAuthorAttributes, 'id'> { }
-
-class ProductAuthor extends Model<IProductAuthorAttributes,
-    ProductAuthorCreationAttributes> implements IProductAuthorAttributes {
+class ProductAuthor
+    extends Model<IProductAuthorAttributes, ProductAuthorCreationAttributes>
+    implements IProductAuthorAttributes
+{
     declare id: number;
     declare productId: number;
     declare authorId: number;
@@ -38,9 +39,9 @@ export const ProductAuthorFactory = (sequelize: Sequelize): typeof ProductAuthor
                 {
                     unique: true,
                     fields: ['productId', 'authorId'],
-                }
+                },
             ],
-        }
+        },
     );
 
     return ProductAuthor;

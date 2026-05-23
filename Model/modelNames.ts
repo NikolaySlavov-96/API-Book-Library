@@ -7,12 +7,15 @@ const ModelName = {
     PRODUCT_AUTHOR: 'productAuthor',
     PRODUCT_FILE: 'productFile',
     PRODUCT_STATUS: 'productStatus',
+    PRODUCT_RATING: 'productRating',
     PRODUCT: 'product',
     SESSION: 'session',
     STATE: 'state',
     USER_DATA: 'userData',
     USER: 'user',
+    PROFILE: 'profile',
     VERIFY_TOKEN: 'verifyToken',
+    REFRESH_TOKEN: 'refreshToken',
 };
 
 export default ModelName;

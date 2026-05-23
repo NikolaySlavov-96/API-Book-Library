@@ -1,29 +1,29 @@
-import { MESSAGES, ESendEvents, queryOperators, cacheKeys, RESPONSE_STATUS_CODE, } from '../constants';
-
-import { emitToSocketEvent, } from '../Events';
-
-import { buildCacheKey, pageParser, searchParser, } from '../Helpers';
-
+import { cacheKeys, ESendEvents, MESSAGES, queryOperators, RESPONSE_STATUS_CODE } from '../constants';
+import { emitToSocketEvent } from '../Events';
+import { buildCacheKey, getAuthContext, pageParser, searchParser, statusParser } from '../Helpers';
+import { cacheDataWithExpiration, deleteCacheEntry, deleteKeysWithPrefix } from '../services/cacheService';
 import * as productService from '../services/productService';
-import {
-    cacheDataWithExpiration,
-    deleteCacheEntry,
-    deleteKeysWithPrefix,
-} from '../services/cacheService';
-
-import { updateMessage, } from '../util';
-import {
-    getUserVerificationStatus,
-} from '../services/getUserVerificationStatus';
+import { updateMessage } from '../util';
 
 export const getAllProducts = async (req, res, next) => {
-    const { limit, offset, } = pageParser(req?.query);
-    const { searchContent, } = searchParser(req?.query);
+    const { limit, offset } = pageParser(req?.query);
+    const { searchContent } = searchParser(req?.query);
+    const { statusId } = statusParser(req?.query);
 
     const filterOperator = queryOperators.LIKE;
 
+    // Status filtering only makes sense for a logged-in user (reads token if present)
+    const userId = req?.user?._id;
+
     try {
-        const result = await productService.getAllData({ offset, limit, filterOperator, searchContent, });
+        const result = await productService.getAllData({
+            offset,
+            limit,
+            filterOperator,
+            searchContent,
+            statusId,
+            userId,
+        });
 
         const key = buildCacheKey(cacheKeys.ALL_PRODUCTS, req);
         await cacheDataWithExpiration(key, result);
@@ -56,15 +56,14 @@ export const getProductById = async (req, res, next) => {
 
 export const createProduct = async (req, res, next) => {
     try {
-        const userId = req.user._id;
-        const checkAccount = await getUserVerificationStatus(userId);
-        if (!checkAccount) {
-            res.status(RESPONSE_STATUS_CODE.UNAUTHORIZED).json(updateMessage(MESSAGES.ACCOUNT_IS_NOT_VERIFY).user);
+        const auth = getAuthContext(req);
+        if (!auth?.isVerify) {
+            res.status(RESPONSE_STATUS_CODE.FORBIDDEN).json(updateMessage(MESSAGES.ACCOUNT_IS_NOT_VERIFY).user);
             return;
         }
         // TODO: Extract the "role" property into an enumeration for better type safety and maintainability
-        if (checkAccount?.role !== 'support') {
-            res.status(RESPONSE_STATUS_CODE.UNAUTHORIZED).json(updateMessage(MESSAGES.PERMISSION).user);
+        if (auth.role !== 'support') {
+            res.status(RESPONSE_STATUS_CODE.FORBIDDEN).json(updateMessage(MESSAGES.PERMISSION).user);
             return;
         }
 
@@ -74,7 +73,7 @@ export const createProduct = async (req, res, next) => {
             emitToSocketEvent(ESendEvents.NEW_PRODUCT_ADDED, result);
         }
 
-        const requestRespond = result?.user ? result?.user : { productId: result.id, };
+        const requestRespond = result?.user ? result?.user : { productId: result.id };
         const statusCode = result?.statusCode ? result?.statusCode : RESPONSE_STATUS_CODE.CREATED;
         res.status(statusCode).json(requestRespond);
 

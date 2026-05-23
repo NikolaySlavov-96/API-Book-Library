@@ -2,14 +2,11 @@ import isEmpty from 'lodash/isEmpty.js';
 import isString from 'lodash/isString.js';
 import isUndefined from 'lodash/isUndefined.js';
 
-import { EReceiveEvents, ESendEvents, MESSAGES, } from '../constants';
-
-import { storeVisitorInfo, } from '../services/visitorService';
-import {
-    registerNewVisitor,
-    setUserInactive,
-    validateConnectionId,
-} from '../services/connectManagerService';
+import { EReceiveEvents, ESendEvents, MESSAGES } from '../constants';
+import { notifySupportsOfNewUser } from '../Helpers';
+import { registerNewVisitor, setUserInactive, validateConnectionId } from '../services/connectManagerService';
+import { deleteRoom, fetchAllRooms, initializeRoom, isRoomExist } from '../services/support/chatRoomService';
+import { insertMessage } from '../services/support/messageService';
 import {
     assignSupport,
     assignUserToQueue,
@@ -17,19 +14,10 @@ import {
     unassignSupport,
     unassignUserFromQueue,
 } from '../services/support/supportManagerService';
-import {
-    deleteRoom,
-    fetchAllRooms,
-    initializeRoom,
-    isRoomExist,
-} from '../services/support/chatRoomService';
-import { insertMessage, } from '../services/support/messageService';
+import { storeVisitorInfo } from '../services/visitorService';
+import { normalizeInputData, updateMessage } from '../util';
 
-import { emitEventToSocket, } from './_SocketEmitters';
-
-import { notifySupportsOfNewUser, } from '../Helpers';
-
-import { normalizeInputData, updateMessage, } from '../util';
+import { emitEventToSocket } from './_SocketEmitters';
 
 interface IMessageResponseJoinToChat {
     message: string;
@@ -88,7 +76,7 @@ const _socketEvents = (io) => {
             }
         });
 
-        socket.on(EReceiveEvents.SUPPORT_CHAT_USER_JOIN, async (data: { connectId: string, }) => {
+        socket.on(EReceiveEvents.SUPPORT_CHAT_USER_JOIN, async (data: { connectId: string }) => {
             try {
                 if (isUndefined(data) || !isString(data.connectId)) {
                     socket.emit(ESendEvents.ERROR, updateMessage(MESSAGES.INCORRECT_DATA).user);
@@ -111,14 +99,15 @@ const _socketEvents = (io) => {
                 } else {
                     const userName = 'Test Ivan';
                     await assignUserToQueue({
-                        connectId: result.connectId, name: userName,
+                        connectId: result.connectId,
+                        name: userName,
                     });
                 }
 
                 // To all the "supports" who have joined
                 await notifySupportsOfNewUser(connectId);
 
-                // To user who joined 
+                // To user who joined
                 socket.emit(ESendEvents.SUPPORT_CHAT_USER_JOIN_ACKNOWLEDGMENT, messageResponseJoinToChat);
             } catch (err) {
                 socket.emit(ESendEvents.ERROR, updateMessage(MESSAGES.ERROR_FROM_SERVER).user);
@@ -126,15 +115,15 @@ const _socketEvents = (io) => {
             }
         });
 
-        socket.on(EReceiveEvents.SUPPORT_ACCEPT_USER, async (data: { supportId: string, acceptUserId: string }) => {
+        socket.on(EReceiveEvents.SUPPORT_ACCEPT_USER, async (data: { supportId: string; acceptUserId: string }) => {
             try {
-                const resultFromSupportCheck = await validateConnectionId({ connectId: data.supportId, });
+                const resultFromSupportCheck = await validateConnectionId({ connectId: data.supportId });
                 if (resultFromSupportCheck?.User?.role !== 'support') {
                     socket.emit(ESendEvents.ERROR, updateMessage(MESSAGES.NOT_AUTHORIZE_ACCEPT_CHAT_REQUEST).user);
                     return;
                 }
 
-                const resultFromUserCheck = await isUserInQueue({ connectId: data.acceptUserId, });
+                const resultFromUserCheck = await isUserInQueue({ connectId: data.acceptUserId });
                 if (!resultFromUserCheck) {
                     socket.emit(ESendEvents.ERROR, updateMessage(MESSAGES.SELECTED_USER_NOT_FOUND).user);
                     return;
@@ -152,7 +141,8 @@ const _socketEvents = (io) => {
                     message: `Support with name ${modifySupportData} is accepted your request`,
                 };
                 const supportPayload = {
-                    roomName: roomInfo.roomName, message: 'support',
+                    roomName: roomInfo.roomName,
+                    message: 'support',
                 };
                 emitEventToSocket(resultFromUserCheck.connectId, ESendEvents.NOTIFY_FOR_CREATE_ROOM, userPayload);
                 emitEventToSocket(resultFromSupportCheck.connectId, ESendEvents.NOTIFY_FOR_CREATE_ROOM, supportPayload);
@@ -171,34 +161,33 @@ const _socketEvents = (io) => {
                 return;
             }
             try {
-                const resultFromRoom = await isRoomExist({ roomName: data.roomName, });
+                const resultFromRoom = await isRoomExist({ roomName: data.roomName });
                 if (!resultFromRoom?.roomName) {
                     socket.emit(ESendEvents.ERROR, updateMessage(MESSAGES.SELECTED_ROOM_NOT_FOUND).user);
                     return;
                 }
 
                 socket.join(resultFromRoom.roomName);
-
             } catch (err) {
                 socket.emit(ESendEvents.ERROR, updateMessage(MESSAGES.ERROR_FROM_SERVER).user);
                 console.log('SocketRoute Event ∞ USER_ACCEPT_JOIN_TO_ROOM', err);
             }
         });
 
-        socket.on(EReceiveEvents.SUPPORT_CHAT_USER_LEAVE, async (data: { roomName: string, connectId: string }) => {
+        socket.on(EReceiveEvents.SUPPORT_CHAT_USER_LEAVE, async (data: { roomName: string; connectId: string }) => {
             if (isUndefined(data) || (!isString(data.roomName) && !isString(data.connectId))) {
                 socket.emit(ESendEvents.ERROR, updateMessage(MESSAGES.INCORRECT_DATA).user);
                 return;
             }
             try {
-
-                const resultFromRoom = await isRoomExist({ roomName: data.roomName, });
+                const resultFromRoom = await isRoomExist({ roomName: data.roomName });
                 if (resultFromRoom.roomName) {
                     // Mark conversation is completed
                     const roomName = normalizeInputData(resultFromRoom.roomName);
-                    emitEventToSocket(roomName, ESendEvents.COMPLETE_ISSUE,
-                        { message: 'Complete', issue: resultFromRoom.roomName, }
-                    );
+                    emitEventToSocket(roomName, ESendEvents.COMPLETE_ISSUE, {
+                        message: 'Complete',
+                        issue: resultFromRoom.roomName,
+                    });
 
                     await deleteRoom({ roomName });
 
@@ -221,22 +210,22 @@ const _socketEvents = (io) => {
             }
         });
 
-        socket.on(EReceiveEvents.SUPPORT_MESSAGE, async (data: { roomName: string, message: string }) => {
+        socket.on(EReceiveEvents.SUPPORT_MESSAGE, async (data: { roomName: string; message: string }) => {
             if (isUndefined(data) || !isString(data.roomName)) {
                 socket.emit(ESendEvents.ERROR, updateMessage(MESSAGES.INCORRECT_DATA).user);
                 return;
             }
 
             try {
-                const resultFromRoom = await isRoomExist({ roomName: data.roomName, });
+                const resultFromRoom = await isRoomExist({ roomName: data.roomName });
                 const roomName = normalizeInputData(resultFromRoom?.roomName);
                 if (!roomName) {
                     socket.emit(ESendEvents.ERROR, updateMessage(MESSAGES.SELECTED_ROOM_NOT_FOUND).user);
                     return;
                 }
 
-                const result = await insertMessage({ resultFromRoom: { roomName }, data, connectId, });
-                emitEventToSocket(roomName, ESendEvents.SUPPORT_MESSAGE, { ...result, 'status': null, });
+                const result = await insertMessage({ resultFromRoom: { roomName }, data, connectId });
+                emitEventToSocket(roomName, ESendEvents.SUPPORT_MESSAGE, { ...result, status: null });
             } catch (err) {
                 socket.emit(ESendEvents.ERROR, updateMessage(MESSAGES.ERROR_FROM_SERVER).user);
                 console.log('SocketRoute Event ∞ SUPPORT_MESSAGE', err);
@@ -250,28 +239,28 @@ const _socketEvents = (io) => {
             //     }
         });
 
-        socket.on(EReceiveEvents.SUPPORT_ACTIVITY, async ({ roomName, connectId, }: ISupportActivity) => {
+        socket.on(EReceiveEvents.SUPPORT_ACTIVITY, async ({ roomName, connectId }: ISupportActivity) => {
             if (!isString(roomName)) {
                 socket.emit(ESendEvents.ERROR, updateMessage(MESSAGES.INCORRECT_DATA).user);
                 return;
             }
 
             try {
-                const resultFromRoom = await isRoomExist({ roomName, });
+                const resultFromRoom = await isRoomExist({ roomName });
                 if (!resultFromRoom?.roomName) {
                     socket.emit(ESendEvents.ERROR, updateMessage(MESSAGES.SELECTED_ROOM_NOT_FOUND).user);
                     return;
                 }
 
                 const roomNameIn = normalizeInputData(resultFromRoom.roomName);
-                emitEventToSocket(roomNameIn, ESendEvents.SUPPORT_ACTIVITY, { connectId, });
+                emitEventToSocket(roomNameIn, ESendEvents.SUPPORT_ACTIVITY, { connectId });
             } catch (err) {
                 socket.emit(ESendEvents.ERROR, updateMessage(MESSAGES.ERROR_FROM_SERVER).user);
                 console.log('SocketRoute Event ∞ SUPPORT_ACTIVITY', err);
             }
         });
 
-        // When user disconnects - to all others 
+        // When user disconnects - to all others
         socket.on('disconnect', async () => {
             console.log(`User ${connectId} disconnected`);
 
@@ -286,10 +275,9 @@ const _socketEvents = (io) => {
             } catch (err) {
                 console.log('SocketRoute Event ∞ disconnect', err);
             } finally {
-                // At disconnect on user send event to everyone else 
+                // At disconnect on user send event to everyone else
                 // socket.broadcast.emit('message', `User ${socket.id.substring(0, 5)}} disconnected`);
             }
-
         });
 
         // socket.on('disconnecting', (reason) => {

@@ -1,12 +1,14 @@
-import { DataTypes, Model, Optional, Sequelize, } from 'sequelize';
+import { DataTypes, Model, type Optional, type Sequelize } from 'sequelize';
 
 import ModelName from './modelNames';
+import { type IProductStatusAttributes } from './ModelsInterfaces';
 
-import { IProductStatusAttributes, } from './ModelsInterfaces';
+type IProductStatusCreationAttributes = Optional<IProductStatusAttributes, 'statusId'>;
 
-interface IProductStatusCreationAttributes extends Optional<IProductStatusAttributes, 'statusId'> { }
-// eslint-disable-next-line max-len
-class ProductStatus extends Model<IProductStatusAttributes, IProductStatusCreationAttributes> implements IProductStatusAttributes {
+class ProductStatus
+    extends Model<IProductStatusAttributes, IProductStatusCreationAttributes>
+    implements IProductStatusAttributes
+{
     userId: number;
     productId: number;
     declare statusId: number;
@@ -14,27 +16,30 @@ class ProductStatus extends Model<IProductStatusAttributes, IProductStatusCreati
 }
 
 export const ProductStatusFactory = (sequelize: Sequelize): typeof ProductStatus => {
-    ProductStatus.init({
-        userId: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
+    ProductStatus.init(
+        {
+            userId: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+            },
+            productId: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+            },
+            statusId: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+            },
+            isDelete: {
+                type: DataTypes.BOOLEAN,
+                defaultValue: false,
+            },
         },
-        productId: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
+        {
+            sequelize,
+            tableName: ModelName.PRODUCT_STATUS,
         },
-        statusId: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-        },
-        isDelete: {
-            type: DataTypes.BOOLEAN,
-            defaultValue: false,
-        },
-    }, {
-        sequelize,
-        tableName: ModelName.PRODUCT_STATUS,
-    });
+    );
 
     return ProductStatus;
 };

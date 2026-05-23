@@ -1,11 +1,10 @@
-import { generateDateForDB, } from '../Helpers';
-
+import { generateDateForDB } from '../Helpers';
 import db from '../Model';
 
-import { verifyToken, } from '../util';
+import { authProvider } from './auth';
 
 export const registerNewVisitor = async (socketId, token?: string) => {
-    const payload = token ? await verifyToken(token) : null;
+    const payload = token ? await authProvider.verifyAccessToken(token) : null;
     const hasPayload = payload && '_id' in payload;
 
     const currentTime = generateDateForDB();
@@ -20,7 +19,7 @@ export const registerNewVisitor = async (socketId, token?: string) => {
 export const setUserInactive = async (connectId: string) => {
     const query = {
         where: {
-            connectId: connectId,
+            connectId,
         },
         raw: true,
         nest: true,
@@ -36,12 +35,14 @@ export const setUserInactive = async (connectId: string) => {
 
 export const validateConnectionId = async (data) => {
     const result = await db.SessionModel.findOne({
-        where: { connectId: data.connectId, },
-        include: [{
-            model: db.User,
-            require: false,
-            attributes: ['id', 'role', 'email'],
-        }],
+        where: { connectId: data.connectId },
+        include: [
+            {
+                model: db.User,
+                require: false,
+                attributes: ['id', 'role', 'email'],
+            },
+        ],
         raw: true,
         nest: true,
     });

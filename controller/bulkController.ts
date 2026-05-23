@@ -1,28 +1,23 @@
-import { MESSAGES, RESPONSE_STATUS_CODE, } from '../constants';
-
+import { MESSAGES, RESPONSE_STATUS_CODE } from '../constants';
+import { getAuthContext } from '../Helpers';
 import * as bulkService from '../services/bulkService';
-
-import { updateMessage, } from '../util';
-import {
-    getUserVerificationStatus,
-} from '../services/getUserVerificationStatus';
+import { updateMessage } from '../util';
 
 export const createBulk = async (req, res, next) => {
     try {
-        const userId = req.user._id;
-        const checkAccount = await getUserVerificationStatus(userId);
-        if (!checkAccount) {
-            res.status(RESPONSE_STATUS_CODE.UNAUTHORIZED).json(updateMessage(MESSAGES.ACCOUNT_IS_NOT_VERIFY).user);
+        const auth = getAuthContext(req);
+        if (!auth?.isVerify) {
+            res.status(RESPONSE_STATUS_CODE.FORBIDDEN).json(updateMessage(MESSAGES.ACCOUNT_IS_NOT_VERIFY).user);
             return;
         }
         // TODO: Extract the "role" property into an enumeration for better type safety and maintainability
-        if (checkAccount?.role !== 'admin') {
-            res.status(RESPONSE_STATUS_CODE.UNAUTHORIZED).json(updateMessage(MESSAGES.PERMISSION).user);
+        if (auth.role !== 'admin') {
+            res.status(RESPONSE_STATUS_CODE.FORBIDDEN).json(updateMessage(MESSAGES.PERMISSION).user);
             return;
         }
 
         const resultIds = [];
-        const body = req.body;
+        const { body } = req;
         if (body?.products?.length >= 1) {
             const result = await bulkService.createBulkProducts(req.body);
             resultIds.push(...result);

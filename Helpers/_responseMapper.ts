@@ -1,4 +1,4 @@
-import { productModel, productSearchModel, productStateModel, } from './MappersModel';
+import { productModel, productSearchModel, productStateModel } from './MappersModel';
 
 export enum _EMappedType {
     PRODUCT = 0,
@@ -43,7 +43,7 @@ const _responseMapper = (result, type: _EMappedType) => {
     }
 
     if (type === _EMappedType.PRODUCT_STATE) {
-        mappedResult.rows = result.rows.map((bs) => productStateModel(bs));
+        mappedResult.rows = result.rows.map((bs) => productStateModel(bs.toJSON()));
         return mappedResult;
     }
 
