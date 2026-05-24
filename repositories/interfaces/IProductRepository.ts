@@ -1,16 +1,9 @@
+import { type TProductRow } from '../../db/schema';
+
 import { type IAuthorRecord } from './IAuthorRepository';
 import { type IFileRecord } from './IFileRepository';
 
-export interface IProductRecord {
-    id: number;
-    productTitle: string | null;
-    genre: string | null;
-    isVerify: boolean;
-    pages: number | null;
-    publishedYear: number | null;
-    description: string | null;
-    authorsSeparator: string;
-}
+export type IProductRecord = TProductRow;
 
 export interface IProductWithRelations extends IProductRecord {
     authors: IAuthorRecord[];
@@ -18,14 +11,8 @@ export interface IProductWithRelations extends IProductRecord {
     userStatusId: number | null;
 }
 
-export interface IProductCreateInput {
-    productTitle: string;
-    genre?: string | null;
-    pages?: number | null;
-    publishedYear?: number | null;
-    description?: string | null;
-    authorsSeparator?: string;
-}
+export type IProductCreateInput = Pick<TProductRow, 'productTitle'> &
+    Partial<Pick<TProductRow, 'genre' | 'pages' | 'publishedYear' | 'description' | 'authorsSeparator'>>;
 
 export interface IProductListQuery {
     offset: number;

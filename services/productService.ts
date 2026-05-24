@@ -35,9 +35,7 @@ export const getDataById = async (id: number) => {
 };
 
 const checkAndInsertAuthors = async (authors: string[]): Promise<number[]> => {
-    const uniqueNames = Array.from(
-        new Set(authors.map((name) => name.trim()).filter((name) => name.length > 0)),
-    );
+    const uniqueNames = Array.from(new Set(authors.map((name) => name.trim()).filter((name) => name.length > 0)));
 
     const authorsIds: number[] = [];
     for (const trimmedName of uniqueNames) {

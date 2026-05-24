@@ -4,15 +4,6 @@ import { type TDb } from '../../db';
 import { users } from '../../db/schema';
 import { type IUserCreateInput, type IUserRecord, type IUserRepository } from '../interfaces';
 
-const toRecord = (row: typeof users.$inferSelect): IUserRecord => ({
-    id: row.id,
-    email: row.email,
-    password: row.password ?? null,
-    isVerify: row.isVerify,
-    isDelete: row.isDelete,
-    role: row.role,
-});
-
 export class UserRepository implements IUserRepository {
     constructor(
         private readonly dbRead: TDb,
@@ -26,12 +17,12 @@ export class UserRepository implements IUserRepository {
         }
 
         const [row] = await this.dbRead.select().from(users).where(eq(users.id, numericId)).limit(1);
-        return row ? toRecord(row) : null;
+        return row ?? null;
     }
 
     async findByEmail(email: string): Promise<IUserRecord | null> {
         const [row] = await this.dbRead.select().from(users).where(eq(users.email, email)).limit(1);
-        return row ? toRecord(row) : null;
+        return row ?? null;
     }
 
     async countByEmail(email: string): Promise<number> {
@@ -44,7 +35,7 @@ export class UserRepository implements IUserRepository {
             .insert(users)
             .values({ email: input.email, password: input.password ?? null })
             .returning();
-        return toRecord(row);
+        return row;
     }
 
     async markVerified(id: number): Promise<void> {

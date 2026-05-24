@@ -3,17 +3,11 @@ import { and, avg, count, eq } from 'drizzle-orm';
 import { type TDb } from '../../db';
 import { productRatings } from '../../db/schema';
 import {
+    type IProductRatingCreateInput,
     type IProductRatingRecord,
     type IProductRatingRepository,
     type IRatingAggregate,
 } from '../interfaces';
-
-const toRecord = (row: typeof productRatings.$inferSelect): IProductRatingRecord => ({
-    id: row.id,
-    userId: row.userId,
-    productId: row.productId,
-    rating: row.rating,
-});
 
 export class ProductRatingRepository implements IProductRatingRepository {
     constructor(
@@ -27,10 +21,10 @@ export class ProductRatingRepository implements IProductRatingRepository {
             .from(productRatings)
             .where(and(eq(productRatings.userId, userId), eq(productRatings.productId, productId)))
             .limit(1);
-        return row ? toRecord(row) : null;
+        return row ?? null;
     }
 
-    async upsert(input: { userId: number; productId: number; rating: number }): Promise<IProductRatingRecord> {
+    async upsert(input: IProductRatingCreateInput): Promise<IProductRatingRecord> {
         const [row] = await this.dbWrite
             .insert(productRatings)
             .values(input)
@@ -39,7 +33,7 @@ export class ProductRatingRepository implements IProductRatingRepository {
                 set: { rating: input.rating, updatedAt: new Date() },
             })
             .returning();
-        return toRecord(row);
+        return row;
     }
 
     async getAggregate(productId: number): Promise<IRatingAggregate> {

@@ -4,14 +4,6 @@ import { type TDb } from '../../db';
 import { files } from '../../db/schema';
 import { type IFileCreateInput, type IFileRecord, type IFileRepository } from '../interfaces';
 
-const toRecord = (row: typeof files.$inferSelect): IFileRecord => ({
-    id: row.id,
-    extension: row.extension ?? null,
-    realFileName: row.realFileName ?? null,
-    src: row.src ?? null,
-    uniqueName: row.uniqueName ?? null,
-});
-
 export class FileRepository implements IFileRepository {
     constructor(
         private readonly dbRead: TDb,
@@ -28,12 +20,12 @@ export class FileRepository implements IFileRepository {
                 uniqueName: input.uniqueName,
             })
             .returning();
-        return toRecord(row);
+        return row;
     }
 
     async findById(id: number): Promise<IFileRecord | null> {
         const [row] = await this.dbRead.select().from(files).where(eq(files.id, id)).limit(1);
-        return row ? toRecord(row) : null;
+        return row ?? null;
     }
 
     async deleteById(id: number): Promise<void> {

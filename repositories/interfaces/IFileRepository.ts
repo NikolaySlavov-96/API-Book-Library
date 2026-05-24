@@ -1,17 +1,8 @@
-export interface IFileRecord {
-    id: number;
-    extension: string | null;
-    realFileName: string | null;
-    src: string | null;
-    uniqueName: string | null;
-}
+import { type TFileRow } from '../../db/schema';
 
-export interface IFileCreateInput {
-    extension: string;
-    realFileName: string;
-    src: string;
-    uniqueName: string;
-}
+export type IFileRecord = TFileRow;
+
+export type IFileCreateInput = Pick<TFileRow, 'extension' | 'realFileName' | 'src' | 'uniqueName'>;
 
 export interface IFileRepository {
     create(input: IFileCreateInput): Promise<IFileRecord>;

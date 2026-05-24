@@ -13,19 +13,8 @@ import {
 
 const buildSearchPredicate = (filterOperator: string, searchContent: string): SQL => {
     const operator = filterOperator === 'iLike' ? ilike : like;
-    return or(operator(products.productTitle, searchContent), operator(products.genre, searchContent)) as SQL;
+    return or(operator(products.productTitle, searchContent), operator(products.genre, searchContent));
 };
-
-const toRecord = (row: typeof products.$inferSelect): IProductRecord => ({
-    id: row.id,
-    productTitle: row.productTitle ?? null,
-    genre: row.genre ?? null,
-    isVerify: row.isVerify,
-    pages: row.pages ?? null,
-    publishedYear: row.publishedYear ?? null,
-    description: row.description ?? null,
-    authorsSeparator: row.authorsSeparator,
-});
 
 export class ProductRepository implements IProductRepository {
     constructor(
@@ -40,10 +29,7 @@ export class ProductRepository implements IProductRepository {
         }
         const where = conditions.length ? and(...conditions) : undefined;
 
-        const totalRows = await this.dbRead
-            .select({ value: count() })
-            .from(products)
-            .where(where);
+        const totalRows = await this.dbRead.select({ value: count() }).from(products).where(where);
         const total = Number(totalRows[0]?.value ?? 0);
 
         const productRows = await this.dbRead.query.products.findMany({
@@ -62,7 +48,7 @@ export class ProductRepository implements IProductRepository {
                     ? {
                           where: (productStatusesTable, { eq: equals, and: allOf }) => {
                               const filters = [
-                                  equals(productStatusesTable.userId, query.userId as number),
+                                  equals(productStatusesTable.userId, query.userId),
                                   equals(productStatusesTable.isDelete, false),
                               ];
                               if (query.statusId) {
@@ -76,27 +62,20 @@ export class ProductRepository implements IProductRepository {
             },
         });
 
-        const filteredRows = query.statusId && query.userId
-            ? productRows.filter((row) => (row.productStatuses?.length ?? 0) > 0)
-            : productRows;
+        const filteredRows =
+            query.statusId && query.userId
+                ? productRows.filter((row) => (row.productStatuses?.length ?? 0) > 0)
+                : productRows;
 
-        const rows: IProductWithRelations[] = filteredRows.map((row) => ({
-            ...toRecord(row),
-            authors: row.productAuthors.map((pa) => ({
-                id: pa.author.id,
-                name: pa.author.name ?? null,
-                genre: pa.author.genre ?? null,
-                isVerify: pa.author.isVerify,
-            })),
-            files: row.productFiles.map((pf) => ({
-                id: pf.file.id,
-                extension: pf.file.extension ?? null,
-                realFileName: pf.file.realFileName ?? null,
-                src: pf.file.src ?? null,
-                uniqueName: pf.file.uniqueName ?? null,
-            })),
-            userStatusId: row.productStatuses?.[0]?.statusId ?? null,
-        }));
+        const rows: IProductWithRelations[] = filteredRows.map((row) => {
+            const { productAuthors, productFiles, productStatuses, ...productFields } = row;
+            return {
+                ...productFields,
+                authors: productAuthors.map((pa) => pa.author),
+                files: productFiles.map((pf) => pf.file),
+                userStatusId: productStatuses?.[0]?.statusId ?? null,
+            };
+        });
 
         return { count: total, rows };
     }
@@ -114,21 +93,11 @@ export class ProductRepository implements IProductRepository {
             return null;
         }
 
+        const { productAuthors, productFiles, ...productFields } = row;
         return {
-            ...toRecord(row),
-            authors: row.productAuthors.map((pa) => ({
-                id: pa.author.id,
-                name: pa.author.name ?? null,
-                genre: pa.author.genre ?? null,
-                isVerify: pa.author.isVerify,
-            })),
-            files: row.productFiles.map((pf) => ({
-                id: pf.file.id,
-                extension: pf.file.extension ?? null,
-                realFileName: pf.file.realFileName ?? null,
-                src: pf.file.src ?? null,
-                uniqueName: pf.file.uniqueName ?? null,
-            })),
+            ...productFields,
+            authors: productAuthors.map((pa) => pa.author),
+            files: productFiles.map((pf) => pf.file),
             userStatusId: null,
         };
     }
@@ -139,7 +108,7 @@ export class ProductRepository implements IProductRepository {
             .from(products)
             .where(sql`lower(${products.productTitle}) = lower(${title})`)
             .limit(1);
-        return row ? toRecord(row) : null;
+        return row ?? null;
     }
 
     async create(input: IProductCreateInput): Promise<IProductRecord> {
@@ -154,6 +123,6 @@ export class ProductRepository implements IProductRepository {
                 ...(input.authorsSeparator ? { authorsSeparator: input.authorsSeparator } : {}),
             })
             .returning();
-        return toRecord(row);
+        return row;
     }
 }

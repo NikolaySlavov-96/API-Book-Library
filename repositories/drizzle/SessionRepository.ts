@@ -10,14 +10,6 @@ import {
     type ISessionWithUser,
 } from '../interfaces';
 
-const toRecord = (row: typeof sessions.$inferSelect): ISessionRecord => ({
-    id: row.id,
-    connectId: row.connectId ?? null,
-    userId: row.userId ?? null,
-    connectedAt: row.connectedAt ?? null,
-    disconnectedAt: row.disconnectedAt ?? null,
-});
-
 export class SessionRepository implements ISessionRepository {
     constructor(
         private readonly dbRead: TDb,
@@ -33,7 +25,7 @@ export class SessionRepository implements ISessionRepository {
                 userId: input.userId,
             })
             .returning();
-        return toRecord(row);
+        return row;
     }
 
     async updateByConnectId(connectId: string, input: ISessionUpdateInput): Promise<void> {
@@ -65,7 +57,7 @@ export class SessionRepository implements ISessionRepository {
         }
 
         return {
-            ...toRecord(row.session),
+            ...row.session,
             user: row.user?.id ? row.user : null,
         };
     }

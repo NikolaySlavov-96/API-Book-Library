@@ -1,16 +1,8 @@
-export interface IUserRecord {
-    id: number;
-    email: string;
-    password: string | null;
-    isVerify: boolean;
-    isDelete: boolean;
-    role: string;
-}
+import { type TUserRow } from '../../db/schema';
 
-export interface IUserCreateInput {
-    email: string;
-    password: string | null;
-}
+export type IUserRecord = TUserRow;
+
+export type IUserCreateInput = Pick<TUserRow, 'email' | 'password'>;
 
 export interface IUserRepository {
     findById(id: number | string): Promise<IUserRecord | null>;

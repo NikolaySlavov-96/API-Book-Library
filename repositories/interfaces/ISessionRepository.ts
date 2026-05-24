@@ -1,10 +1,6 @@
-export interface ISessionRecord {
-    id: number;
-    connectId: string | null;
-    userId: number | null;
-    connectedAt: string | null;
-    disconnectedAt: string | null;
-}
+import { type TSessionRow } from '../../db/schema';
+
+export type ISessionRecord = TSessionRow;
 
 export interface ISessionUserRef {
     id: number;
@@ -16,17 +12,9 @@ export interface ISessionWithUser extends ISessionRecord {
     user: ISessionUserRef | null;
 }
 
-export interface ISessionCreateInput {
-    connectId: string;
-    connectedAt: string;
-    userId: number | null;
-}
+export type ISessionCreateInput = Pick<TSessionRow, 'connectId' | 'connectedAt' | 'userId'>;
 
-export interface ISessionUpdateInput {
-    userId?: number | null;
-    connectedAt?: string;
-    disconnectedAt?: string;
-}
+export type ISessionUpdateInput = Partial<Pick<TSessionRow, 'userId' | 'connectedAt' | 'disconnectedAt'>>;
 
 export interface ISessionRepository {
     create(input: ISessionCreateInput): Promise<ISessionRecord>;

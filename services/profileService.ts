@@ -8,7 +8,7 @@ const { BE_URL } = process.env;
 const AVATAR_PATH = BE_URL + SYSTEM_FILE_DIRECTORY.UPLOAD + '/';
 
 const serializeProfile = (profile: IProfileWithAvatar) => {
-    const avatar = profile.avatar;
+    const { avatar } = profile;
 
     return {
         userId: profile.userId,

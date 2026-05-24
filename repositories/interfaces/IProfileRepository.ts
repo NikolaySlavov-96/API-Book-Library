@@ -1,12 +1,6 @@
-export interface IProfileRecord {
-    id: number;
-    userId: number;
-    year: number;
-    readingGoal: number;
-    displayName: string | null;
-    avatarFileId: number | null;
-    notifyByEmail: boolean;
-}
+import { type TProfileRow } from '../../db/schema';
+
+export type IProfileRecord = TProfileRow;
 
 export interface IProfileAvatar {
     id: number;
@@ -18,17 +12,11 @@ export interface IProfileWithAvatar extends IProfileRecord {
     avatar: IProfileAvatar | null;
 }
 
-export interface IProfileCreateInput {
-    userId: number;
-    year: number;
-}
+export type IProfileCreateInput = Pick<TProfileRow, 'userId' | 'year'>;
 
-export interface IProfileUpdateInput {
-    readingGoal?: number;
-    displayName?: string | null;
-    avatarFileId?: number | null;
-    notifyByEmail?: boolean;
-}
+export type IProfileUpdateInput = Partial<
+    Pick<TProfileRow, 'readingGoal' | 'displayName' | 'avatarFileId' | 'notifyByEmail'>
+>;
 
 export interface IProfileRepository {
     create(input: IProfileCreateInput): Promise<IProfileRecord>;

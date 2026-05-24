@@ -5,15 +5,7 @@ import userModel from './userModel';
 
 const productStateModel = (data: IProductStatusWithRelations) => {
     const updatedProduct = productModel({
-        id: data.product.id,
-        productTitle: data.product.productTitle,
-        genre: data.product.genre,
-        isVerify: data.product.isVerify,
-        pages: data.product.pages,
-        publishedYear: data.product.publishedYear,
-        description: data.product.description,
-        authors: data.product.authors,
-        files: data.product.files,
+        ...data.product,
         userStatusId: null,
     });
     const updateUser = userModel(data.user);

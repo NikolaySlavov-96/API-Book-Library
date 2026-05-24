@@ -1,9 +1,9 @@
-export interface IAuthorFileRecord {
-    id: number;
-    authorId: number;
-    fileId: number;
-}
+import { type TAuthorFileRow } from '../../db/schema';
+
+export type IAuthorFileRecord = TAuthorFileRow;
+
+export type IAuthorFileCreateInput = Pick<TAuthorFileRow, 'authorId' | 'fileId'>;
 
 export interface IAuthorFileRepository {
-    create(input: { authorId: number; fileId: number }): Promise<IAuthorFileRecord>;
+    create(input: IAuthorFileCreateInput): Promise<IAuthorFileRecord>;
 }

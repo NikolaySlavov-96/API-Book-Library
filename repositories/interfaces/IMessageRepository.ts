@@ -1,16 +1,8 @@
-export interface IMessageRecord {
-    id: number;
-    roomName: string;
-    senderId: string;
-    message: string | null;
-    isDelete: boolean;
-}
+import { type TMessageRow } from '../../db/schema';
 
-export interface IMessageCreateInput {
-    roomName: string;
-    senderId: string;
-    message: string;
-}
+export type IMessageRecord = TMessageRow;
+
+export type IMessageCreateInput = Pick<TMessageRow, 'roomName' | 'senderId' | 'message'>;
 
 export interface IMessageRepository {
     create(input: IMessageCreateInput): Promise<IMessageRecord>;

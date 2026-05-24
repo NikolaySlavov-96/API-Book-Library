@@ -1,14 +1,8 @@
-export interface IAuthorRecord {
-    id: number;
-    name: string | null;
-    genre: string | null;
-    isVerify: boolean;
-}
+import { type TAuthorRow } from '../../db/schema';
 
-export interface IAuthorCreateInput {
-    name: string;
-    genre?: string;
-}
+export type IAuthorRecord = TAuthorRow;
+
+export type IAuthorCreateInput = Pick<TAuthorRow, 'name'> & Partial<Pick<TAuthorRow, 'genre'>>;
 
 export interface IAuthorRepository {
     findByName(name: string): Promise<IAuthorRecord | null>;

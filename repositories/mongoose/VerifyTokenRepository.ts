@@ -1,8 +1,4 @@
-import {
-    type IVerifyTokenCreateInput,
-    type IVerifyTokenRecord,
-    type IVerifyTokenRepository,
-} from '../interfaces';
+import { type IVerifyTokenCreateInput, type IVerifyTokenRecord, type IVerifyTokenRepository } from '../interfaces';
 
 import { type IVerifyTokenDocument, VerifyTokenModel } from './models/VerifyTokenModel';
 

@@ -1,8 +1,8 @@
 import {
     type IProductListResult,
     type IProductStatusByEmailResult,
-    type IProductStatusListResult,
     type IProductStatusByEmailRow,
+    type IProductStatusListResult,
     type IProductStatusWithRelations,
     type IProductWithRelations,
 } from '../repositories';

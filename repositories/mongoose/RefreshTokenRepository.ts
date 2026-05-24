@@ -1,8 +1,4 @@
-import {
-    type IRefreshTokenCreateInput,
-    type IRefreshTokenRecord,
-    type IRefreshTokenRepository,
-} from '../interfaces';
+import { type IRefreshTokenCreateInput, type IRefreshTokenRecord, type IRefreshTokenRepository } from '../interfaces';
 
 import { type IRefreshTokenDocument, RefreshTokenModel } from './models/RefreshTokenModel';
 

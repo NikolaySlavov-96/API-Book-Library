@@ -10,16 +10,6 @@ import {
     type IProfileWithAvatar,
 } from '../interfaces';
 
-const toRecord = (row: typeof profiles.$inferSelect): IProfileRecord => ({
-    id: row.id,
-    userId: row.userId,
-    year: row.year,
-    readingGoal: row.readingGoal,
-    displayName: row.displayName ?? null,
-    avatarFileId: row.avatarFileId ?? null,
-    notifyByEmail: row.notifyByEmail,
-});
-
 export class ProfileRepository implements IProfileRepository {
     constructor(
         private readonly dbRead: TDb,
@@ -31,12 +21,12 @@ export class ProfileRepository implements IProfileRepository {
             .insert(profiles)
             .values({ userId: input.userId, year: input.year })
             .returning();
-        return toRecord(row);
+        return row;
     }
 
     async findByUserId(userId: number): Promise<IProfileRecord | null> {
         const [row] = await this.dbRead.select().from(profiles).where(eq(profiles.userId, userId)).limit(1);
-        return row ? toRecord(row) : null;
+        return row ?? null;
     }
 
     async findByUserIdWithAvatar(userId: number): Promise<IProfileWithAvatar | null> {
@@ -59,7 +49,7 @@ export class ProfileRepository implements IProfileRepository {
         }
 
         return {
-            ...toRecord(row.profile),
+            ...row.profile,
             avatar: row.avatar?.id ? row.avatar : null,
         };
     }
@@ -72,6 +62,6 @@ export class ProfileRepository implements IProfileRepository {
         if (input.notifyByEmail !== undefined) updates.notifyByEmail = input.notifyByEmail;
 
         const [row] = await this.dbWrite.update(profiles).set(updates).where(eq(profiles.userId, userId)).returning();
-        return row ? toRecord(row) : null;
+        return row ?? null;
     }
 }

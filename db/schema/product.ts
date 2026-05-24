@@ -1,5 +1,15 @@
 import { relations, sql } from 'drizzle-orm';
-import { boolean, integer, pgTable, serial, smallint, text, timestamp, uniqueIndex, varchar } from 'drizzle-orm/pg-core';
+import {
+    boolean,
+    integer,
+    pgTable,
+    serial,
+    smallint,
+    text,
+    timestamp,
+    uniqueIndex,
+    varchar,
+} from 'drizzle-orm/pg-core';
 
 import { productAuthors } from './productAuthor';
 import { productFiles } from './productFile';

@@ -7,12 +7,6 @@ export class MessageRepository implements IMessageRepository {
 
     async create(input: IMessageCreateInput): Promise<IMessageRecord> {
         const [row] = await this.dbWrite.insert(messages).values(input).returning();
-        return {
-            id: row.id,
-            roomName: row.roomName,
-            senderId: row.senderId,
-            message: row.message ?? null,
-            isDelete: row.isDelete,
-        };
+        return row;
     }
 }

@@ -6,8 +6,8 @@ import { Server as SocketIOServer } from 'socket.io';
 
 import 'dotenv/config';
 
-import { ensureDatabaseExists, verifyDatabaseConnections } from './db';
 import { expressConfig, mongoClient, redisClient, router } from './config';
+import { ensureDatabaseExists, verifyDatabaseConnections } from './db';
 import { initEmitters, socketEvents } from './Events';
 import { globalErrorHandling } from './Helpers';
 
