@@ -34,13 +34,13 @@ export const getDataById = async (id: number) => {
     return mappedResponse;
 };
 
-const checkAndInsertAuthors = async (authors: string): Promise<number[]> => {
+const checkAndInsertAuthors = async (authors: string[]): Promise<number[]> => {
+    const uniqueNames = Array.from(
+        new Set(authors.map((name) => name.trim()).filter((name) => name.length > 0)),
+    );
+
     const authorsIds: number[] = [];
-    const authorsName = authors.split('<->');
-
-    for (const authorName of authorsName) {
-        const trimmedName = authorName.trim();
-
+    for (const trimmedName of uniqueNames) {
         const isAuthor = await repositories.author.findByName(trimmedName);
         if (!isAuthor) {
             const created = await repositories.author.create({ name: trimmedName });
@@ -64,7 +64,7 @@ const insertProductFiles = async (productId: number, filesId: number[]): Promise
     }
 };
 
-export const create = async ({ author, productTitle, genre, filesId, pages, publishedYear, description }) => {
+export const create = async ({ authors, productTitle, genre, filesId, pages, publishedYear, description }) => {
     const modTitle = productTitle.trim();
     const modGenre = genre?.trim();
 
@@ -74,7 +74,7 @@ export const create = async ({ author, productTitle, genre, filesId, pages, publ
         return updateMessage(MESSAGES.PRODUCT_ALREADY_EXIST, 403);
     }
 
-    const authorsId = await checkAndInsertAuthors(author);
+    const authorsId = await checkAndInsertAuthors(authors);
 
     const created = await repositories.product.create({
         productTitle: modTitle,

@@ -3,11 +3,6 @@ import { type IProductWithRelations } from '../../repositories';
 import fileModel from './fileModel';
 
 const productModel = (data: IProductWithRelations) => {
-    const authorsName =
-        data.authors
-            ?.map((a) => a?.name)
-            .filter(Boolean)
-            .join(', ') ?? '';
     const updatedFile = fileModel(data?.files);
 
     return {
@@ -19,10 +14,9 @@ const productModel = (data: IProductWithRelations) => {
         publishedYear: data.publishedYear ?? null,
         description: data.description ?? null,
         statusId: data.userStatusId ?? null,
-        authorName: authorsName,
-        authorImage: undefined,
-        authorGenre: undefined,
-        authorStatus: undefined,
+        authors: (data.authors ?? [])
+            .filter((a) => a?.name)
+            .map((a) => ({ id: a.id, name: a.name as string })),
         ...updatedFile,
     };
 };

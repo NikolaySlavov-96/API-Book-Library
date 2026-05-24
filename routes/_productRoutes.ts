@@ -37,7 +37,8 @@ product.post(
     '/',
     isAuthenticated(),
     body('productTitle').isLength({ min: 2 }).withMessage(ROUTING_MESSAGES.PRODUCT_TITLE_REQUIRED),
-    body('author').isLength({ min: 2 }).withMessage(ROUTING_MESSAGES.AUTHOR_REQUIRED),
+    body('authors').isArray({ min: 1 }).withMessage(ROUTING_MESSAGES.AUTHOR_REQUIRED),
+    body('authors.*').isString().isLength({ min: 2 }).withMessage(ROUTING_MESSAGES.AUTHOR_REQUIRED),
     body('genre').isLength({ min: 2 }).withMessage(ROUTING_MESSAGES.PRODUCT_GENRE),
     body('pages').optional({ nullable: true }).isInt({ min: 1 }).withMessage(ROUTING_MESSAGES.PRODUCT_PAGES),
     body('publishedYear')
