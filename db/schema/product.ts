@@ -17,6 +17,7 @@ export const products = pgTable(
         pages: integer('pages'),
         publishedYear: smallint('publishedYear'),
         description: text('description'),
+        authorsSeparator: varchar('authorsSeparator', { length: 8 }).default(',').notNull(),
         createdAt: timestamp('createdAt', { withTimezone: true }).defaultNow().notNull(),
         updatedAt: timestamp('updatedAt', { withTimezone: true }).defaultNow().notNull(),
     },

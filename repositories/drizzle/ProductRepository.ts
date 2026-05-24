@@ -24,6 +24,7 @@ const toRecord = (row: typeof products.$inferSelect): IProductRecord => ({
     pages: row.pages ?? null,
     publishedYear: row.publishedYear ?? null,
     description: row.description ?? null,
+    authorsSeparator: row.authorsSeparator,
 });
 
 export class ProductRepository implements IProductRepository {
@@ -150,6 +151,7 @@ export class ProductRepository implements IProductRepository {
                 pages: input.pages ?? null,
                 publishedYear: input.publishedYear ?? null,
                 description: input.description ?? null,
+                ...(input.authorsSeparator ? { authorsSeparator: input.authorsSeparator } : {}),
             })
             .returning();
         return toRecord(row);

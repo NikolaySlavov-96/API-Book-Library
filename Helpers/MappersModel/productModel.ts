@@ -17,6 +17,7 @@ const productModel = (data: IProductWithRelations) => {
         authors: (data.authors ?? [])
             .filter((a) => a?.name)
             .map((a) => ({ id: a.id, name: a.name as string })),
+        authorsSeparator: data.authorsSeparator ?? ',',
         ...updatedFile,
     };
 };

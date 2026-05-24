@@ -9,6 +9,7 @@ export interface IProductRecord {
     pages: number | null;
     publishedYear: number | null;
     description: string | null;
+    authorsSeparator: string;
 }
 
 export interface IProductWithRelations extends IProductRecord {
@@ -23,6 +24,7 @@ export interface IProductCreateInput {
     pages?: number | null;
     publishedYear?: number | null;
     description?: string | null;
+    authorsSeparator?: string;
 }
 
 export interface IProductListQuery {

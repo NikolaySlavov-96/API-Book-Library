@@ -64,7 +64,16 @@ const insertProductFiles = async (productId: number, filesId: number[]): Promise
     }
 };
 
-export const create = async ({ authors, productTitle, genre, filesId, pages, publishedYear, description }) => {
+export const create = async ({
+    authors,
+    productTitle,
+    genre,
+    filesId,
+    pages,
+    publishedYear,
+    description,
+    authorsSeparator,
+}) => {
     const modTitle = productTitle.trim();
     const modGenre = genre?.trim();
 
@@ -82,6 +91,7 @@ export const create = async ({ authors, productTitle, genre, filesId, pages, pub
         pages,
         publishedYear,
         description: description?.trim(),
+        authorsSeparator,
     });
 
     if (filesId?.length) {
