@@ -49,6 +49,11 @@ product.post(
         .optional({ nullable: true })
         .isLength({ max: 4000 })
         .withMessage(ROUTING_MESSAGES.PRODUCT_DESCRIPTION),
+    body('authorsSeparator')
+        .optional({ nullable: true })
+        .isString()
+        .isLength({ min: 1, max: 8 })
+        .withMessage(ROUTING_MESSAGES.AUTHORS_SEPARATOR),
     expressValidator,
     productController.createProduct,
 );
