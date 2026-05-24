@@ -1,14 +1,14 @@
 import 'dotenv/config';
 
 import { MESSAGES, RESPONSE_STATUS_CODE, SYSTEM_FILE_DIRECTORY } from '../constants';
-import db from '../Model';
+import { type IProfileWithAvatar, repositories } from '../repositories';
 import { updateMessage } from '../util';
 
 const { BE_URL } = process.env;
 const AVATAR_PATH = BE_URL + SYSTEM_FILE_DIRECTORY.UPLOAD + '/';
 
-const serializeProfile = (profile) => {
-    const avatar = profile?.avatar;
+const serializeProfile = (profile: IProfileWithAvatar) => {
+    const avatar = profile.avatar;
 
     return {
         userId: profile.userId,
@@ -23,46 +23,36 @@ const serializeProfile = (profile) => {
 };
 
 export const getProfile = async (userId) => {
-    const profile = await db.Profile.findOne({
-        where: { userId },
-        include: [
-            {
-                model: db.File,
-                as: 'avatar',
-                required: false,
-                attributes: ['id', 'src', 'uniqueName'],
-            },
-        ],
-    });
+    const profile = await repositories.profile.findByUserIdWithAvatar(userId);
 
     if (!profile) {
         return updateMessage(MESSAGES.INVALID_USER, RESPONSE_STATUS_CODE.UNAUTHORIZED);
     }
 
-    return serializeProfile(profile.toJSON());
+    return serializeProfile(profile);
 };
 
 export const updateProfile = async (userId, body) => {
-    const profile = await db.Profile.findOne({ where: { userId } });
+    const profile = await repositories.profile.findByUserId(userId);
     if (!profile) {
         return updateMessage(MESSAGES.INVALID_USER, RESPONSE_STATUS_CODE.UNAUTHORIZED);
     }
 
-    // Allowlist the fields a user may change on their own profile
+    const updates: Parameters<typeof repositories.profile.updateByUserId>[1] = {};
     if (body.readingGoal !== undefined) {
-        profile.readingGoal = body.readingGoal;
+        updates.readingGoal = body.readingGoal;
     }
     if (body.displayName !== undefined) {
-        profile.displayName = body.displayName?.trim() || null;
+        updates.displayName = body.displayName?.trim() || null;
     }
     if (body.avatarFileId !== undefined) {
-        profile.avatarFileId = body.avatarFileId;
+        updates.avatarFileId = body.avatarFileId;
     }
     if (body.notifyByEmail !== undefined) {
-        profile.notifyByEmail = body.notifyByEmail;
+        updates.notifyByEmail = body.notifyByEmail;
     }
 
-    await profile.save();
+    await repositories.profile.updateByUserId(userId, updates);
 
     return getProfile(userId);
 };

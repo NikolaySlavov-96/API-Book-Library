@@ -1,13 +1,13 @@
 import 'dotenv/config';
 
-const { BE_URL } = process.env;
-
 import { SYSTEM_FILE_DIRECTORY } from '../../constants';
+import { type IFileRecord } from '../../repositories';
 
+const { BE_URL } = process.env;
 const FILE_PATH = BE_URL + SYSTEM_FILE_DIRECTORY.UPLOAD + '/';
 
-const fileModel = (data) => {
-    const firstFile = data[0];
+const fileModel = (data: IFileRecord[] | undefined | null) => {
+    const firstFile = data?.[0];
     return {
         fileUrl: FILE_PATH + (firstFile?.uniqueName ?? 'productNotFound.png'),
         fileSrc: firstFile?.src ?? 'Stay happy',

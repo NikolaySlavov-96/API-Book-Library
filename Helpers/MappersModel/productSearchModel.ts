@@ -1,10 +1,22 @@
+import { type IProductStatusByEmailRow } from '../../repositories';
+
 import productModel from './productModel';
 import userModel from './userModel';
 
-// `data` is a ProductStatus row: the owning User, the Product, and the real statusId.
-const productSearchModel = (data) => {
-    const updateUser = userModel(data.User);
-    const updateProduct = productModel(data.Product);
+const productSearchModel = (data: IProductStatusByEmailRow) => {
+    const updateUser = userModel(data.user);
+    const updateProduct = productModel({
+        id: data.product.id,
+        productTitle: data.product.productTitle,
+        genre: data.product.genre,
+        isVerify: data.product.isVerify,
+        pages: data.product.pages,
+        publishedYear: data.product.publishedYear,
+        description: data.product.description,
+        authors: data.product.authors,
+        files: data.product.files,
+        userStatusId: null,
+    });
 
     return {
         ...updateUser,

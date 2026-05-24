@@ -6,12 +6,12 @@ import { Server as SocketIOServer } from 'socket.io';
 
 import 'dotenv/config';
 
-import { checkDatabaseIfItExist, expressConfig, mongoClient, redisClient, router } from './config';
+import { ensureDatabaseExists, verifyDatabaseConnections } from './db';
+import { expressConfig, mongoClient, redisClient, router } from './config';
 import { initEmitters, socketEvents } from './Events';
 import { globalErrorHandling } from './Helpers';
-import db from './Model';
 
-const { APP_PORT, SOCKET_ADDRESS, DB_FORCE_STATUS } = process.env;
+const { APP_PORT, SOCKET_ADDRESS } = process.env;
 
 const app = express();
 
@@ -35,12 +35,8 @@ async function start() {
 
     io.adapter(createAdapter(pubClient, subClient));
 
-    await checkDatabaseIfItExist();
-
-    await db.sequelize.authenticate();
-
-    const resetStatus = DB_FORCE_STATUS === 'true' ? true : false;
-    await db.sequelize.sync({ force: resetStatus });
+    await ensureDatabaseExists();
+    await verifyDatabaseConnections();
 
     expressConfig(app, express, fileUpload);
 

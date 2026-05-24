@@ -1,10 +1,12 @@
 import { MESSAGES, RESPONSE_STATUS_CODE } from '../constants';
 import { calculateTimeDifference } from '../Helpers';
-import VerifyTokenModel from '../Model/VerifyTokenModel';
+import { repositories } from '../repositories';
 import { updateMessage } from '../util';
 
+const DEFAULT_UNIT = 'minute';
+
 export const verifyEmailToken = async (token: string) => {
-    const isExistToken = await VerifyTokenModel.findOne({ token });
+    const isExistToken = await repositories.verifyToken.findByToken(token);
     if (!isExistToken) {
         return updateMessage(MESSAGES.TOKEN_DOES_NOT_EXIST, RESPONSE_STATUS_CODE.UNAUTHORIZED);
     }
@@ -13,7 +15,7 @@ export const verifyEmailToken = async (token: string) => {
         return updateMessage(MESSAGES.TOKEN_USER, RESPONSE_STATUS_CODE.UNAUTHORIZED);
     }
 
-    const tokenAge = calculateTimeDifference(isExistToken.createdAt, isExistToken.unit || 'minute');
+    const tokenAge = calculateTimeDifference(isExistToken.createdAt, isExistToken.unit || DEFAULT_UNIT);
     const isValidToken = tokenAge < isExistToken.expireAt;
     if (!isValidToken) {
         return updateMessage(MESSAGES.EXPIRED_TOKEN, RESPONSE_STATUS_CODE.UNAUTHORIZED);
@@ -23,22 +25,7 @@ export const verifyEmailToken = async (token: string) => {
 };
 
 export const verifyMagicToken = async (token: string) => {
-    const isExistToken = await VerifyTokenModel.findOne({ token });
-    if (!isExistToken) {
-        return updateMessage(MESSAGES.TOKEN_DOES_NOT_EXIST, RESPONSE_STATUS_CODE.UNAUTHORIZED);
-    }
-
-    if (isExistToken.status) {
-        return updateMessage(MESSAGES.TOKEN_USER, RESPONSE_STATUS_CODE.UNAUTHORIZED);
-    }
-
-    const tokenAge = calculateTimeDifference(isExistToken.createdAt, isExistToken.unit || 'minute');
-    const isValidToken = tokenAge < isExistToken.expireAt;
-    if (!isValidToken) {
-        return updateMessage(MESSAGES.EXPIRED_TOKEN, RESPONSE_STATUS_CODE.UNAUTHORIZED);
-    }
-
-    return isExistToken;
+    return verifyEmailToken(token);
 };
 
 interface IGenerateEmailToken {
@@ -46,10 +33,9 @@ interface IGenerateEmailToken {
     address: string;
 }
 export const generateEmailToken = async (data: IGenerateEmailToken, expireAt: number, unit: 'minute') => {
-    const newData = { ...data, expireAt, unit };
-    return VerifyTokenModel.create(newData);
+    return repositories.verifyToken.create({ ...data, expireAt, unit });
 };
 
-export const changeEmailTokenStatus = async (token) => {
-    return VerifyTokenModel.findOneAndUpdate({ token }, { status: true });
+export const changeEmailTokenStatus = async (token: string) => {
+    return repositories.verifyToken.markUsed(token);
 };
