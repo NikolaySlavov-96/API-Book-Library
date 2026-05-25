@@ -1,6 +1,7 @@
 import { type Socket } from 'socket.io';
 
 import { type ESendEvents } from '../constants';
+import { type Principal, principalRoom } from '../services/principalService';
 
 let io: Socket;
 
@@ -14,8 +15,8 @@ export const emitToSocketEvent = (eventName: ESendEvents, payload: unknown) => {
     }
 };
 
-export const emitEventToSocket = (socketId: string, eventName: ESendEvents, payload: unknown) => {
+export const emitEventToPrincipal = (principal: Principal, eventName: ESendEvents, payload: unknown) => {
     if (io) {
-        io.to(socketId).emit(eventName, payload);
+        io.to(principalRoom(principal)).emit(eventName, payload);
     }
 };

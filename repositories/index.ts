@@ -70,7 +70,7 @@ export const repositories: IRepositoryContainer = {
     productRating: new ProductRatingRepository(dbRead, dbWrite),
     message: new MessageRepository(dbWrite),
     messageStatus: new MessageStatusRepository(dbWrite),
-    session: new SessionRepository(dbRead, dbWrite),
+    session: new SessionRepository(dbWrite),
     state: new StateRepository(dbRead),
     verifyToken: new VerifyTokenRepository(),
     refreshToken: new RefreshTokenRepository(),

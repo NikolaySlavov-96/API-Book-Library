@@ -1,20 +1,16 @@
 import { eq } from 'drizzle-orm';
 
 import { type TDb } from '../../db';
-import { sessions, users } from '../../db/schema';
+import { sessions } from '../../db/schema';
 import {
     type ISessionCreateInput,
     type ISessionRecord,
     type ISessionRepository,
     type ISessionUpdateInput,
-    type ISessionWithUser,
 } from '../interfaces';
 
 export class SessionRepository implements ISessionRepository {
-    constructor(
-        private readonly dbRead: TDb,
-        private readonly dbWrite: TDb,
-    ) {}
+    constructor(private readonly dbWrite: TDb) {}
 
     async create(input: ISessionCreateInput): Promise<ISessionRecord> {
         const [row] = await this.dbWrite
@@ -35,30 +31,5 @@ export class SessionRepository implements ISessionRepository {
         if (input.disconnectedAt !== undefined) updates.disconnectedAt = input.disconnectedAt;
 
         await this.dbWrite.update(sessions).set(updates).where(eq(sessions.connectId, connectId));
-    }
-
-    async findByConnectIdWithUser(connectId: string): Promise<ISessionWithUser | null> {
-        const [row] = await this.dbRead
-            .select({
-                session: sessions,
-                user: {
-                    id: users.id,
-                    role: users.role,
-                    email: users.email,
-                },
-            })
-            .from(sessions)
-            .leftJoin(users, eq(sessions.userId, users.id))
-            .where(eq(sessions.connectId, connectId))
-            .limit(1);
-
-        if (!row) {
-            return null;
-        }
-
-        return {
-            ...row.session,
-            user: row.user?.id ? row.user : null,
-        };
     }
 }

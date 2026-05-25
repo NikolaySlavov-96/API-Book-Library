@@ -19,7 +19,3 @@ export const setUserInactive = async (connectId: string) => {
     const currentTime = generateDateForDB();
     await repositories.session.updateByConnectId(connectId, { disconnectedAt: currentTime });
 };
-
-export const validateConnectionId = async (data: { connectId: string }) => {
-    return repositories.session.findByConnectIdWithUser(data.connectId);
-};

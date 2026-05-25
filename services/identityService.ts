@@ -1,7 +1,7 @@
 import 'dotenv/config';
 
 import { MESSAGES, RESPONSE_STATUS_CODE } from '../constants';
-import { addTokenResponse, generateDateForDB } from '../Helpers';
+import { addTokenResponse } from '../Helpers';
 import { repositories } from '../repositories';
 import { cryptCompare, cryptHash, updateMessage } from '../util';
 
@@ -46,19 +46,9 @@ export const login = async (body) => {
         return updateMessage(MESSAGES.DELETED_PROFILE, RESPONSE_STATUS_CODE.BAD_REQUEST);
     }
 
-    const { password, connectId } = body;
-
-    const matchPassword = await cryptCompare(password, existingEmail.password ?? '');
+    const matchPassword = await cryptCompare(body.password, existingEmail.password ?? '');
     if (!matchPassword) {
         return updateMessage(MESSAGES.WRONG_EMAIL_OR_PASSWORD, RESPONSE_STATUS_CODE.BAD_REQUEST);
-    }
-
-    if (connectId) {
-        const currentTime = generateDateForDB();
-        await repositories.session.updateByConnectId(connectId, {
-            userId: existingEmail.id,
-            connectedAt: currentTime,
-        });
     }
 
     return addTokenResponse(existingEmail, MESSAGES.SUCCESSFULLY_LOGIN);
@@ -84,15 +74,7 @@ export const loginViaMagic = async (email) => {
 };
 
 export const logout = async (data) => {
-    if (data?.connectId) {
-        const currentTime = generateDateForDB();
-        await repositories.session.updateByConnectId(data.connectId, { disconnectedAt: currentTime });
-    }
-
-    // End the refresh session so a leaked/rotated token can't be reused.
     await revokeRefreshToken(data?.refreshToken);
-
-    return;
 };
 
 export const checkFieldInDB = async (email) => {

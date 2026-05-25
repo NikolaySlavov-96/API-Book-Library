@@ -25,10 +25,22 @@ async function start() {
     await subClient.connect();
 
     const initServer = server.createServer(app);
+
+    const allowedOrigins = (process.env.CORS_ORIGIN ?? process.env.WEB_URI ?? '')
+        .split(',')
+        .map((o) => o.trim())
+        .filter(Boolean);
+
     const io = new SocketIOServer(initServer, {
         path: SOCKET_ADDRESS,
         cors: {
-            origin: '*',
+            origin: (origin, callback) => {
+                if (!origin || allowedOrigins.includes(origin)) {
+                    return callback(null, true);
+                }
+                return callback(new Error('Origin not allowed by CORS'));
+            },
+            credentials: true,
         },
         transports: ['websocket'],
     });
