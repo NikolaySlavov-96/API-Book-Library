@@ -268,6 +268,12 @@ const _socketEvents = (io) => {
                         socket.leave(resultFromRoom.roomName);
                         return;
                     }
+
+                    socket.emit(ESendEvents.COMPLETE_ISSUE, {
+                        message: 'Complete',
+                        issue: data.roomName,
+                    });
+                    return;
                 }
 
                 const queued = await isUserInQueue(info.principal);
