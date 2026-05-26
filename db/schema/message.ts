@@ -1,5 +1,5 @@
 import { relations } from 'drizzle-orm';
-import { boolean, integer, pgTable, serial, timestamp, varchar } from 'drizzle-orm/pg-core';
+import { boolean, integer, pgTable, serial, text, timestamp, varchar } from 'drizzle-orm/pg-core';
 
 import { messageStatuses } from './messageStatus';
 import { TABLE_NAMES } from './tableNames';
@@ -10,7 +10,7 @@ export const messages = pgTable(TABLE_NAMES.MESSAGE, {
     roomName: varchar('roomName', { length: 64 }).notNull(),
     senderId: varchar('senderId', { length: 150 }).notNull(),
     senderUserId: integer('senderUserId'),
-    message: varchar('message', { length: 255 }),
+    message: text('message'),
     isDelete: boolean('isDelete').default(false).notNull(),
     createdAt: timestamp('createdAt', { withTimezone: true }).defaultNow().notNull(),
     updatedAt: timestamp('updatedAt', { withTimezone: true }).defaultNow().notNull(),

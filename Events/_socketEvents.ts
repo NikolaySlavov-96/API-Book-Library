@@ -44,8 +44,6 @@ interface IUserConnect {
 const WELCOME_USER_TEXT = 'Welcome to Support Chat! A consultant will see you shortly.';
 const WELCOME_ADMIN_TEXT = 'Welcome to Support Chat Admin!';
 
-const MAX_MESSAGE_LENGTH = 255;
-
 // Distributed rate limiter: max RATE_MAX_EVENTS per RATE_WINDOW_MS, keyed by principal.
 const RATE_WINDOW_MS = 1000;
 const RATE_MAX_EVENTS = 5;
@@ -64,7 +62,6 @@ const sanitizeMessage = (raw: unknown): string | null => {
     if (!isString(raw)) return null;
     const trimmed = raw.trim();
     if (!trimmed) return null;
-    if (trimmed.length > MAX_MESSAGE_LENGTH) return null;
     return trimmed;
 };
 
@@ -303,7 +300,7 @@ const _socketEvents = (io) => {
 
                 const cleanMessage = sanitizeMessage(data.message);
                 if (cleanMessage === null) {
-                    socket.emit(ESendEvents.ERROR, updateMessage(MESSAGES.MESSAGE_TOO_LONG).user);
+                    socket.emit(ESendEvents.ERROR, updateMessage(MESSAGES.INCORRECT_DATA).user);
                     return;
                 }
 

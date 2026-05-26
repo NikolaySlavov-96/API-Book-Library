@@ -60,7 +60,6 @@ const messages: IMessageType = {
     },
     SELECTED_ROOM_NOT_FOUND: { message: "room doesn't not exist", messageCode: 'support-0004' },
     NOT_ROOM_MEMBER: { message: 'You are not a participant of this room', messageCode: 'support-0005' },
-    MESSAGE_TOO_LONG: { message: 'Message is too long (max 255 characters)', messageCode: 'support-0006' },
     RATE_LIMIT: { message: 'Too many messages, please slow down', messageCode: 'support-0007' },
 };
 
