@@ -6,4 +6,5 @@ export type IMessageStatusCreateInput = Pick<TMessageStatusRow, 'messageId' | 's
 
 export interface IMessageStatusRepository {
     create(input: IMessageStatusCreateInput): Promise<IMessageStatusRecord>;
+    createIfNotExists(input: IMessageStatusCreateInput): Promise<IMessageStatusRecord | null>;
 }

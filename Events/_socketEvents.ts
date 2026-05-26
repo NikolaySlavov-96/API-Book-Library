@@ -2,7 +2,7 @@ import isEmpty from 'lodash/isEmpty.js';
 import isString from 'lodash/isString.js';
 import isUndefined from 'lodash/isUndefined.js';
 
-import { EReceiveEvents, ESendEvents, MESSAGES } from '../constants';
+import { EMessageStatus, EReceiveEvents, ESendEvents, MESSAGES } from '../constants';
 import { notifySupportsOfNewUser } from '../Helpers';
 import { incrementWithTtl } from '../services/cacheService';
 import { registerNewVisitor, setUserInactive } from '../services/connectManagerService';
@@ -15,10 +15,11 @@ import {
     isRoomMember,
     removeRoomMember,
 } from '../services/support/chatRoomService';
-import { insertMessage } from '../services/support/messageService';
+import { insertMessage, recordMessageStatus } from '../services/support/messageService';
 import {
     assignSupport,
     assignUserToQueue,
+    getAllWaitingUsers,
     isSupportAgent,
     isUserInQueue,
     unassignSupport,
@@ -135,6 +136,11 @@ const _socketEvents = (io) => {
 
                 if (info.role === 'support') {
                     await assignSupport(info.principal);
+                    const userQueue = await getAllWaitingUsers();
+                    socket.emit(ESendEvents.NOTIFY_ADMINS_OF_NEW_USER, {
+                        newUserPrincipal: '',
+                        userQueue,
+                    });
                     socket.emit(ESendEvents.SUPPORT_CHAT_USER_JOIN_ACKNOWLEDGMENT, {
                         message: WELCOME_ADMIN_TEXT,
                         principal: info.principal,
@@ -324,6 +330,56 @@ const _socketEvents = (io) => {
                 socket.emit(ESendEvents.ERROR, updateMessage(MESSAGES.ERROR_FROM_SERVER).user);
                 console.log('SocketRoute Event ∞ SUPPORT_MESSAGE', err);
             }
+        });
+
+        const handleMessageStatusEvent = async (
+            data: { roomName: string; messageId: number },
+            status: EMessageStatus,
+            logTag: string,
+        ) => {
+            if (isUndefined(data) || !isString(data?.roomName) || typeof data?.messageId !== 'number') {
+                socket.emit(ESendEvents.ERROR, updateMessage(MESSAGES.INCORRECT_DATA).user);
+                return;
+            }
+
+            try {
+                const info = requireValidSession(socket);
+                if (!info) return;
+                if (await checkRateLimit(info.principal)) return;
+
+                const resultFromRoom = await isRoomExist({ roomName: data.roomName });
+                if (!resultFromRoom?.roomName) {
+                    socket.emit(ESendEvents.ERROR, updateMessage(MESSAGES.SELECTED_ROOM_NOT_FOUND).user);
+                    return;
+                }
+
+                const allowed = await isRoomMember(resultFromRoom.roomName, info.principal);
+                if (!allowed) {
+                    socket.emit(ESendEvents.ERROR, updateMessage(MESSAGES.NOT_ROOM_MEMBER).user);
+                    return;
+                }
+
+                const recorded = await recordMessageStatus(data.messageId, status);
+                if (!recorded) return;
+
+                io.to(resultFromRoom.roomName).emit(ESendEvents.SUPPORT_MESSAGE_STATUS, {
+                    roomName: resultFromRoom.roomName,
+                    messageId: recorded.messageId,
+                    status: recorded.status,
+                    updatedAt: recorded.updatedAt,
+                });
+            } catch (err) {
+                socket.emit(ESendEvents.ERROR, updateMessage(MESSAGES.ERROR_FROM_SERVER).user);
+                console.log(`SocketRoute Event ∞ ${logTag}`, err);
+            }
+        };
+
+        socket.on(EReceiveEvents.SUPPORT_MESSAGE_DELIVERED, (data: { roomName: string; messageId: number }) => {
+            handleMessageStatusEvent(data, EMessageStatus.DELIVERED, 'SUPPORT_MESSAGE_DELIVERED');
+        });
+
+        socket.on(EReceiveEvents.SUPPORT_MESSAGE_SEEN, (data: { roomName: string; messageId: number }) => {
+            handleMessageStatusEvent(data, EMessageStatus.SEEN, 'SUPPORT_MESSAGE_SEEN');
         });
 
         socket.on(EReceiveEvents.SUPPORT_ACTIVITY, async (data: { roomName: string }) => {

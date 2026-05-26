@@ -2,6 +2,7 @@ export { _cacheTimes as cacheTimes } from './_cache';
 export { default as cacheKeys } from './_cache';
 export { default as EMAIL } from './_emailConstants';
 export { default as MESSAGES } from './_messages';
+export { _EMessageStatus as EMessageStatus } from './_messageStatus';
 export { default as queryOperators } from './_queryOperators';
 export { default as RESPONSE_STATUS_CODE } from './_responseStatusCode';
 export { PASSWORD_PATTERN } from './_routingMessage';

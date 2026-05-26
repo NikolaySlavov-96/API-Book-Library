@@ -1,3 +1,4 @@
+import { EMessageStatus } from '../../constants';
 import { type IMessageRecord, repositories } from '../../repositories';
 import { type Principal } from '../principalService';
 
@@ -8,13 +9,37 @@ interface IInsertMessage {
     senderUserId: number | null;
 }
 
-export const insertMessage = async (inData: IInsertMessage): Promise<IMessageRecord> => {
+export interface IMessageWithStatus extends IMessageRecord {
+    status: EMessageStatus;
+}
+
+export const insertMessage = async (inData: IInsertMessage): Promise<IMessageWithStatus> => {
     const { resultFromRoom, data, principal, senderUserId } = inData;
 
-    return repositories.message.create({
+    const row = await repositories.message.create({
         roomName: resultFromRoom.roomName,
         message: data.message,
         senderId: principal,
         senderUserId,
     });
+
+    await repositories.messageStatus.createIfNotExists({
+        messageId: row.id,
+        status: EMessageStatus.SENT,
+    });
+
+    return { ...row, status: EMessageStatus.SENT };
+};
+
+export const recordMessageStatus = async (
+    messageId: number,
+    status: EMessageStatus,
+): Promise<{ messageId: number; status: EMessageStatus; updatedAt: string } | null> => {
+    const created = await repositories.messageStatus.createIfNotExists({ messageId, status });
+    if (!created) return null;
+    return {
+        messageId: created.messageId,
+        status: created.status as EMessageStatus,
+        updatedAt: created.updatedAt.toISOString(),
+    };
 };

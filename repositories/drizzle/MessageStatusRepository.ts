@@ -13,4 +13,13 @@ export class MessageStatusRepository implements IMessageStatusRepository {
         const [row] = await this.dbWrite.insert(messageStatuses).values(input).returning();
         return row;
     }
+
+    async createIfNotExists(input: IMessageStatusCreateInput): Promise<IMessageStatusRecord | null> {
+        const [row] = await this.dbWrite
+            .insert(messageStatuses)
+            .values(input)
+            .onConflictDoNothing({ target: [messageStatuses.messageId, messageStatuses.status] })
+            .returning();
+        return row ?? null;
+    }
 }
