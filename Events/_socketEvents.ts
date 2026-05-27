@@ -3,7 +3,7 @@ import isString from 'lodash/isString.js';
 import isUndefined from 'lodash/isUndefined.js';
 
 import { EMessageStatus, EReceiveEvents, ESendEvents, MESSAGES } from '../constants';
-import { notifySupportsOfNewUser } from '../Helpers';
+import { createLogger, notifySupportsOfNewUser } from '../Helpers';
 import { incrementWithTtl } from '../services/cacheService';
 import { registerNewVisitor, setUserInactive } from '../services/connectManagerService';
 import { promoteAnonToUser } from '../services/principalMigrationService';
@@ -29,6 +29,8 @@ import { storeVisitorInfo } from '../services/visitorService';
 import { updateMessage } from '../util';
 
 import { emitEventToPrincipal } from './_SocketEmitters';
+
+const log = createLogger('socketEvents');
 
 interface IUserConnect {
     country_code: string;
@@ -65,10 +67,12 @@ const sanitizeMessage = (raw: unknown): string | null => {
     return trimmed;
 };
 
+// TODO(lint): type `socket` as `Socket` from socket.io (no-explicit-any).
 const getPrincipalInfo = (socket: any): PrincipalInfo => {
     return socket.data.principalInfo as PrincipalInfo;
 };
 
+// TODO(lint): type `socket` as `Socket` from socket.io (no-explicit-any).
 const requireValidSession = (socket: any): PrincipalInfo | null => {
     const info = getPrincipalInfo(socket);
     if (!info.isAnonymous && isTokenExpired(info.tokenExp)) {
@@ -102,7 +106,7 @@ const _socketEvents = (io) => {
                     await notifySupportsOfNewUser(principalInfo.principal);
                 }
             } catch (err) {
-                console.log('SocketRoute Event ∞ promoteAnonToUser', err);
+                log.error('SocketRoute Event ∞ promoteAnonToUser', err);
             }
         }
 
@@ -155,7 +159,7 @@ const _socketEvents = (io) => {
                 });
             } catch (err) {
                 socket.emit(ESendEvents.ERROR, updateMessage(MESSAGES.ERROR_FROM_SERVER).user);
-                console.log('SocketRoute Event ∞ SUPPORT_CHAT_USER_JOIN', err);
+                log.error('SocketRoute Event ∞ SUPPORT_CHAT_USER_JOIN', err);
             }
         });
 
@@ -201,7 +205,7 @@ const _socketEvents = (io) => {
                 await notifySupportsOfNewUser(info.principal);
             } catch (err) {
                 socket.emit(ESendEvents.ERROR, updateMessage(MESSAGES.ERROR_FROM_SERVER).user);
-                console.log('SocketRoute Event ∞ SUPPORT_ACCEPT_USER', err);
+                log.error('SocketRoute Event ∞ SUPPORT_ACCEPT_USER', err);
             }
         });
 
@@ -233,7 +237,7 @@ const _socketEvents = (io) => {
                 socket.join(resultFromRoom.roomName);
             } catch (err) {
                 socket.emit(ESendEvents.ERROR, updateMessage(MESSAGES.ERROR_FROM_SERVER).user);
-                console.log('SocketRoute Event ∞ USER_ACCEPT_JOIN_TO_ROOM', err);
+                log.error('SocketRoute Event ∞ USER_ACCEPT_JOIN_TO_ROOM', err);
             }
         });
 
@@ -286,7 +290,7 @@ const _socketEvents = (io) => {
                 await notifySupportsOfNewUser(info.principal);
             } catch (err) {
                 socket.emit(ESendEvents.ERROR, updateMessage(MESSAGES.ERROR_FROM_SERVER).user);
-                console.log('SocketRoute Event ∞ SUPPORT_CHAT_USER_LEAVE', err);
+                log.error('SocketRoute Event ∞ SUPPORT_CHAT_USER_LEAVE', err);
             }
         });
 
@@ -331,7 +335,7 @@ const _socketEvents = (io) => {
                 io.to(resultFromRoom.roomName).emit(ESendEvents.SUPPORT_MESSAGE, result);
             } catch (err) {
                 socket.emit(ESendEvents.ERROR, updateMessage(MESSAGES.ERROR_FROM_SERVER).user);
-                console.log('SocketRoute Event ∞ SUPPORT_MESSAGE', err);
+                log.error('SocketRoute Event ∞ SUPPORT_MESSAGE', err);
             }
         });
 
@@ -373,7 +377,7 @@ const _socketEvents = (io) => {
                 });
             } catch (err) {
                 socket.emit(ESendEvents.ERROR, updateMessage(MESSAGES.ERROR_FROM_SERVER).user);
-                console.log(`SocketRoute Event ∞ ${logTag}`, err);
+                log.error(`SocketRoute Event ∞ ${logTag}`, err);
             }
         };
 
@@ -413,7 +417,7 @@ const _socketEvents = (io) => {
                 });
             } catch (err) {
                 socket.emit(ESendEvents.ERROR, updateMessage(MESSAGES.ERROR_FROM_SERVER).user);
-                console.log('SocketRoute Event ∞ SUPPORT_ACTIVITY', err);
+                log.error('SocketRoute Event ∞ SUPPORT_ACTIVITY', err);
             }
         });
 
@@ -425,6 +429,7 @@ const _socketEvents = (io) => {
                 const stillOnline = sockets.some((s) => s.id !== connectId);
                 if (stillOnline) return;
 
+                // TODO(lint): batch with Promise.all so room removals run in parallel (no-await-in-loop).
                 for (const roomName of socket.rooms) {
                     if (roomName !== connectId && !roomName.startsWith('principal:')) {
                         await removeRoomMember(roomName, principalInfo.principal);
@@ -438,7 +443,7 @@ const _socketEvents = (io) => {
 
                 await unassignSupport(principalInfo.principal);
             } catch (err) {
-                console.log('SocketRoute Event ∞ disconnecting', err);
+                log.error('SocketRoute Event ∞ disconnecting', err);
             }
         });
     });

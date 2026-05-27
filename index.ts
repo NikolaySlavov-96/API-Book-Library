@@ -9,7 +9,9 @@ import 'dotenv/config';
 import { expressConfig, mongoClient, redisClient, router } from './config';
 import { ensureDatabaseExists, verifyDatabaseConnections } from './db';
 import { initEmitters, socketEvents } from './Events';
-import { globalErrorHandling } from './Helpers';
+import { createLogger, globalErrorHandling } from './Helpers';
+
+const log = createLogger('bootstrap');
 
 const { APP_PORT, SOCKET_ADDRESS } = process.env;
 
@@ -59,7 +61,7 @@ async function start() {
 
     app.use(globalErrorHandling());
 
-    initServer.listen(APP_PORT, () => console.log('Application works on port ~: ', APP_PORT));
+    initServer.listen(APP_PORT, () => log.info('Application works on port ~: ', APP_PORT));
 }
 
 void start();

@@ -3,7 +3,11 @@ import pg from 'pg';
 
 import 'dotenv/config';
 
+import { createLogger } from '../Helpers';
+
 import * as schema from './schema';
+
+const log = createLogger('db');
 
 const { Client, Pool } = pg;
 
@@ -43,7 +47,7 @@ export const ensureDatabaseExists = async (): Promise<void> => {
             await adminClient.query(`CREATE DATABASE "${dbName}";`);
         }
     } catch (err) {
-        console.error('Error creating database: ', err);
+        log.error('Error creating database: ', err);
     } finally {
         await adminClient.end();
     }

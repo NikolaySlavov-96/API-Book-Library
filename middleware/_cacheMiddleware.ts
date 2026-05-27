@@ -1,8 +1,10 @@
 import { MESSAGES, RESPONSE_STATUS_CODE } from '../constants';
-import { buildCacheKey } from '../Helpers';
+import { buildCacheKey, createLogger } from '../Helpers';
 import { fetchCacheData } from '../services/cacheService';
 import { type NextFunction, type Request, type Response } from '../Types/expressType';
 import { normalizeInputData, updateMessage } from '../util';
+
+const log = createLogger('cacheMiddleware');
 
 const _cacheMiddleware = (key: string) => {
     return async (req: Request, res: Response, next: NextFunction) => {
@@ -18,7 +20,7 @@ const _cacheMiddleware = (key: string) => {
                 next();
             }
         } catch (err) {
-            console.log('ERROR ~ cacheMiddleware: ', err);
+            log.error('ERROR ~ cacheMiddleware: ', err);
             res.status(RESPONSE_STATUS_CODE.SERVER_ERROR).json(
                 updateMessage(MESSAGES.MESSAGE_AT_ERROR_FROM_SERVER).user,
             );

@@ -38,6 +38,7 @@ const checkAndInsertAuthors = async (authors: string[]): Promise<number[]> => {
     const uniqueNames = Array.from(new Set(authors.map((name) => name.trim()).filter((name) => name.length > 0)));
 
     const authorsIds: number[] = [];
+    // TODO(lint): use Promise.all to lookup/create authors in parallel (no-await-in-loop x2).
     for (const trimmedName of uniqueNames) {
         const isAuthor = await repositories.author.findByName(trimmedName);
         if (!isAuthor) {
@@ -51,12 +52,14 @@ const checkAndInsertAuthors = async (authors: string[]): Promise<number[]> => {
 };
 
 const insertProductAuthors = async (productId: number, authorsIds: number[]): Promise<void> => {
+    // TODO(lint): batch with Promise.all (no-await-in-loop).
     for (const authorId of authorsIds) {
         await repositories.productAuthor.create({ productId, authorId });
     }
 };
 
 const insertProductFiles = async (productId: number, filesId: number[]): Promise<void> => {
+    // TODO(lint): batch with Promise.all (no-await-in-loop).
     for (const fileId of filesId) {
         await repositories.productFile.create({ productId, fileId });
     }
@@ -101,12 +104,14 @@ export const create = async ({
     return created;
 };
 
+// TODO(lint): drop `async` once the body uses `await` (require-await).
 export const update = async (id, _body) => {
     // TODO: implement update flow against the new repository interface
     void id;
     return null;
 };
 
+// TODO(lint): drop `async` once the body uses `await` (require-await).
 export const remove = async (id) => {
     // TODO: implement soft-delete via repositories
     void id;

@@ -36,6 +36,7 @@ export const getUser = async (req, res, next) => {
 
 export const refreshToken = async (req, res, next) => {
     try {
+        // TODO(lint): rename to avoid shadowing the outer `refreshToken` function (no-shadow).
         const { refreshToken } = req.body;
         const result = await refreshTokenService.rotateRefreshToken(refreshToken);
         res.status(result?.statusCode || RESPONSE_STATUS_CODE.OK).json(result?.user || result);

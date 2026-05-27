@@ -6,6 +6,10 @@ export { _getUserId as getUserId } from './getUserId';
 export { _getAuthContext as getAuthContext } from './getUserId';
 export { _addTokenResponse as addTokenResponse } from './tokenHelpers';
 
+// Logger
+export type { ILogger } from './_logger';
+export { createLogger, logger } from './_logger';
+
 // Date
 export { calculateRelativeDate } from './_Date';
 export { calculateTimeDifference } from './_Date';

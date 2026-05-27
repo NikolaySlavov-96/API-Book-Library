@@ -52,6 +52,7 @@ export const migrateRoomMemberships = async (oldPrincipal: Principal, newPrincip
     const rooms = await fetchSetMembers(cacheKeys.CHAT_ROOM);
     const touched: string[] = [];
 
+    // TODO(lint): parallelize per-room migration via Promise.all (no-await-in-loop x3).
     for (const roomName of rooms) {
         const mKey = membersKey(roomName);
         if (await isSetMember(mKey, oldPrincipal)) {

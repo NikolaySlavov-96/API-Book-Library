@@ -1,6 +1,9 @@
 import { redisClient } from '../config';
 import { cacheTimes } from '../constants';
+import { createLogger } from '../Helpers';
 import { normalizeInputData } from '../util';
+
+const log = createLogger('cacheService');
 
 // Store and manage cached data using Redis for
 // improved performance and quick data retrieval
@@ -64,6 +67,7 @@ export const deleteCacheEntry = async (key) => {
 export const deleteKeysWithPrefix = async (prefix) => {
     try {
         let cursorCount = 0;
+        // TODO(lint): sequential scan + delete is intentional (paginated cursor); review if pipelining is safer (no-await-in-loop).
         do {
             const { cursor, keys } = await redisClient.scan(cursorCount.toString(), {
                 MATCH: `${prefix}*`,
@@ -73,11 +77,12 @@ export const deleteKeysWithPrefix = async (prefix) => {
             cursorCount = Number(dataString);
 
             if (keys.length > 0) {
+                // TODO(lint): consider deleting in parallel inside one pipeline (no-await-in-loop).
                 await deleteCacheEntry(keys);
             }
         } while (cursorCount !== 0);
     } catch (err) {
-        console.error('Error ~ deleteKeysWithPrefix: ', err);
+        log.error('Error ~ deleteKeysWithPrefix: ', err);
     } finally {
         // If a new Redis connection is created solely for erasing keys, ensure to
         // call "quit" to properly close the connection afterward

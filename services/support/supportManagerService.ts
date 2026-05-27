@@ -65,6 +65,7 @@ export const unassignUserFromQueue = async (principal: Principal): Promise<boole
     if (!principal) return false;
     const list = await fetchSetMembers(cacheKeys.USER_QUEUE);
     let hasUser = false;
+    // TODO(lint): parallelize removals via Promise.all (no-await-in-loop).
     for (const raw of list) {
         const parsed = parseQueueEntry(raw);
         if (parsed?.principal === principal) {
@@ -82,6 +83,7 @@ export const migrateQueueEntryPrincipal = async (
 ): Promise<boolean> => {
     const list = await fetchSetMembers(cacheKeys.USER_QUEUE);
     let migrated = false;
+    // TODO(lint): parallelize entry migration via Promise.all (no-await-in-loop x2).
     for (const raw of list) {
         const parsed = parseQueueEntry(raw);
         if (parsed?.principal === oldPrincipal) {

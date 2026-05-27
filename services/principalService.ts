@@ -19,6 +19,7 @@ const isValidClientId = (value: unknown): value is string => {
     return typeof value === 'string' && /^[A-Za-z0-9_-]{8,128}$/.test(value);
 };
 
+// TODO(lint): type `handshake.auth` shape (token + clientId) instead of `any` (no-explicit-any).
 export const derivePrincipal = (handshake: { auth?: any }): PrincipalInfo | null => {
     const auth = handshake?.auth ?? {};
     const { token } = auth;
@@ -32,6 +33,7 @@ export const derivePrincipal = (handshake: { auth?: any }): PrincipalInfo | null
                 userId: Number(result._id),
                 role: result.role,
                 email: result.email,
+                // TODO(lint): extend the IVerifyToken type with optional `exp` to drop these `any` casts (no-explicit-any).
                 tokenExp: typeof (result as any).exp === 'number' ? (result as any).exp : null,
                 isAnonymous: false,
             };

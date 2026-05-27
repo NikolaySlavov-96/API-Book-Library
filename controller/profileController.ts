@@ -5,6 +5,7 @@ import * as profileService from '../services/profileService';
 export const getProfile = async (req, res, next) => {
     try {
         const userId = getUserId(req);
+        // TODO(lint): type `result` using the proper Profile/IUpdateMessage union (no-explicit-any).
         const result: any = await profileService.getProfile(userId);
 
         if (result?.statusCode) {
@@ -21,6 +22,7 @@ export const getProfile = async (req, res, next) => {
 export const updateProfile = async (req, res, next) => {
     try {
         const userId = getUserId(req);
+        // TODO(lint): type `result` using the proper Profile/IUpdateMessage union (no-explicit-any).
         const result: any = await profileService.updateProfile(userId, req.body);
 
         if (result?.statusCode) {

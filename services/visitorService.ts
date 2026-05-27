@@ -1,7 +1,9 @@
-import { calculateRelativeDate, getCurrentDate } from '../Helpers';
+import { calculateRelativeDate, createLogger, getCurrentDate } from '../Helpers';
 import { repositories } from '../repositories';
 
 import { addDataToSet, deleteCacheEntry, fetchSetSize } from './cacheService';
+
+const log = createLogger('visitorService');
 
 export const storeVisitorInfo = async (data) => {
     const redisKey = getCurrentDate();
@@ -29,7 +31,7 @@ export const storeVisitorInfo = async (data) => {
         returnedData.dailyUsers = Number(uniqueIPs);
         return returnedData;
     } catch (err) {
-        console.log('Visitor Service ~ storeVisitorInfo ~ :', err);
+        log.error('storeVisitorInfo ~ :', err);
         return returnedData;
     }
 };
@@ -40,6 +42,6 @@ export const cleanupExpiredVisitorKey = async () => {
     try {
         await deleteCacheEntry(key);
     } catch (err) {
-        console.log(err);
+        log.error('cleanupExpiredVisitorKey ~ :', err);
     }
 };

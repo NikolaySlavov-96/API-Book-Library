@@ -1,11 +1,15 @@
 import { createClient } from 'redis';
 
+import { createLogger } from '../Helpers';
+
+const log = createLogger('redisClient');
+
 const { REDIS_ADDRESS, REDIS_PORT } = process.env;
 
 const redisClient = createClient({ url: `redis://${REDIS_ADDRESS}:${REDIS_PORT}` });
 
 redisClient.on('error', (err) => {
-    console.error('Redis client error', err);
+    log.error('Redis client error', err);
 });
 
 // TODO Research
