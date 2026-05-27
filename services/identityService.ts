@@ -1,11 +1,11 @@
 import 'dotenv/config';
 
 import { MESSAGES, RESPONSE_STATUS_CODE } from '../constants';
-import { addTokenResponse } from '../Helpers';
 import { repositories } from '../repositories';
 import { cryptCompare, cryptHash, updateMessage } from '../util';
 
 import { revokeRefreshToken } from './refreshTokenService';
+import { _addTokenResponse as addTokenResponse } from './tokenResponseService';
 
 // Identity / authentication service.
 // Everything here is a candidate to be replaced by an external auth provider.
