@@ -378,11 +378,11 @@ const _socketEvents = (io) => {
         };
 
         socket.on(EReceiveEvents.SUPPORT_MESSAGE_DELIVERED, (data: { roomName: string; messageId: number }) => {
-            handleMessageStatusEvent(data, EMessageStatus.DELIVERED, 'SUPPORT_MESSAGE_DELIVERED');
+            void handleMessageStatusEvent(data, EMessageStatus.DELIVERED, 'SUPPORT_MESSAGE_DELIVERED');
         });
 
         socket.on(EReceiveEvents.SUPPORT_MESSAGE_SEEN, (data: { roomName: string; messageId: number }) => {
-            handleMessageStatusEvent(data, EMessageStatus.SEEN, 'SUPPORT_MESSAGE_SEEN');
+            void handleMessageStatusEvent(data, EMessageStatus.SEEN, 'SUPPORT_MESSAGE_SEEN');
         });
 
         socket.on(EReceiveEvents.SUPPORT_ACTIVITY, async (data: { roomName: string }) => {
