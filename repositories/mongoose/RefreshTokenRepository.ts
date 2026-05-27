@@ -1,8 +1,8 @@
-import { type IRefreshTokenCreateInput, type IRefreshTokenRecord, type IRefreshTokenRepository } from '../interfaces';
+import { type TRefreshTokenCreateInput, type TRefreshTokenRecord, type TRefreshTokenRepository } from '../types';
 
 import { type IRefreshTokenDocument, RefreshTokenModel } from './models/RefreshTokenModel';
 
-const toRecord = (doc: IRefreshTokenDocument): IRefreshTokenRecord => ({
+const toRecord = (doc: IRefreshTokenDocument): TRefreshTokenRecord => ({
     token: doc.token,
     userId: doc.userId,
     expireAt: doc.expireAt,
@@ -12,13 +12,13 @@ const toRecord = (doc: IRefreshTokenDocument): IRefreshTokenRecord => ({
     updatedAt: doc.updatedAt,
 });
 
-export class RefreshTokenRepository implements IRefreshTokenRepository {
-    async findByToken(token: string): Promise<IRefreshTokenRecord | null> {
+export class RefreshTokenRepository implements TRefreshTokenRepository {
+    async findByToken(token: string): Promise<TRefreshTokenRecord | null> {
         const doc = await RefreshTokenModel.findOne({ token });
         return doc ? toRecord(doc) : null;
     }
 
-    async create(input: IRefreshTokenCreateInput): Promise<IRefreshTokenRecord> {
+    async create(input: TRefreshTokenCreateInput): Promise<TRefreshTokenRecord> {
         const doc = await RefreshTokenModel.create(input);
         return toRecord(doc);
     }

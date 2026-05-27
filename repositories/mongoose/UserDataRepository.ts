@@ -1,14 +1,14 @@
-import { type IUserDataRecord, type IUserDataRepository } from '../interfaces';
+import { type TUserDataRecord, type TUserDataRepository } from '../types';
 
 import { UserDataModel } from './models/UserDataModel';
 
-export class UserDataRepository implements IUserDataRepository {
-    async findByAddress(userAddress: string): Promise<IUserDataRecord | null> {
+export class UserDataRepository implements TUserDataRepository {
+    async findByAddress(userAddress: string): Promise<TUserDataRecord | null> {
         const doc = await UserDataModel.findOne({ userAddress });
         return doc ? { userAddress: doc.userAddress } : null;
     }
 
-    async create(input: IUserDataRecord): Promise<IUserDataRecord> {
+    async create(input: TUserDataRecord): Promise<TUserDataRecord> {
         const doc = await UserDataModel.create(input);
         return { userAddress: doc.userAddress };
     }

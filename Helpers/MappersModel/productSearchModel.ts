@@ -1,9 +1,9 @@
-import { type IProductStatusByEmailRow } from '../../repositories';
+import { type TProductStatusByEmailRow } from '../../repositories';
 
 import productModel from './productModel';
 import userModel from './userModel';
 
-const productSearchModel = (data: IProductStatusByEmailRow) => {
+const productSearchModel = (data: TProductStatusByEmailRow) => {
     const updateUser = userModel(data.user);
     const updateProduct = productModel({
         ...data.product,

@@ -1,5 +1,5 @@
 import { EMessageStatus } from '../../constants';
-import { type IMessageRecord, repositories } from '../../repositories';
+import { repositories, type TMessageRecord } from '../../repositories';
 import { type Principal } from '../principalService';
 
 interface IInsertMessage {
@@ -9,7 +9,7 @@ interface IInsertMessage {
     senderUserId: number | null;
 }
 
-export interface IMessageWithStatus extends IMessageRecord {
+export interface IMessageWithStatus extends TMessageRecord {
     status: EMessageStatus;
 }
 

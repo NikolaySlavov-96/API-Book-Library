@@ -1,10 +1,10 @@
 import {
-    type IProductListResult,
-    type IProductStatusByEmailResult,
-    type IProductStatusByEmailRow,
-    type IProductStatusListResult,
-    type IProductStatusWithRelations,
-    type IProductWithRelations,
+    type TProductListResult,
+    type TProductStatusByEmailResult,
+    type TProductStatusByEmailRow,
+    type TProductStatusListResult,
+    type TProductStatusWithRelations,
+    type TProductWithRelations,
 } from '../repositories';
 
 import { productModel, productSearchModel, productStateModel } from './MappersModel';
@@ -15,7 +15,7 @@ export enum _EMappedType {
     PRODUCT_SEARCH,
 }
 
-export const _mappedSingleObject = (result: IProductWithRelations | null, type: _EMappedType) => {
+export const _mappedSingleObject = (result: TProductWithRelations | null, type: _EMappedType) => {
     if (!result) {
         return result;
     }
@@ -27,7 +27,7 @@ export const _mappedSingleObject = (result: IProductWithRelations | null, type: 
     return result;
 };
 
-type TPaginatedRepoResult = IProductListResult | IProductStatusListResult | IProductStatusByEmailResult;
+type TPaginatedRepoResult = TProductListResult | TProductStatusListResult | TProductStatusByEmailResult;
 
 const _responseMapper = (result: TPaginatedRepoResult, type: _EMappedType) => {
     const mappedResult = {
@@ -36,20 +36,20 @@ const _responseMapper = (result: TPaginatedRepoResult, type: _EMappedType) => {
     };
 
     if (type === _EMappedType.PRODUCT) {
-        const productResult = result as IProductListResult;
+        const productResult = result as TProductListResult;
         mappedResult.rows = productResult.rows.map((row) => productModel(row));
         return mappedResult;
     }
 
     if (type === _EMappedType.PRODUCT_SEARCH) {
-        const searchResult = result as IProductStatusByEmailResult;
-        mappedResult.rows = searchResult.rows.map((row: IProductStatusByEmailRow) => productSearchModel(row));
+        const searchResult = result as TProductStatusByEmailResult;
+        mappedResult.rows = searchResult.rows.map((row: TProductStatusByEmailRow) => productSearchModel(row));
         return mappedResult;
     }
 
     if (type === _EMappedType.PRODUCT_STATE) {
-        const stateResult = result as IProductStatusListResult;
-        mappedResult.rows = stateResult.rows.map((row: IProductStatusWithRelations) => productStateModel(row));
+        const stateResult = result as TProductStatusListResult;
+        mappedResult.rows = stateResult.rows.map((row: TProductStatusWithRelations) => productStateModel(row));
         return mappedResult;
     }
 

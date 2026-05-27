@@ -3,19 +3,19 @@ import { and, avg, count, eq } from 'drizzle-orm';
 import { type TDb } from '../../db';
 import { productRatings } from '../../db/schema';
 import {
-    type IProductRatingCreateInput,
-    type IProductRatingRecord,
-    type IProductRatingRepository,
-    type IRatingAggregate,
-} from '../interfaces';
+    type TProductRatingCreateInput,
+    type TProductRatingRecord,
+    type TProductRatingRepository,
+    type TRatingAggregate,
+} from '../types';
 
-export class ProductRatingRepository implements IProductRatingRepository {
+export class ProductRatingRepository implements TProductRatingRepository {
     constructor(
         private readonly dbRead: TDb,
         private readonly dbWrite: TDb,
     ) {}
 
-    async findByUserAndProduct(userId: number, productId: number): Promise<IProductRatingRecord | null> {
+    async findByUserAndProduct(userId: number, productId: number): Promise<TProductRatingRecord | null> {
         const [row] = await this.dbRead
             .select()
             .from(productRatings)
@@ -24,7 +24,7 @@ export class ProductRatingRepository implements IProductRatingRepository {
         return row ?? null;
     }
 
-    async upsert(input: IProductRatingCreateInput): Promise<IProductRatingRecord> {
+    async upsert(input: TProductRatingCreateInput): Promise<TProductRatingRecord> {
         const [row] = await this.dbWrite
             .insert(productRatings)
             .values(input)
@@ -36,7 +36,7 @@ export class ProductRatingRepository implements IProductRatingRepository {
         return row;
     }
 
-    async getAggregate(productId: number): Promise<IRatingAggregate> {
+    async getAggregate(productId: number): Promise<TRatingAggregate> {
         const [row] = await this.dbRead
             .select({
                 average: avg(productRatings.rating),

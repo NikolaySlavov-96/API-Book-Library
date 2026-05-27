@@ -1,13 +1,13 @@
 import 'dotenv/config';
 
 import { MESSAGES, RESPONSE_STATUS_CODE, SYSTEM_FILE_DIRECTORY } from '../constants';
-import { type IProfileWithAvatar, repositories } from '../repositories';
+import { repositories, type TProfileWithAvatar } from '../repositories';
 import { updateMessage } from '../util';
 
 const { BE_URL } = process.env;
 const AVATAR_PATH = BE_URL + SYSTEM_FILE_DIRECTORY.UPLOAD + '/';
 
-const serializeProfile = (profile: IProfileWithAvatar) => {
+const serializeProfile = (profile: TProfileWithAvatar) => {
     const { avatar } = profile;
 
     return {

@@ -3,26 +3,26 @@ import { and, asc, count, eq, ilike, like, or, type SQL, sql } from 'drizzle-orm
 import { type TDb } from '../../db';
 import { products } from '../../db/schema';
 import {
-    type IProductCreateInput,
-    type IProductListQuery,
-    type IProductListResult,
-    type IProductRecord,
-    type IProductRepository,
-    type IProductWithRelations,
-} from '../interfaces';
+    type TProductCreateInput,
+    type TProductListQuery,
+    type TProductListResult,
+    type TProductRecord,
+    type TProductRepository,
+    type TProductWithRelations,
+} from '../types';
 
 const buildSearchPredicate = (filterOperator: string, searchContent: string): SQL => {
     const operator = filterOperator === 'iLike' ? ilike : like;
     return or(operator(products.productTitle, searchContent), operator(products.genre, searchContent));
 };
 
-export class ProductRepository implements IProductRepository {
+export class ProductRepository implements TProductRepository {
     constructor(
         private readonly dbRead: TDb,
         private readonly dbWrite: TDb,
     ) {}
 
-    async findAndCount(query: IProductListQuery): Promise<IProductListResult> {
+    async findAndCount(query: TProductListQuery): Promise<TProductListResult> {
         const conditions: SQL[] = [];
         if (query.searchContent) {
             conditions.push(buildSearchPredicate(query.filterOperator, query.searchContent));
@@ -67,7 +67,7 @@ export class ProductRepository implements IProductRepository {
                 ? productRows.filter((row) => (row.productStatuses?.length ?? 0) > 0)
                 : productRows;
 
-        const rows: IProductWithRelations[] = filteredRows.map((row) => {
+        const rows: TProductWithRelations[] = filteredRows.map((row) => {
             const { productAuthors, productFiles, productStatuses, ...productFields } = row;
             return {
                 ...productFields,
@@ -80,7 +80,7 @@ export class ProductRepository implements IProductRepository {
         return { count: total, rows };
     }
 
-    async findById(id: number): Promise<IProductWithRelations | null> {
+    async findById(id: number): Promise<TProductWithRelations | null> {
         const row = await this.dbRead.query.products.findFirst({
             where: eq(products.id, id),
             with: {
@@ -102,7 +102,7 @@ export class ProductRepository implements IProductRepository {
         };
     }
 
-    async findByTitleCaseInsensitive(title: string): Promise<IProductRecord | null> {
+    async findByTitleCaseInsensitive(title: string): Promise<TProductRecord | null> {
         const [row] = await this.dbRead
             .select()
             .from(products)
@@ -111,7 +111,7 @@ export class ProductRepository implements IProductRepository {
         return row ?? null;
     }
 
-    async create(input: IProductCreateInput): Promise<IProductRecord> {
+    async create(input: TProductCreateInput): Promise<TProductRecord> {
         const [row] = await this.dbWrite
             .insert(products)
             .values({

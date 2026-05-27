@@ -1,8 +1,8 @@
-import { type IProductWithRelations } from '../../repositories';
+import { type TProductWithRelations } from '../../repositories';
 
 import fileModel from './fileModel';
 
-const productModel = (data: IProductWithRelations) => {
+const productModel = (data: TProductWithRelations) => {
     const updatedFile = fileModel(data?.files);
 
     return {

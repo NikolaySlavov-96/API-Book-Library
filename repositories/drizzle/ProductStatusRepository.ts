@@ -3,30 +3,30 @@ import { and, asc, count, eq, ilike, like, or, type SQL } from 'drizzle-orm';
 import { type TDb } from '../../db';
 import { products, productStatuses, users } from '../../db/schema';
 import {
-    type IProductStatusByEmailQuery,
-    type IProductStatusByEmailResult,
-    type IProductStatusByEmailRow,
-    type IProductStatusCreateInput,
-    type IProductStatusListQuery,
-    type IProductStatusListResult,
-    type IProductStatusRecord,
-    type IProductStatusRepository,
-    type IProductStatusWithRelations,
-    type IStatusCountRow,
-} from '../interfaces';
+    type TProductStatusByEmailQuery,
+    type TProductStatusByEmailResult,
+    type TProductStatusByEmailRow,
+    type TProductStatusCreateInput,
+    type TProductStatusListQuery,
+    type TProductStatusListResult,
+    type TProductStatusRecord,
+    type TProductStatusRepository,
+    type TProductStatusWithRelations,
+    type TStatusCountRow,
+} from '../types';
 
 const buildSearchPredicate = (filterOperator: string, searchContent: string): SQL => {
     const operator = filterOperator === 'iLike' ? ilike : like;
     return or(operator(products.productTitle, searchContent), operator(products.genre, searchContent));
 };
 
-export class ProductStatusRepository implements IProductStatusRepository {
+export class ProductStatusRepository implements TProductStatusRepository {
     constructor(
         private readonly dbRead: TDb,
         private readonly dbWrite: TDb,
     ) {}
 
-    async findAndCount(query: IProductStatusListQuery): Promise<IProductStatusListResult> {
+    async findAndCount(query: TProductStatusListQuery): Promise<TProductStatusListResult> {
         const baseConditions: SQL[] = [eq(productStatuses.userId, query.userId), eq(productStatuses.isDelete, false)];
         if (query.statusId) {
             baseConditions.push(eq(productStatuses.statusId, query.statusId));
@@ -63,7 +63,7 @@ export class ProductStatusRepository implements IProductStatusRepository {
             },
         });
 
-        const rows: IProductStatusWithRelations[] = statusRows.map((row) => {
+        const rows: TProductStatusWithRelations[] = statusRows.map((row) => {
             const { productAuthors, productFiles, ...productFields } = row.product;
             return {
                 id: row.id,
@@ -88,7 +88,7 @@ export class ProductStatusRepository implements IProductStatusRepository {
         return { count: total, rows };
     }
 
-    async findOneActive(productId: number, userId: number): Promise<IProductStatusRecord | null> {
+    async findOneActive(productId: number, userId: number): Promise<TProductStatusRecord | null> {
         const [row] = await this.dbRead
             .select()
             .from(productStatuses)
@@ -103,7 +103,7 @@ export class ProductStatusRepository implements IProductStatusRepository {
         return row ?? null;
     }
 
-    async findStatusCounts(userId: number): Promise<IStatusCountRow[]> {
+    async findStatusCounts(userId: number): Promise<TStatusCountRow[]> {
         const rows = await this.dbRead
             .select({
                 statusId: productStatuses.statusId,
@@ -116,12 +116,12 @@ export class ProductStatusRepository implements IProductStatusRepository {
         return rows.map((row) => ({ statusId: Number(row.statusId), count: Number(row.count) }));
     }
 
-    async create(input: IProductStatusCreateInput): Promise<IProductStatusRecord> {
+    async create(input: TProductStatusCreateInput): Promise<TProductStatusRecord> {
         const [row] = await this.dbWrite.insert(productStatuses).values(input).returning();
         return row;
     }
 
-    async updateStatusId(id: number, statusId: number): Promise<IProductStatusRecord | null> {
+    async updateStatusId(id: number, statusId: number): Promise<TProductStatusRecord | null> {
         const [row] = await this.dbWrite
             .update(productStatuses)
             .set({ statusId, updatedAt: new Date() })
@@ -130,7 +130,7 @@ export class ProductStatusRepository implements IProductStatusRepository {
         return row ?? null;
     }
 
-    async markDeleted(id: number): Promise<IProductStatusRecord | null> {
+    async markDeleted(id: number): Promise<TProductStatusRecord | null> {
         const [row] = await this.dbWrite
             .update(productStatuses)
             .set({ isDelete: true, updatedAt: new Date() })
@@ -139,7 +139,7 @@ export class ProductStatusRepository implements IProductStatusRepository {
         return row ?? null;
     }
 
-    async findByUserEmail(query: IProductStatusByEmailQuery): Promise<IProductStatusByEmailResult> {
+    async findByUserEmail(query: TProductStatusByEmailQuery): Promise<TProductStatusByEmailResult> {
         const [userRow] = await this.dbRead
             .select({ id: users.id })
             .from(users)
@@ -170,7 +170,7 @@ export class ProductStatusRepository implements IProductStatusRepository {
             },
         });
 
-        const rows: IProductStatusByEmailRow[] = statusRows.map((row) => {
+        const rows: TProductStatusByEmailRow[] = statusRows.map((row) => {
             const { productAuthors, productFiles, ...productFields } = row.product;
             return {
                 id: row.id,

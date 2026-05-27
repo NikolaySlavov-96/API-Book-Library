@@ -3,16 +3,16 @@ import { eq } from 'drizzle-orm';
 import { type TDb } from '../../db';
 import { sessions } from '../../db/schema';
 import {
-    type ISessionCreateInput,
-    type ISessionRecord,
-    type ISessionRepository,
-    type ISessionUpdateInput,
-} from '../interfaces';
+    type TSessionCreateInput,
+    type TSessionRecord,
+    type TSessionRepository,
+    type TSessionUpdateInput,
+} from '../types';
 
-export class SessionRepository implements ISessionRepository {
+export class SessionRepository implements TSessionRepository {
     constructor(private readonly dbWrite: TDb) {}
 
-    async create(input: ISessionCreateInput): Promise<ISessionRecord> {
+    async create(input: TSessionCreateInput): Promise<TSessionRecord> {
         const [row] = await this.dbWrite
             .insert(sessions)
             .values({
@@ -24,7 +24,7 @@ export class SessionRepository implements ISessionRepository {
         return row;
     }
 
-    async updateByConnectId(connectId: string, input: ISessionUpdateInput): Promise<void> {
+    async updateByConnectId(connectId: string, input: TSessionUpdateInput): Promise<void> {
         const updates: Partial<typeof sessions.$inferInsert> = {};
         if (input.userId !== undefined) updates.userId = input.userId;
         if (input.connectedAt !== undefined) updates.connectedAt = input.connectedAt;

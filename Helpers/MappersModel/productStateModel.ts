@@ -1,9 +1,9 @@
-import { type IProductStatusWithRelations } from '../../repositories';
+import { type TProductStatusWithRelations } from '../../repositories';
 
 import productModel from './productModel';
 import userModel from './userModel';
 
-const productStateModel = (data: IProductStatusWithRelations) => {
+const productStateModel = (data: TProductStatusWithRelations) => {
     const updatedProduct = productModel({
         ...data.product,
         userStatusId: null,

@@ -3,20 +3,20 @@ import { eq } from 'drizzle-orm';
 import { type TDb } from '../../db';
 import { files, profiles } from '../../db/schema';
 import {
-    type IProfileCreateInput,
-    type IProfileRecord,
-    type IProfileRepository,
-    type IProfileUpdateInput,
-    type IProfileWithAvatar,
-} from '../interfaces';
+    type TProfileCreateInput,
+    type TProfileRecord,
+    type TProfileRepository,
+    type TProfileUpdateInput,
+    type TProfileWithAvatar,
+} from '../types';
 
-export class ProfileRepository implements IProfileRepository {
+export class ProfileRepository implements TProfileRepository {
     constructor(
         private readonly dbRead: TDb,
         private readonly dbWrite: TDb,
     ) {}
 
-    async create(input: IProfileCreateInput): Promise<IProfileRecord> {
+    async create(input: TProfileCreateInput): Promise<TProfileRecord> {
         const [row] = await this.dbWrite
             .insert(profiles)
             .values({ userId: input.userId, year: input.year })
@@ -24,12 +24,12 @@ export class ProfileRepository implements IProfileRepository {
         return row;
     }
 
-    async findByUserId(userId: number): Promise<IProfileRecord | null> {
+    async findByUserId(userId: number): Promise<TProfileRecord | null> {
         const [row] = await this.dbRead.select().from(profiles).where(eq(profiles.userId, userId)).limit(1);
         return row ?? null;
     }
 
-    async findByUserIdWithAvatar(userId: number): Promise<IProfileWithAvatar | null> {
+    async findByUserIdWithAvatar(userId: number): Promise<TProfileWithAvatar | null> {
         const [row] = await this.dbRead
             .select({
                 profile: profiles,
@@ -54,7 +54,7 @@ export class ProfileRepository implements IProfileRepository {
         };
     }
 
-    async updateByUserId(userId: number, input: IProfileUpdateInput): Promise<IProfileRecord | null> {
+    async updateByUserId(userId: number, input: TProfileUpdateInput): Promise<TProfileRecord | null> {
         const updates: Partial<typeof profiles.$inferInsert> = { updatedAt: new Date() };
         if (input.readingGoal !== undefined) updates.readingGoal = input.readingGoal;
         if (input.displayName !== undefined) updates.displayName = input.displayName ?? null;

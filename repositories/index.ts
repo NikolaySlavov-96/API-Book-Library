@@ -16,48 +16,48 @@ import {
     StateRepository,
     UserRepository,
 } from './drizzle';
-import {
-    type IAuthorFileRepository,
-    type IAuthorRepository,
-    type IFileRepository,
-    type IMessageRepository,
-    type IMessageStatusRepository,
-    type IProductAuthorRepository,
-    type IProductFileRepository,
-    type IProductRatingRepository,
-    type IProductRepository,
-    type IProductStatusRepository,
-    type IProfileRepository,
-    type IRefreshTokenRepository,
-    type ISessionRepository,
-    type IStateRepository,
-    type IUserDataRepository,
-    type IUserRepository,
-    type IVerifyTokenRepository,
-} from './interfaces';
 import { RefreshTokenRepository, UserDataRepository, VerifyTokenRepository } from './mongoose';
+import {
+    type TAuthorFileRepository,
+    type TAuthorRepository,
+    type TFileRepository,
+    type TMessageRepository,
+    type TMessageStatusRepository,
+    type TProductAuthorRepository,
+    type TProductFileRepository,
+    type TProductRatingRepository,
+    type TProductRepository,
+    type TProductStatusRepository,
+    type TProfileRepository,
+    type TRefreshTokenRepository,
+    type TSessionRepository,
+    type TStateRepository,
+    type TUserDataRepository,
+    type TUserRepository,
+    type TVerifyTokenRepository,
+} from './types';
 
-export interface IRepositoryContainer {
-    user: IUserRepository;
-    profile: IProfileRepository;
-    author: IAuthorRepository;
-    file: IFileRepository;
-    product: IProductRepository;
-    productAuthor: IProductAuthorRepository;
-    productFile: IProductFileRepository;
-    authorFile: IAuthorFileRepository;
-    productStatus: IProductStatusRepository;
-    productRating: IProductRatingRepository;
-    message: IMessageRepository;
-    messageStatus: IMessageStatusRepository;
-    session: ISessionRepository;
-    state: IStateRepository;
-    verifyToken: IVerifyTokenRepository;
-    refreshToken: IRefreshTokenRepository;
-    userData: IUserDataRepository;
-}
+export type TRepositoryContainer = {
+    user: TUserRepository;
+    profile: TProfileRepository;
+    author: TAuthorRepository;
+    file: TFileRepository;
+    product: TProductRepository;
+    productAuthor: TProductAuthorRepository;
+    productFile: TProductFileRepository;
+    authorFile: TAuthorFileRepository;
+    productStatus: TProductStatusRepository;
+    productRating: TProductRatingRepository;
+    message: TMessageRepository;
+    messageStatus: TMessageStatusRepository;
+    session: TSessionRepository;
+    state: TStateRepository;
+    verifyToken: TVerifyTokenRepository;
+    refreshToken: TRefreshTokenRepository;
+    userData: TUserDataRepository;
+};
 
-export const repositories: IRepositoryContainer = {
+export const repositories: TRepositoryContainer = {
     user: new UserRepository(dbRead, dbWrite),
     profile: new ProfileRepository(dbRead, dbWrite),
     author: new AuthorRepository(dbRead, dbWrite),
@@ -77,4 +77,4 @@ export const repositories: IRepositoryContainer = {
     userData: new UserDataRepository(),
 };
 
-export * from './interfaces';
+export * from './types';

@@ -2,15 +2,15 @@ import { count, eq } from 'drizzle-orm';
 
 import { type TDb } from '../../db';
 import { users } from '../../db/schema';
-import { type IUserCreateInput, type IUserRecord, type IUserRepository } from '../interfaces';
+import { type TUserCreateInput, type TUserRecord, type TUserRepository } from '../types';
 
-export class UserRepository implements IUserRepository {
+export class UserRepository implements TUserRepository {
     constructor(
         private readonly dbRead: TDb,
         private readonly dbWrite: TDb,
     ) {}
 
-    async findById(id: number | string): Promise<IUserRecord | null> {
+    async findById(id: number | string): Promise<TUserRecord | null> {
         const numericId = typeof id === 'string' ? Number(id) : id;
         if (!Number.isFinite(numericId)) {
             return null;
@@ -20,7 +20,7 @@ export class UserRepository implements IUserRepository {
         return row ?? null;
     }
 
-    async findByEmail(email: string): Promise<IUserRecord | null> {
+    async findByEmail(email: string): Promise<TUserRecord | null> {
         const [row] = await this.dbRead.select().from(users).where(eq(users.email, email)).limit(1);
         return row ?? null;
     }
@@ -30,7 +30,7 @@ export class UserRepository implements IUserRepository {
         return Number(row?.value ?? 0);
     }
 
-    async create(input: IUserCreateInput): Promise<IUserRecord> {
+    async create(input: TUserCreateInput): Promise<TUserRecord> {
         const [row] = await this.dbWrite
             .insert(users)
             .values({ email: input.email, password: input.password ?? null })

@@ -2,15 +2,15 @@ import { eq } from 'drizzle-orm';
 
 import { type TDb } from '../../db';
 import { files } from '../../db/schema';
-import { type IFileCreateInput, type IFileRecord, type IFileRepository } from '../interfaces';
+import { type TFileCreateInput, type TFileRecord, type TFileRepository } from '../types';
 
-export class FileRepository implements IFileRepository {
+export class FileRepository implements TFileRepository {
     constructor(
         private readonly dbRead: TDb,
         private readonly dbWrite: TDb,
     ) {}
 
-    async create(input: IFileCreateInput): Promise<IFileRecord> {
+    async create(input: TFileCreateInput): Promise<TFileRecord> {
         const [row] = await this.dbWrite
             .insert(files)
             .values({
@@ -23,7 +23,7 @@ export class FileRepository implements IFileRepository {
         return row;
     }
 
-    async findById(id: number): Promise<IFileRecord | null> {
+    async findById(id: number): Promise<TFileRecord | null> {
         const [row] = await this.dbRead.select().from(files).where(eq(files.id, id)).limit(1);
         return row ?? null;
     }

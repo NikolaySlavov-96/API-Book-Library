@@ -1,11 +1,11 @@
 import { type TDb } from '../../db';
 import { productFiles } from '../../db/schema';
-import { type IProductFileCreateInput, type IProductFileRecord, type IProductFileRepository } from '../interfaces';
+import { type TProductFileCreateInput, type TProductFileRecord, type TProductFileRepository } from '../types';
 
-export class ProductFileRepository implements IProductFileRepository {
+export class ProductFileRepository implements TProductFileRepository {
     constructor(private readonly dbWrite: TDb) {}
 
-    async create(input: IProductFileCreateInput): Promise<IProductFileRecord> {
+    async create(input: TProductFileCreateInput): Promise<TProductFileRecord> {
         const [row] = await this.dbWrite.insert(productFiles).values(input).returning();
         return row;
     }

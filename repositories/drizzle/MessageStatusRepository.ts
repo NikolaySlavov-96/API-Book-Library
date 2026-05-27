@@ -1,20 +1,16 @@
 import { type TDb } from '../../db';
 import { messageStatuses } from '../../db/schema';
-import {
-    type IMessageStatusCreateInput,
-    type IMessageStatusRecord,
-    type IMessageStatusRepository,
-} from '../interfaces';
+import { type TMessageStatusCreateInput, type TMessageStatusRecord, type TMessageStatusRepository } from '../types';
 
-export class MessageStatusRepository implements IMessageStatusRepository {
+export class MessageStatusRepository implements TMessageStatusRepository {
     constructor(private readonly dbWrite: TDb) {}
 
-    async create(input: IMessageStatusCreateInput): Promise<IMessageStatusRecord> {
+    async create(input: TMessageStatusCreateInput): Promise<TMessageStatusRecord> {
         const [row] = await this.dbWrite.insert(messageStatuses).values(input).returning();
         return row;
     }
 
-    async createIfNotExists(input: IMessageStatusCreateInput): Promise<IMessageStatusRecord | null> {
+    async createIfNotExists(input: TMessageStatusCreateInput): Promise<TMessageStatusRecord | null> {
         const [row] = await this.dbWrite
             .insert(messageStatuses)
             .values(input)
