@@ -7,7 +7,7 @@ import { Server as SocketIOServer } from 'socket.io';
 import 'dotenv/config';
 
 import { expressConfig, mongoClient, redisClient, router } from './config';
-import { ensureDatabaseExists, verifyDatabaseConnections } from './db';
+import { verifyDatabaseConnections } from './db';
 import { initEmitters, socketEvents } from './Events';
 import { createLogger, globalErrorHandling } from './Helpers';
 
@@ -49,7 +49,6 @@ async function start() {
 
     io.adapter(createAdapter(pubClient, subClient));
 
-    await ensureDatabaseExists();
     await verifyDatabaseConnections();
 
     expressConfig(app, express, fileUpload);
