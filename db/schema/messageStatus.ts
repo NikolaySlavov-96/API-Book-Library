@@ -7,7 +7,9 @@ import { TABLE_NAMES } from './tableNames';
 export const messageStatuses = pgTable(
     TABLE_NAMES.MESSAGE_STATUS,
     {
-        messageId: integer('messageId').notNull(),
+        messageId: integer('messageId')
+            .notNull()
+            .references(() => messages.id, { onDelete: 'cascade' }),
         status: varchar('status', { length: 20 }).notNull(),
         createdAt: timestamp('createdAt', { withTimezone: true }).defaultNow().notNull(),
         updatedAt: timestamp('updatedAt', { withTimezone: true }).defaultNow().notNull(),

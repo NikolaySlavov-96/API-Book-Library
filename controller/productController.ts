@@ -41,7 +41,7 @@ export const getProductById = async (req, res, next) => {
         const result = await productService.getDataById(id);
 
         if (!result) {
-            res.status(RESPONSE_STATUS_CODE.NO_CONTENT);
+            res.status(RESPONSE_STATUS_CODE.NO_CONTENT).end();
             return;
         }
 
@@ -105,6 +105,6 @@ export const deleteProduct = async (req, res, next) => {
         await productService.remove(id);
         res.status(RESPONSE_STATUS_CODE.NO_CONTENT).end();
     } catch (err) {
-        next();
+        next(err);
     }
 };

@@ -8,9 +8,15 @@ import { users } from './user';
 
 export const productStatuses = pgTable(TABLE_NAMES.PRODUCT_STATUS, {
     id: serial('id').primaryKey(),
-    userId: integer('userId').notNull(),
-    productId: integer('productId').notNull(),
-    statusId: integer('statusId').notNull(),
+    userId: integer('userId')
+        .notNull()
+        .references(() => users.id, { onDelete: 'cascade' }),
+    productId: integer('productId')
+        .notNull()
+        .references(() => products.id, { onDelete: 'cascade' }),
+    statusId: integer('statusId')
+        .notNull()
+        .references(() => states.id),
     isDelete: boolean('isDelete').default(false).notNull(),
     createdAt: timestamp('createdAt', { withTimezone: true }).defaultNow().notNull(),
     updatedAt: timestamp('updatedAt', { withTimezone: true }).defaultNow().notNull(),

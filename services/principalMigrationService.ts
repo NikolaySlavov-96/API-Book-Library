@@ -1,8 +1,10 @@
+import { SECONDS_IN_30_DAYS } from '../constants';
+
 import { cacheDataWithExpiration, fetchCacheData } from './cacheService';
 import { migrateRoomMemberships } from './support/chatRoomService';
 import { migrateQueueEntryPrincipal, migrateSupportAgentPrincipal } from './support/supportManagerService';
 
-const MARKER_TTL_SECONDS = 30 * 24 * 60 * 60;
+const MARKER_TTL_SECONDS = SECONDS_IN_30_DAYS;
 const markerKey = (clientId: string) => `principalMigration:${clientId}`;
 
 export interface MigrationResult {

@@ -9,8 +9,12 @@ export const productRatings = pgTable(
     TABLE_NAMES.PRODUCT_RATING,
     {
         id: serial('id').primaryKey(),
-        userId: integer('userId').notNull(),
-        productId: integer('productId').notNull(),
+        userId: integer('userId')
+            .notNull()
+            .references(() => users.id, { onDelete: 'cascade' }),
+        productId: integer('productId')
+            .notNull()
+            .references(() => products.id, { onDelete: 'cascade' }),
         rating: smallint('rating').notNull(),
         createdAt: timestamp('createdAt', { withTimezone: true }).defaultNow().notNull(),
         updatedAt: timestamp('updatedAt', { withTimezone: true }).defaultNow().notNull(),

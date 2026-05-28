@@ -14,15 +14,16 @@ export const addingFile = async (deliverFile, body) => {
     const [, fileExtension] = mimetype.split('/');
     const fileName = `${uniqueFileName}.${fileExtension}`;
 
+    // Move the file first: a failed write must not leave an orphan DB row.
+    const pathName = createDirectoryPath(UPLOAD_DIRECTORY, fileName);
+    await deliverFile.mv(pathName);
+
     const created = await repositories.file.create({
         extension: fileExtension,
         realFileName,
         src,
         uniqueName: fileName,
     });
-
-    const pathName = createDirectoryPath(UPLOAD_DIRECTORY, fileName);
-    deliverFile.mv(pathName);
 
     const resourcePath = UPLOAD_DIRECTORY + '/' + fileName;
     return { resourcePath, fileId: created.id };

@@ -5,8 +5,6 @@ import { updateMessage } from '../util';
 
 import { getRatingAggregate } from './productRatingService';
 
-const FILTER_OPERATOR_ILIKE = 'iLike';
-
 export const getAllData = async ({ offset, limit, filterOperator, searchContent, statusId, userId }) => {
     const result = await repositories.product.findAndCount({
         offset,
@@ -117,7 +115,3 @@ export const remove = async (id) => {
     void id;
     return null;
 };
-
-// `iLike` is the canonical operator name passed from controllers — kept as a
-// module-level constant so we can swap operator semantics in one place.
-export const PRODUCT_FILTER_OPERATOR = FILTER_OPERATOR_ILIKE;

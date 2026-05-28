@@ -9,7 +9,7 @@ export const messages = pgTable(TABLE_NAMES.MESSAGE, {
     id: serial('id').primaryKey(),
     roomName: varchar('roomName', { length: 64 }).notNull(),
     senderId: varchar('senderId', { length: 150 }).notNull(),
-    senderUserId: integer('senderUserId'),
+    senderUserId: integer('senderUserId').references(() => users.id, { onDelete: 'set null' }),
     message: text('message'),
     isDelete: boolean('isDelete').default(false).notNull(),
     createdAt: timestamp('createdAt', { withTimezone: true }).defaultNow().notNull(),

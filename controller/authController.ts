@@ -48,7 +48,7 @@ export const refreshToken = async (req, res, next) => {
 export const exitUser = async (req, res, next) => {
     try {
         await identityService.logout(req.body);
-        res.status(RESPONSE_STATUS_CODE.NO_CONTENT);
+        res.status(RESPONSE_STATUS_CODE.NO_CONTENT).end();
     } catch (err) {
         next(err);
     }

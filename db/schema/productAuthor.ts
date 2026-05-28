@@ -9,8 +9,12 @@ export const productAuthors = pgTable(
     TABLE_NAMES.PRODUCT_AUTHOR,
     {
         id: serial('id').primaryKey(),
-        productId: integer('productId').notNull(),
-        authorId: integer('authorId').notNull(),
+        productId: integer('productId')
+            .notNull()
+            .references(() => products.id, { onDelete: 'cascade' }),
+        authorId: integer('authorId')
+            .notNull()
+            .references(() => authors.id, { onDelete: 'cascade' }),
     },
     (table) => ({
         productAuthorUnique: uniqueIndex('productAuthor_productId_authorId').on(table.productId, table.authorId),

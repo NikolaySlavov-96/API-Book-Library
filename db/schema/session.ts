@@ -7,7 +7,7 @@ import { users } from './user';
 export const sessions = pgTable(TABLE_NAMES.SESSION, {
     id: serial('id').primaryKey(),
     connectId: varchar('connectId', { length: 50 }).unique(),
-    userId: integer('userId'),
+    userId: integer('userId').references(() => users.id, { onDelete: 'set null' }),
     connectedAt: varchar('connectedAt'),
     disconnectedAt: varchar('disconnectedAt'),
 });

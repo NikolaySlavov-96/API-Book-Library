@@ -1,4 +1,4 @@
-import { cacheKeys } from '../../constants';
+import { cacheKeys, SECONDS_IN_DAY } from '../../constants';
 import { UUID } from '../../util';
 import {
     addDataToSet,
@@ -11,7 +11,7 @@ import {
 import { type Principal } from '../principalService';
 
 const ISSUE_TICKET_NAME = 'IssTktTNum-';
-const ROOM_TTL_SECONDS = 24 * 60 * 60;
+const ROOM_TTL_SECONDS = SECONDS_IN_DAY;
 
 const membersKey = (roomName: string) => `${cacheKeys.CHAT_ROOM}:members:${roomName}`;
 

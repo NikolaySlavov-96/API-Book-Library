@@ -9,8 +9,12 @@ export const productFiles = pgTable(
     TABLE_NAMES.PRODUCT_FILE,
     {
         id: serial('id').primaryKey(),
-        productId: integer('productId').notNull(),
-        fileId: integer('fileId').notNull(),
+        productId: integer('productId')
+            .notNull()
+            .references(() => products.id, { onDelete: 'cascade' }),
+        fileId: integer('fileId')
+            .notNull()
+            .references(() => files.id, { onDelete: 'cascade' }),
     },
     (table) => ({
         productFileUnique: uniqueIndex('productFile_productId_fileId').on(table.productId, table.fileId),

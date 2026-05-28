@@ -9,8 +9,12 @@ export const authorFiles = pgTable(
     TABLE_NAMES.AUTHOR_FILE,
     {
         id: serial('id').primaryKey(),
-        authorId: integer('authorId').notNull(),
-        fileId: integer('fileId').notNull(),
+        authorId: integer('authorId')
+            .notNull()
+            .references(() => authors.id, { onDelete: 'cascade' }),
+        fileId: integer('fileId')
+            .notNull()
+            .references(() => files.id, { onDelete: 'cascade' }),
     },
     (table) => ({
         authorFileUnique: uniqueIndex('authorFile_authorId_fileId').on(table.authorId, table.fileId),

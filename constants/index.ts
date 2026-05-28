@@ -10,3 +10,4 @@ export { default as ROUTING_MESSAGES } from './_routingMessage';
 export { _ESendEvents as ESendEvents } from './_socketEvents';
 export { _EReceiveEvents as EReceiveEvents } from './_socketEvents';
 export { default as SYSTEM_FILE_DIRECTORY } from './_SystemFileDirectory';
+export { SECONDS_IN_30_DAYS, SECONDS_IN_DAY, SECONDS_IN_HOUR, SECONDS_IN_WEEK } from './_time';
