@@ -8,8 +8,8 @@ interface IMessageType {
 const messages: IMessageType = {
     // Global
     MESSAGE_AT_ERROR_FROM_SERVER: { message: 'Something went wrong!', messageCode: 'global-0001' },
-    ERROR_FROM_SERVER: { message: 'Something went wrong!', messageCode: 'global-0001' },
-    PERMISSION: { message: "You don't have permission", messageCode: 'global-002' },
+    ERROR_FROM_SERVER: { message: 'Something went wrong!', messageCode: 'global-0003' },
+    PERMISSION: { message: "You don't have permission", messageCode: 'global-0002' },
 
     // User
     INVALID_TOKEN: { message: 'Invalid Token!', messageCode: 'user-0001' },
@@ -32,7 +32,7 @@ const messages: IMessageType = {
     INVALID_USER: { message: 'Invalid user!', messageCode: 'user-0018' },
     DELETED_PROFILE: { message: 'Profile is delete, contact with administrator', messageCode: 'user-0019' },
     ACCOUNT_IS_NOT_VERIFY: { message: 'Your account is not Verify', messageCode: 'user-0020' },
-    TOKEN_DOES_NOT_EXIST: { message: 'Email does not exist!', messageCode: 'user-0021' },
+    TOKEN_DOES_NOT_EXIST: { message: 'Token does not exist!', messageCode: 'user-0021' },
     TOKEN_USER: { message: 'Token used!', messageCode: 'user-0022' },
 
     // Product
@@ -53,12 +53,12 @@ const messages: IMessageType = {
 
     // Support
     INCORRECT_DATA: { message: 'Incorrect Data', messageCode: 'support-0001' },
-    SELECTED_USER_NOT_FOUND: { message: 'User Not fount', messageCode: 'support-0002' },
+    SELECTED_USER_NOT_FOUND: { message: 'User Not found', messageCode: 'support-0002' },
     NOT_AUTHORIZE_ACCEPT_CHAT_REQUEST: {
         message: 'not authorized to accept a support chat request',
         messageCode: 'support-0004',
     },
-    SELECTED_ROOM_NOT_FOUND: { message: "room doesn't not exist", messageCode: 'support-0004' },
+    SELECTED_ROOM_NOT_FOUND: { message: 'Room does not exist', messageCode: 'support-0006' },
     NOT_ROOM_MEMBER: { message: 'You are not a participant of this room', messageCode: 'support-0005' },
     RATE_LIMIT: { message: 'Too many messages, please slow down', messageCode: 'support-0007' },
 };
