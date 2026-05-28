@@ -6,11 +6,13 @@
 // satisfies this interface and pointing `authProvider` (see ./index.ts) at it.
 // No controller, route or domain service needs to change.
 
+import { type EUserRole } from '../../constants';
+
 export interface IAuthIdentity {
     _id: string;
     email: string;
     isVerify: boolean;
-    role: string;
+    role: EUserRole;
 }
 
 export type TVerifyResult = IAuthIdentity | { error: unknown };

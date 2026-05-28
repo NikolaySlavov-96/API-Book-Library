@@ -2,7 +2,7 @@ import isEmpty from 'lodash/isEmpty.js';
 import isString from 'lodash/isString.js';
 import isUndefined from 'lodash/isUndefined.js';
 
-import { EMessageStatus, EReceiveEvents, ESendEvents, MESSAGES } from '../constants';
+import { EMessageStatus, EReceiveEvents, ESendEvents, EUserRole, MESSAGES } from '../constants';
 import { createLogger, notifySupportsOfNewUser } from '../Helpers';
 import { incrementWithTtl } from '../services/cacheService';
 import { registerNewVisitor, setUserInactive } from '../services/connectManagerService';
@@ -135,7 +135,7 @@ const _socketEvents = (io) => {
                     return;
                 }
 
-                if (info.role === 'support') {
+                if (info.role === EUserRole.SUPPORT) {
                     await assignSupport(info.principal);
                     const userQueue = await getAllWaitingUsers();
                     socket.emit(ESendEvents.NOTIFY_ADMINS_OF_NEW_USER, {
@@ -176,7 +176,7 @@ const _socketEvents = (io) => {
                     return;
                 }
 
-                if (info.role !== 'support' || !(await isSupportAgent(info.principal))) {
+                if (info.role !== EUserRole.SUPPORT || !(await isSupportAgent(info.principal))) {
                     socket.emit(ESendEvents.ERROR, updateMessage(MESSAGES.NOT_AUTHORIZE_ACCEPT_CHAT_REQUEST).user);
                     return;
                 }

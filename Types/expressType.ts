@@ -1,10 +1,12 @@
 import { NextFunction, type Request as EXReq, Response } from 'express';
 
+import { type EUserRole } from '../constants';
+
 interface IUser {
     email: string;
     _id: string;
     isVerify?: boolean;
-    role?: string;
+    role?: EUserRole;
     organisation?: string;
 }
 

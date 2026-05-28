@@ -1,4 +1,4 @@
-import { MESSAGES, RESPONSE_STATUS_CODE } from '../constants';
+import { EUserRole, MESSAGES, RESPONSE_STATUS_CODE } from '../constants';
 import { getAuthContext } from '../Helpers';
 import * as fileService from '../services/fileService';
 import { updateMessage } from '../util';
@@ -6,9 +6,8 @@ import { updateMessage } from '../util';
 export const addFile = async (req, res, next) => {
     try {
         // Image upload is temporarily restricted to privileged accounts.
-        // TODO: Extract the "role" property into an enumeration for better type safety and maintainability
         const auth = getAuthContext(req);
-        if (auth?.role !== 'support') {
+        if (auth?.role !== EUserRole.SUPPORT) {
             res.status(RESPONSE_STATUS_CODE.FORBIDDEN).json(updateMessage(MESSAGES.PERMISSION).user);
             return;
         }

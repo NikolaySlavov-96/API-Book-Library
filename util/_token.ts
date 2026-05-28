@@ -3,6 +3,7 @@ const { sign, verify } = jwt;
 
 const { JWT_SECRET } = process.env;
 
+import { type EUserRole } from '../constants';
 import { type IPayload } from '../Types/verification';
 
 type TExpire = jwt.SignOptions['expiresIn'];
@@ -29,7 +30,7 @@ interface IVerifyToken {
     _id: string;
     email: string;
     isVerify: boolean;
-    role: string;
+    role: EUserRole;
     iat?: number;
 }
 

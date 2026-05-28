@@ -1,3 +1,4 @@
+import { type EUserRole } from '../constants';
 import { verifyToken } from '../util';
 
 export type Principal = string;
@@ -5,7 +6,7 @@ export type Principal = string;
 export interface PrincipalInfo {
     principal: Principal;
     userId: number | null;
-    role: string | null;
+    role: EUserRole | null;
     email: string | null;
     tokenExp: number | null;
     isAnonymous: boolean;
