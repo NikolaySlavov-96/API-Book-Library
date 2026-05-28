@@ -1,8 +1,10 @@
+import { type EUserRole } from '../constants';
+
 export interface IPayload {
     _id: string;
     email: string;
     isVerify: boolean;
-    role: 'user' | 'support';
+    role: EUserRole;
 }
 
 export interface ICondition {

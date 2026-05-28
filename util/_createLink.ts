@@ -5,6 +5,7 @@ import { UUID } from '.';
 export default async (user, condition) => {
     const token = await createToken(user, condition);
 
+    // TODO(lint): rename inner `token` param to avoid shadowing outer scope (no-shadow).
     const objectWithCondition = {
         verify: (token) => `/auth/verify/${token}`,
         magic: (token) => `/auth/magic/${token}`,

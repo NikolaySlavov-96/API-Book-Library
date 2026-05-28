@@ -19,7 +19,7 @@ export default (app, express, fileUpload) => {
         }),
     );
 
-    app.use(express.json());
+    app.use(express.json({ limit: process.env.JSON_BODY_LIMIT || '500kb' }));
 
     app.use(trimBody());
     app.use(auth());

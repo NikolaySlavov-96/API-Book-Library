@@ -1,4 +1,4 @@
-import { cacheKeys, ESendEvents, MESSAGES, queryOperators, RESPONSE_STATUS_CODE } from '../constants';
+import { cacheKeys, ESendEvents, EUserRole, MESSAGES, queryOperators, RESPONSE_STATUS_CODE } from '../constants';
 import { emitToSocketEvent } from '../Events';
 import { buildCacheKey, getAuthContext, pageParser, searchParser, statusParser } from '../Helpers';
 import { cacheDataWithExpiration, deleteCacheEntry, deleteKeysWithPrefix } from '../services/cacheService';
@@ -41,7 +41,7 @@ export const getProductById = async (req, res, next) => {
         const result = await productService.getDataById(id);
 
         if (!result) {
-            res.status(RESPONSE_STATUS_CODE.NO_CONTENT);
+            res.status(RESPONSE_STATUS_CODE.NO_CONTENT).end();
             return;
         }
 
@@ -61,8 +61,7 @@ export const createProduct = async (req, res, next) => {
             res.status(RESPONSE_STATUS_CODE.FORBIDDEN).json(updateMessage(MESSAGES.ACCOUNT_IS_NOT_VERIFY).user);
             return;
         }
-        // TODO: Extract the "role" property into an enumeration for better type safety and maintainability
-        if (auth.role !== 'support') {
+        if (auth.role !== EUserRole.SUPPORT) {
             res.status(RESPONSE_STATUS_CODE.FORBIDDEN).json(updateMessage(MESSAGES.PERMISSION).user);
             return;
         }
@@ -105,6 +104,6 @@ export const deleteProduct = async (req, res, next) => {
         await productService.remove(id);
         res.status(RESPONSE_STATUS_CODE.NO_CONTENT).end();
     } catch (err) {
-        next();
+        next(err);
     }
 };

@@ -1,10 +1,14 @@
+import { type TProductStatusByEmailRow } from '../../repositories';
+
 import productModel from './productModel';
 import userModel from './userModel';
 
-// `data` is a ProductStatus row: the owning User, the Product, and the real statusId.
-const productSearchModel = (data) => {
-    const updateUser = userModel(data.User);
-    const updateProduct = productModel(data.Product);
+const productSearchModel = (data: TProductStatusByEmailRow) => {
+    const updateUser = userModel(data.user);
+    const updateProduct = productModel({
+        ...data.product,
+        userStatusId: null,
+    });
 
     return {
         ...updateUser,

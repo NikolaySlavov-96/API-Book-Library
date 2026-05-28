@@ -1,4 +1,4 @@
-import { MESSAGES, RESPONSE_STATUS_CODE } from '../constants';
+import { EUserRole, MESSAGES, RESPONSE_STATUS_CODE } from '../constants';
 import { getAuthContext } from '../Helpers';
 import * as bulkService from '../services/bulkService';
 import { updateMessage } from '../util';
@@ -10,8 +10,7 @@ export const createBulk = async (req, res, next) => {
             res.status(RESPONSE_STATUS_CODE.FORBIDDEN).json(updateMessage(MESSAGES.ACCOUNT_IS_NOT_VERIFY).user);
             return;
         }
-        // TODO: Extract the "role" property into an enumeration for better type safety and maintainability
-        if (auth.role !== 'admin') {
+        if (auth.role !== EUserRole.ADMIN) {
             res.status(RESPONSE_STATUS_CODE.FORBIDDEN).json(updateMessage(MESSAGES.PERMISSION).user);
             return;
         }

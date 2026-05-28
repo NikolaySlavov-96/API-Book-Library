@@ -6,12 +6,14 @@ import { Server as SocketIOServer } from 'socket.io';
 
 import 'dotenv/config';
 
-import { checkDatabaseIfItExist, expressConfig, mongoClient, redisClient, router } from './config';
+import { expressConfig, mongoClient, redisClient, router } from './config';
+import { verifyDatabaseConnections } from './db';
 import { initEmitters, socketEvents } from './Events';
-import { globalErrorHandling } from './Helpers';
-import db from './Model';
+import { createLogger, globalErrorHandling } from './Helpers';
 
-const { APP_PORT, SOCKET_ADDRESS, DB_FORCE_STATUS } = process.env;
+const log = createLogger('bootstrap');
+
+const { APP_PORT, SOCKET_ADDRESS } = process.env;
 
 const app = express();
 
@@ -25,22 +27,29 @@ async function start() {
     await subClient.connect();
 
     const initServer = server.createServer(app);
+
+    const allowedOrigins = (process.env.CORS_ORIGIN ?? process.env.WEB_URI ?? '')
+        .split(',')
+        .map((o) => o.trim())
+        .filter(Boolean);
+
     const io = new SocketIOServer(initServer, {
         path: SOCKET_ADDRESS,
         cors: {
-            origin: '*',
+            origin: (origin, callback) => {
+                if (!origin || allowedOrigins.includes(origin)) {
+                    return callback(null, true);
+                }
+                return callback(new Error('Origin not allowed by CORS'));
+            },
+            credentials: true,
         },
         transports: ['websocket'],
     });
 
     io.adapter(createAdapter(pubClient, subClient));
 
-    await checkDatabaseIfItExist();
-
-    await db.sequelize.authenticate();
-
-    const resetStatus = DB_FORCE_STATUS === 'true' ? true : false;
-    await db.sequelize.sync({ force: resetStatus });
+    await verifyDatabaseConnections();
 
     expressConfig(app, express, fileUpload);
 
@@ -51,7 +60,7 @@ async function start() {
 
     app.use(globalErrorHandling());
 
-    initServer.listen(APP_PORT, () => console.log('Application works on port ~: ', APP_PORT));
+    initServer.listen(APP_PORT, () => log.info('Application works on port ~: ', APP_PORT));
 }
 
 void start();

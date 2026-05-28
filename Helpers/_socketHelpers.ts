@@ -1,18 +1,16 @@
 import { ESendEvents } from '../constants';
-import { emitEventToSocket } from '../Events/_SocketEmitters';
+import { emitEventToPrincipal } from '../Events/_SocketEmitters';
+import { type Principal } from '../services/principalService';
 import { getAllOnlineSupports, getAllWaitingUsers } from '../services/support/supportManagerService';
-import { normalizeInputData } from '../util';
 
-export const notifySupportsOfNewUser = async (connectId: string) => {
+export const notifySupportsOfNewUser = async (newUserPrincipal: Principal) => {
     const supports = await getAllOnlineSupports();
     const usersInQueue = await getAllWaitingUsers();
 
-    supports.forEach((support) => {
-        const payload = {
-            newUserSocketId: connectId,
+    supports.forEach((supportPrincipal) => {
+        emitEventToPrincipal(supportPrincipal, ESendEvents.NOTIFY_ADMINS_OF_NEW_USER, {
+            newUserPrincipal,
             userQueue: usersInQueue,
-        };
-        const dataString = normalizeInputData(support);
-        emitEventToSocket(dataString, ESendEvents.NOTIFY_ADMINS_OF_NEW_USER, payload);
+        });
     });
 };

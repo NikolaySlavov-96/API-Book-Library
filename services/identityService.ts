@@ -1,11 +1,11 @@
 import 'dotenv/config';
 
 import { MESSAGES, RESPONSE_STATUS_CODE } from '../constants';
-import { addTokenResponse, generateDateForDB } from '../Helpers';
-import db from '../Model';
+import { repositories } from '../repositories';
 import { cryptCompare, cryptHash, updateMessage } from '../util';
 
 import { revokeRefreshToken } from './refreshTokenService';
+import { _addTokenResponse as addTokenResponse } from './tokenResponseService';
 
 // Identity / authentication service.
 // Everything here is a candidate to be replaced by an external auth provider.
@@ -13,22 +13,22 @@ import { revokeRefreshToken } from './refreshTokenService';
 // profile row on registration.
 
 export const register = async (query) => {
-    query.email = query.email.toLowerCase();
+    const email = query.email.toLowerCase();
 
-    const existingEmail = (await db.User.findOne({ where: { email: query.email } }))?.dataValues;
+    const existingEmail = await repositories.user.findByEmail(email);
 
     if (existingEmail) {
         return updateMessage(MESSAGES.EMAIL_IS_ALREADY_TAKEN, RESPONSE_STATUS_CODE.BAD_REQUEST);
     }
 
     const hashedPassword = await cryptHash(query.password);
-    const user = await db.User.create({
-        email: query.email,
+    const user = await repositories.user.create({
+        email,
         password: hashedPassword,
     });
 
     // Seed the application-owned profile for the new identity.
-    await db.Profile.create({
+    await repositories.profile.create({
         userId: user.id,
         year: query.year,
     });
@@ -37,11 +37,7 @@ export const register = async (query) => {
 };
 
 export const login = async (body) => {
-    const existingEmail = await db.User.findOne({
-        where: { email: body.email },
-        raw: true,
-        nest: true,
-    });
+    const existingEmail = await repositories.user.findByEmail(body.email);
 
     if (!existingEmail) {
         return updateMessage(MESSAGES.WRONG_EMAIL_OR_PASSWORD, RESPONSE_STATUS_CODE.BAD_REQUEST);
@@ -50,34 +46,16 @@ export const login = async (body) => {
         return updateMessage(MESSAGES.DELETED_PROFILE, RESPONSE_STATUS_CODE.BAD_REQUEST);
     }
 
-    const { password, connectId } = body;
-
-    const matchPassword = await cryptCompare(password, existingEmail.password);
+    const matchPassword = await cryptCompare(body.password, existingEmail.password ?? '');
     if (!matchPassword) {
         return updateMessage(MESSAGES.WRONG_EMAIL_OR_PASSWORD, RESPONSE_STATUS_CODE.BAD_REQUEST);
-    }
-
-    if (connectId) {
-        const currentTime = generateDateForDB();
-        await db.SessionModel.update(
-            { userId: existingEmail.id, connectedAt: currentTime },
-            {
-                where: { connectId },
-                raw: true,
-                nest: true,
-            },
-        );
     }
 
     return addTokenResponse(existingEmail, MESSAGES.SUCCESSFULLY_LOGIN);
 };
 
 export const loginViaMagic = async (email) => {
-    const existingEmail = await db.User.findOne({
-        where: { email },
-        raw: true,
-        nest: true,
-    });
+    const existingEmail = await repositories.user.findByEmail(email);
 
     if (!existingEmail) {
         return updateMessage(MESSAGES.WRONG_EMAIL_OR_PASSWORD, RESPONSE_STATUS_CODE.BAD_REQUEST);
@@ -96,40 +74,24 @@ export const loginViaMagic = async (email) => {
 };
 
 export const logout = async (data) => {
-    if (data?.connectId) {
-        const currentTime = generateDateForDB();
-        await db.SessionModel.update(
-            { disconnectedAt: currentTime },
-            {
-                where: { connectId: data.connectId },
-                raw: true,
-                nest: true,
-            },
-        );
-    }
-
-    // End the refresh session so a leaked/rotated token can't be reused.
     await revokeRefreshToken(data?.refreshToken);
-
-    return;
 };
 
 export const checkFieldInDB = async (email) => {
-    const { count } = await db.User.findAndCountAll({ where: { email } });
-    return count > 0;
+    const total = await repositories.user.countByEmail(email);
+    return total > 0;
 };
 
 export const verifyTokenFormUser = async (address) => {
-    const existingEmail = await db.User.findOne({ where: { email: address } });
-    if (!existingEmail?.dataValues) {
+    const existingEmail = await repositories.user.findByEmail(address);
+    if (!existingEmail) {
         return updateMessage(MESSAGES.EMAIL_DOES_NOT_EXIST, RESPONSE_STATUS_CODE.UNAUTHORIZED);
     }
-    if (existingEmail?.dataValues?.isVerify) {
+    if (existingEmail.isVerify) {
         return updateMessage(MESSAGES.ACCOUNT_ALREADY_TAKEN, RESPONSE_STATUS_CODE.UNAUTHORIZED);
     }
 
-    existingEmail.isVerify = true;
-    await existingEmail.save();
+    await repositories.user.markVerified(existingEmail.id);
 
     return updateMessage(MESSAGES.SUCCESSFULLY_VERIFY_ACCOUNT, RESPONSE_STATUS_CODE.OK);
 };

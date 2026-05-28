@@ -13,6 +13,7 @@ export default (req: Request, res: Response, next: NextFunction) => {
     next();
 };
 
+// TODO(lint): type `error` using express-validator's `Result<ValidationError>` (no-explicit-any).
 const errorParser = (error: any) => {
     let message;
 

@@ -4,6 +4,7 @@ import * as productService from '../services/productService';
 
 export const createBulkProducts = async ({ products }) => {
     const productsId = [];
+    // TODO(lint): batch with Promise.all to create products in parallel (no-await-in-loop).
     for (const product of products) {
         const productResponse = await productService.create(product);
         if (productResponse.statusCode) {

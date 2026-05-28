@@ -28,6 +28,7 @@ const routing = {
     PRODUCT_PAGES: 'Pages must be a positive integer',
     PRODUCT_PUBLISHED_YEAR: 'Published year is not valid',
     PRODUCT_DESCRIPTION: 'Description is too long',
+    AUTHORS_SEPARATOR: 'Authors separator must be 1-8 characters',
 };
 
 export default routing;

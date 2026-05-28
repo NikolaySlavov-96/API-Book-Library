@@ -1,13 +1,18 @@
+import { type TProductStatusWithRelations } from '../../repositories';
+
 import productModel from './productModel';
 import userModel from './userModel';
 
-const productStateModel = (data) => {
-    const updatedProduct = productModel(data.Product);
-    const updateUser = userModel(data.User);
+const productStateModel = (data: TProductStatusWithRelations) => {
+    const updatedProduct = productModel({
+        ...data.product,
+        userStatusId: null,
+    });
+    const updateUser = userModel(data.user);
 
     return {
         productStateId: data.statusId,
-        productStateStatus: data.isDelete, // IsDelete
+        productStateStatus: data.isDelete,
         ...updatedProduct,
         ...updateUser,
     };

@@ -37,7 +37,8 @@ product.post(
     '/',
     isAuthenticated(),
     body('productTitle').isLength({ min: 2 }).withMessage(ROUTING_MESSAGES.PRODUCT_TITLE_REQUIRED),
-    body('author').isLength({ min: 2 }).withMessage(ROUTING_MESSAGES.AUTHOR_REQUIRED),
+    body('authors').isArray({ min: 1 }).withMessage(ROUTING_MESSAGES.AUTHOR_REQUIRED),
+    body('authors.*').isString().isLength({ min: 2 }).withMessage(ROUTING_MESSAGES.AUTHOR_REQUIRED),
     body('genre').isLength({ min: 2 }).withMessage(ROUTING_MESSAGES.PRODUCT_GENRE),
     body('pages').optional({ nullable: true }).isInt({ min: 1 }).withMessage(ROUTING_MESSAGES.PRODUCT_PAGES),
     body('publishedYear')
@@ -48,6 +49,11 @@ product.post(
         .optional({ nullable: true })
         .isLength({ max: 4000 })
         .withMessage(ROUTING_MESSAGES.PRODUCT_DESCRIPTION),
+    body('authorsSeparator')
+        .optional({ nullable: true })
+        .isString()
+        .isLength({ min: 1, max: 8 })
+        .withMessage(ROUTING_MESSAGES.AUTHORS_SEPARATOR),
     expressValidator,
     productController.createProduct,
 );

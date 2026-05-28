@@ -1,7 +1,9 @@
-import { calculateRelativeDate, getCurrentDate } from '../Helpers';
-import UserDataModel from '../Model/UserDataModel';
+import { calculateRelativeDate, createLogger, getCurrentDate } from '../Helpers';
+import { repositories } from '../repositories';
 
 import { addDataToSet, deleteCacheEntry, fetchSetSize } from './cacheService';
+
+const log = createLogger('visitorService');
 
 export const storeVisitorInfo = async (data) => {
     const redisKey = getCurrentDate();
@@ -14,38 +16,32 @@ export const storeVisitorInfo = async (data) => {
     };
 
     try {
-        // Check and Insert in Mongo DB
-        const resultMongo = await UserDataModel.findOne({ userAddress: userIp });
-        if (!resultMongo) {
-            await UserDataModel.create({ userAddress: userIp });
+        const existing = await repositories.userData.findByAddress(userIp);
+        if (!existing) {
+            await repositories.userData.create({ userAddress: userIp });
         }
-        const allUncialUser = await UserDataModel.countDocuments();
-        returnedData.uncialUsers = allUncialUser;
+        returnedData.uncialUsers = await repositories.userData.countAll();
 
-        // Check and Insert in Redis
-        // Added record in Array
         const resultRedis = await addDataToSet(redisKey, userIp);
         if (resultRedis) {
             returnedData.isNewUser = true;
         }
-        // Create new records
-        // const uniqueIPs = await redisClient.sMembers('key');
 
-        // Return only count of exist records in Array
         const uniqueIPs = await fetchSetSize(redisKey);
         returnedData.dailyUsers = Number(uniqueIPs);
         return returnedData;
     } catch (err) {
-        console.log('Visitor Service ~ storeVisitorInfo ~ :', err);
+        log.error('storeVisitorInfo ~ :', err);
         return returnedData;
     }
 };
 
-const deleteKey = async () => {
+// Kept for potential cleanup tasks; not currently wired up.
+export const cleanupExpiredVisitorKey = async () => {
     const key = calculateRelativeDate(1, 'day');
     try {
         await deleteCacheEntry(key);
     } catch (err) {
-        console.log(err);
+        log.error('cleanupExpiredVisitorKey ~ :', err);
     }
 };

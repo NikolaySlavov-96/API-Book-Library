@@ -1,112 +1,47 @@
 import { EMappedType, responseMapper } from '../Helpers';
-import db from '../Model';
-const Op = db?.Sequelize?.Op;
+import { repositories } from '../repositories';
 
 export const getAllStates = async () => {
-    return await db.State.findAll();
+    return repositories.state.findAll();
 };
 
 export const getAllDate = async ({ statusId, userId, offset, limit, filterOperator, searchContent }) => {
-    const queryOperator = Op[filterOperator];
-    const hasSearchContent = !!searchContent;
-
     const numericStatusId = parseInt(statusId);
-    const statusFilter = numericStatusId ? { statusId: numericStatusId } : {};
 
-    const query = {
-        where: { ...statusFilter, userId, isDelete: false },
-        include: [
-            {
-                model: db.Product,
-                required: true,
-                attributes: ['id', 'productTitle', 'genre', 'isVerify'],
-                as: 'Product',
-                include: [
-                    {
-                        model: db.File,
-                        required: false,
-                        as: 'files',
-                        attributes: ['id', 'src', 'uniqueName'],
-                    },
-                    {
-                        model: db.Author,
-                        as: 'authors',
-                        attributes: ['name', 'isVerify', 'genre'],
-                    },
-                ],
-                where: hasSearchContent
-                    ? {
-                          [Op.or]: [
-                              {
-                                  productTitle: { [queryOperator]: searchContent },
-                              },
-                              {
-                                  genre: { [queryOperator]: searchContent },
-                              },
-                          ],
-                      }
-                    : {},
-            },
-            {
-                model: db.User as 'user',
-                required: true,
-                attributes: ['email', 'id'],
-            },
-            {
-                model: db.State,
-                required: true,
-                attributes: ['stateName'],
-            },
-        ],
-        attributes: ['id', 'statusId', 'isDelete'],
-        order: [['id', 'ASC']],
+    const result = await repositories.productStatus.findAndCount({
+        statusId: numericStatusId || null,
+        userId,
         offset,
-        distinct: true,
         limit,
-    };
+        filterOperator,
+        searchContent,
+    });
 
-    const result = await db.ProductStatus.findAndCountAll(query);
-
-    const mappedResponse = responseMapper(result, EMappedType.PRODUCT_STATE);
-
-    return mappedResponse;
+    return responseMapper(result, EMappedType.PRODUCT_STATE);
 };
 
 export const getStatusCounts = async (userId) => {
-    const rows = await db.ProductStatus.findAll({
-        where: { userId, isDelete: false },
-        attributes: ['statusId', [db.sequelize.fn('COUNT', db.sequelize.col('statusId')), 'count']],
-        group: ['statusId'],
-        raw: true,
-    });
-
-    return rows.map((r) => ({ statusId: Number(r.statusId), count: Number(r.count) }));
+    return repositories.productStatus.findStatusCounts(userId);
 };
 
 export const getInfoFromProductStatus = async (productId, userId) => {
-    return await db.ProductStatus.findOne({
-        where: { productId, userId, isDelete: false },
-        attributes: ['statusId'],
-    });
+    return repositories.productStatus.findOneActive(productId, userId);
 };
 
 export const removeProductStatus = async (userId, productId) => {
-    const row = await db.ProductStatus.findOne({ where: { productId, userId, isDelete: false } });
-    if (!row) {
+    const existing = await repositories.productStatus.findOneActive(productId, userId);
+    if (!existing) {
         return null;
     }
-    row.isDelete = true;
-    return await row.save();
+    return repositories.productStatus.markDeleted(existing.id);
 };
 
 export const addingNewProductStatus = async (userId, { productId, statusId }) => {
-    const existingProduct = await db.ProductStatus.findOne({ where: { productId, userId, isDelete: false } });
+    const existing = await repositories.productStatus.findOneActive(productId, userId);
 
-    if (existingProduct) {
-        existingProduct.statusId = statusId;
-        return await existingProduct.save();
+    if (existing) {
+        return repositories.productStatus.updateStatusId(existing.id, statusId);
     }
 
-    const result = (await db.ProductStatus.create({ userId, productId, statusId }))?.dataValues;
-    return result;
+    return repositories.productStatus.create({ userId, productId, statusId });
 };
