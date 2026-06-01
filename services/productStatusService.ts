@@ -5,6 +5,10 @@ export const getAllStates = async () => {
     return repositories.state.findAll();
 };
 
+export const getStateById = async (statusId) => {
+    return repositories.state.findById(parseInt(statusId));
+};
+
 export const getAllDate = async ({ statusId, userId, offset, limit, filterOperator, searchContent }) => {
     const numericStatusId = parseInt(statusId);
 

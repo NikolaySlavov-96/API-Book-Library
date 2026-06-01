@@ -62,7 +62,7 @@ product.post(
     '/status/',
     isAuthenticated(),
     body('productId').isLength({ min: 1 }).withMessage(ROUTING_MESSAGES.PRODUCT_ID_IS_REQUIRED),
-    body('statusId').isFloat({ min: 1, max: 5 }).withMessage(ROUTING_MESSAGES.PRODUCT_COLLECTION_TYPE),
+    body('statusId').isInt({ min: 1 }).withMessage(ROUTING_MESSAGES.PRODUCT_COLLECTION_TYPE),
     expressValidator,
     productStatusController.createProductStatus,
 );

@@ -46,6 +46,7 @@ const messages: IMessageType = {
         messageCode: 'book-0008',
     },
     PRODUCT_NOT_IN_COLLECTION: { message: 'Book is not in your collection', messageCode: 'book-0009' },
+    STATUS_DOES_NOT_EXIST: { message: 'Selected collection type does not exist', messageCode: 'book-0010' },
     PLEASE_ADDED_FILE: { message: 'Please added file', messageCode: 'book-0004' },
     FILE_DOES_NOT_EXIT: { message: 'A file that does not exist', messageCode: 'book-0005' },
     UN_SUCCESS_REMOVE_FILE: { message: 'Unsuccessfully remove file', messageCode: 'book-0006' },

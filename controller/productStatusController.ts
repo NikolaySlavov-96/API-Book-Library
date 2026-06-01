@@ -72,6 +72,12 @@ export const createProductStatus = async (req, res, next) => {
             return;
         }
 
+        const status = await productStatusService.getStateById(req.body.statusId);
+        if (!status) {
+            res.status(RESPONSE_STATUS_CODE.BAD_REQUEST).json(updateMessage(MESSAGES.STATUS_DOES_NOT_EXIST).user);
+            return;
+        }
+
         await productStatusService.addingNewProductStatus(auth.id, req.body);
 
         const key = buildCacheKey(cacheKeys.PRODUCT_STATUS_ID, req);

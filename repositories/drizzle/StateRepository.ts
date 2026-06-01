@@ -1,3 +1,5 @@
+import { eq } from 'drizzle-orm';
+
 import { type TDb } from '../../db';
 import { states } from '../../db/schema';
 import { type TStateRecord, type TStateRepository } from '../types';
@@ -7,5 +9,10 @@ export class StateRepository implements TStateRepository {
 
     async findAll(): Promise<TStateRecord[]> {
         return this.dbRead.select().from(states);
+    }
+
+    async findById(id: number): Promise<TStateRecord | null> {
+        const [state] = await this.dbRead.select().from(states).where(eq(states.id, id)).limit(1);
+        return state ?? null;
     }
 }
