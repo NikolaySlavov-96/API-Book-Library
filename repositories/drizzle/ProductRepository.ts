@@ -1,7 +1,7 @@
 import { and, asc, count, eq, ilike, inArray, like, or, type SQL, sql } from 'drizzle-orm';
 
 import { type TDb } from '../../db';
-import { authors, productAuthors as productAuthorsTable, products } from '../../db/schema';
+import { authors, productAuthors as productAuthorsTable, products, productStatuses } from '../../db/schema';
 import {
     type TProductCreateInput,
     type TProductListQuery,
@@ -37,6 +37,19 @@ export class ProductRepository implements TProductRepository {
         if (query.searchContent) {
             conditions.push(buildSearchPredicate(this.dbRead, query.filterOperator, query.searchContent));
         }
+        if (query.statusId && query.userId) {
+            const productsByStatus = this.dbRead
+                .select({ id: productStatuses.productId })
+                .from(productStatuses)
+                .where(
+                    and(
+                        eq(productStatuses.userId, query.userId),
+                        eq(productStatuses.statusId, query.statusId),
+                        eq(productStatuses.isDelete, false),
+                    ),
+                );
+            conditions.push(inArray(products.id, productsByStatus));
+        }
         const where = conditions.length ? and(...conditions) : undefined;
 
         const totalRows = await this.dbRead.select({ value: count() }).from(products).where(where);
@@ -56,34 +69,24 @@ export class ProductRepository implements TProductRepository {
                 },
                 productStatuses: query.userId
                     ? {
-                          where: (productStatusesTable, { eq: equals, and: allOf }) => {
-                              const filters = [
+                          where: (productStatusesTable, { eq: equals, and: allOf }) =>
+                              allOf(
                                   equals(productStatusesTable.userId, query.userId),
                                   equals(productStatusesTable.isDelete, false),
-                              ];
-                              if (query.statusId) {
-                                  filters.push(equals(productStatusesTable.statusId, query.statusId));
-                              }
-                              return allOf(...filters);
-                          },
+                              ),
                           columns: { statusId: true },
                       }
                     : undefined,
             },
         });
 
-        const filteredRows =
-            query.statusId && query.userId
-                ? productRows.filter((row) => (row.productStatuses?.length ?? 0) > 0)
-                : productRows;
-
-        const rows: TProductWithRelations[] = filteredRows.map((row) => {
-            const { productAuthors, productFiles, productStatuses, ...productFields } = row;
+        const rows: TProductWithRelations[] = productRows.map((row) => {
+            const { productAuthors, productFiles, productStatuses: rowStatuses, ...productFields } = row;
             return {
                 ...productFields,
                 authors: productAuthors.map((pa) => pa.author),
                 files: productFiles.map((pf) => pf.file),
-                userStatusId: productStatuses?.[0]?.statusId ?? null,
+                userStatusId: rowStatuses?.[0]?.statusId ?? null,
             };
         });
 
