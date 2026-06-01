@@ -27,7 +27,7 @@ export const getAllProductsByStatus = async (req, res, next) => {
     const { limit, offset } = pageParser(req?.query);
     const { searchContent } = searchParser(req?.query);
 
-    const filterOperator = queryOperators.LIKE;
+    const filterOperator = queryOperators.ILIKE;
 
     const userId = getUserId(req);
     const { statusId } = req.params;

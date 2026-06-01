@@ -1,7 +1,7 @@
-import { and, asc, count, eq, ilike, like, or, type SQL, sql } from 'drizzle-orm';
+import { and, asc, count, eq, ilike, inArray, like, or, type SQL, sql } from 'drizzle-orm';
 
 import { type TDb } from '../../db';
-import { products } from '../../db/schema';
+import { authors, productAuthors as productAuthorsTable, products } from '../../db/schema';
 import {
     type TProductCreateInput,
     type TProductListQuery,
@@ -11,9 +11,19 @@ import {
     type TProductWithRelations,
 } from '../types';
 
-const buildSearchPredicate = (filterOperator: string, searchContent: string): SQL => {
+const buildSearchPredicate = (db: TDb, filterOperator: string, searchContent: string): SQL => {
     const operator = filterOperator === 'iLike' ? ilike : like;
-    return or(operator(products.productTitle, searchContent), operator(products.genre, searchContent));
+    const productsByAuthor = db
+        .select({ id: productAuthorsTable.productId })
+        .from(productAuthorsTable)
+        .innerJoin(authors, eq(authors.id, productAuthorsTable.authorId))
+        .where(operator(authors.name, searchContent));
+
+    return or(
+        operator(products.productTitle, searchContent),
+        operator(products.genre, searchContent),
+        inArray(products.id, productsByAuthor),
+    );
 };
 
 export class ProductRepository implements TProductRepository {
@@ -25,7 +35,7 @@ export class ProductRepository implements TProductRepository {
     async findAndCount(query: TProductListQuery): Promise<TProductListResult> {
         const conditions: SQL[] = [];
         if (query.searchContent) {
-            conditions.push(buildSearchPredicate(query.filterOperator, query.searchContent));
+            conditions.push(buildSearchPredicate(this.dbRead, query.filterOperator, query.searchContent));
         }
         const where = conditions.length ? and(...conditions) : undefined;
 

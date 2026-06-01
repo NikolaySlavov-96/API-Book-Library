@@ -10,7 +10,7 @@ export const getAllProducts = async (req, res, next) => {
     const { searchContent } = searchParser(req?.query);
     const { statusId } = statusParser(req?.query);
 
-    const filterOperator = queryOperators.LIKE;
+    const filterOperator = queryOperators.ILIKE;
 
     // Status filtering only makes sense for a logged-in user (reads token if present)
     const userId = req?.user?._id;
