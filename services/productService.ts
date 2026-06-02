@@ -4,6 +4,7 @@ import { repositories } from '../repositories';
 import { updateMessage } from '../util';
 
 import { getRatingAggregate } from './productRatingService';
+import { attachStatusHistory } from './productStatusService';
 
 export const getAllData = async ({ offset, limit, filterOperator, searchContent, statusId, userId }) => {
     const result = await repositories.product.findAndCount({
@@ -15,7 +16,7 @@ export const getAllData = async ({ offset, limit, filterOperator, searchContent,
         userId,
     });
 
-    return responseMapper(result, EMappedType.PRODUCT);
+    return attachStatusHistory(responseMapper(result, EMappedType.PRODUCT), userId);
 };
 
 export const getDataById = async (id: number) => {

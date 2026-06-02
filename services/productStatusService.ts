@@ -21,7 +21,24 @@ export const getAllDate = async ({ statusId, userId, offset, limit, filterOperat
         searchContent,
     });
 
-    return responseMapper(result, EMappedType.PRODUCT_STATE);
+    return attachStatusHistory(responseMapper(result, EMappedType.PRODUCT_STATE), userId);
+};
+
+export const attachStatusHistory = async (mapped, userId) => {
+    if (!userId) {
+        return mapped;
+    }
+
+    const rows = mapped.rows as Array<{ productId: number }>;
+    const historyMap = await repositories.productStatus.findHistoryForProducts(
+        userId,
+        rows.map((row) => row.productId),
+    );
+
+    return {
+        ...mapped,
+        rows: rows.map((row) => ({ ...row, statusHistory: historyMap.get(row.productId) ?? [] })),
+    };
 };
 
 export const getStatusCounts = async (userId) => {
@@ -29,7 +46,12 @@ export const getStatusCounts = async (userId) => {
 };
 
 export const getInfoFromProductStatus = async (productId, userId) => {
-    return repositories.productStatus.findOneActive(productId, userId);
+    const [existing, statusHistory] = await Promise.all([
+        repositories.productStatus.findOneActive(productId, userId),
+        repositories.productStatus.findHistoryForProduct(userId, productId),
+    ]);
+
+    return { statusId: existing?.statusId ?? null, statusHistory };
 };
 
 export const removeProductStatus = async (userId, productId) => {
@@ -43,9 +65,15 @@ export const removeProductStatus = async (userId, productId) => {
 export const addingNewProductStatus = async (userId, { productId, statusId }) => {
     const existing = await repositories.productStatus.findOneActive(productId, userId);
 
-    if (existing) {
-        return repositories.productStatus.updateStatusId(existing.id, statusId);
+    if (existing && existing.statusId === Number(statusId)) {
+        return;
     }
 
-    return repositories.productStatus.create({ userId, productId, statusId });
+    if (existing) {
+        await repositories.productStatus.updateStatusId(existing.id, statusId);
+    } else {
+        await repositories.productStatus.create({ userId, productId, statusId });
+    }
+
+    await repositories.productStatus.addStatusHistory(userId, productId, statusId);
 };

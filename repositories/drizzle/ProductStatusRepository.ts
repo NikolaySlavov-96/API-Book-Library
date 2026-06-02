@@ -1,7 +1,7 @@
-import { and, asc, count, eq, ilike, like, or, type SQL } from 'drizzle-orm';
+import { and, asc, count, eq, ilike, inArray, like, or, type SQL } from 'drizzle-orm';
 
 import { type TDb } from '../../db';
-import { products, productStatuses, users } from '../../db/schema';
+import { products, productStatuses, productStatusHistory, users } from '../../db/schema';
 import {
     type TProductStatusByEmailQuery,
     type TProductStatusByEmailResult,
@@ -13,6 +13,7 @@ import {
     type TProductStatusRepository,
     type TProductStatusWithRelations,
     type TStatusCountRow,
+    type TStatusHistoryRow,
 } from '../types';
 
 const buildSearchPredicate = (filterOperator: string, searchContent: string): SQL => {
@@ -114,6 +115,41 @@ export class ProductStatusRepository implements TProductStatusRepository {
             .groupBy(productStatuses.statusId);
 
         return rows.map((row) => ({ statusId: Number(row.statusId), count: Number(row.count) }));
+    }
+
+    async addStatusHistory(userId: number, productId: number, statusId: number): Promise<void> {
+        await this.dbWrite.insert(productStatusHistory).values({ userId, productId, statusId });
+    }
+
+    async findHistoryForProducts(userId: number, productIds: number[]): Promise<Map<number, TStatusHistoryRow[]>> {
+        const map = new Map<number, TStatusHistoryRow[]>();
+        if (productIds.length === 0) {
+            return map;
+        }
+
+        const rows = await this.dbRead
+            .select({
+                productId: productStatusHistory.productId,
+                statusId: productStatusHistory.statusId,
+                createdAt: productStatusHistory.createdAt,
+            })
+            .from(productStatusHistory)
+            .where(and(eq(productStatusHistory.userId, userId), inArray(productStatusHistory.productId, productIds)))
+            .orderBy(asc(productStatusHistory.createdAt));
+
+        for (const row of rows) {
+            const productId = Number(row.productId);
+            const list = map.get(productId) ?? [];
+            list.push({ statusId: Number(row.statusId), createdAt: row.createdAt });
+            map.set(productId, list);
+        }
+
+        return map;
+    }
+
+    async findHistoryForProduct(userId: number, productId: number): Promise<TStatusHistoryRow[]> {
+        const history = await this.findHistoryForProducts(userId, [productId]);
+        return history.get(productId) ?? [];
     }
 
     async create(input: TProductStatusCreateInput): Promise<TProductStatusRecord> {
