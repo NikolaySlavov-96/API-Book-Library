@@ -121,8 +121,8 @@ export class ProductStatusRepository implements TProductStatusRepository {
         await this.dbWrite.insert(productStatusHistory).values({ userId, productId, statusId });
     }
 
-    async findCountsForProducts(userId: number, productIds: number[]): Promise<Map<number, TStatusCountRow[]>> {
-        const map = new Map<number, TStatusCountRow[]>();
+    async findHistoryForProducts(userId: number, productIds: number[]): Promise<Map<number, TStatusHistoryRow[]>> {
+        const map = new Map<number, TStatusHistoryRow[]>();
         if (productIds.length === 0) {
             return map;
         }
@@ -131,35 +131,25 @@ export class ProductStatusRepository implements TProductStatusRepository {
             .select({
                 productId: productStatusHistory.productId,
                 statusId: productStatusHistory.statusId,
-                count: count(),
+                createdAt: productStatusHistory.createdAt,
             })
             .from(productStatusHistory)
             .where(and(eq(productStatusHistory.userId, userId), inArray(productStatusHistory.productId, productIds)))
-            .groupBy(productStatusHistory.productId, productStatusHistory.statusId);
+            .orderBy(asc(productStatusHistory.createdAt));
 
         for (const row of rows) {
             const productId = Number(row.productId);
             const list = map.get(productId) ?? [];
-            list.push({ statusId: Number(row.statusId), count: Number(row.count) });
+            list.push({ statusId: Number(row.statusId), createdAt: row.createdAt });
             map.set(productId, list);
         }
 
         return map;
     }
 
-    async findCountsForProduct(userId: number, productId: number): Promise<TStatusCountRow[]> {
-        const counts = await this.findCountsForProducts(userId, [productId]);
-        return counts.get(productId) ?? [];
-    }
-
     async findHistoryForProduct(userId: number, productId: number): Promise<TStatusHistoryRow[]> {
-        const rows = await this.dbRead
-            .select({ statusId: productStatusHistory.statusId, createdAt: productStatusHistory.createdAt })
-            .from(productStatusHistory)
-            .where(and(eq(productStatusHistory.userId, userId), eq(productStatusHistory.productId, productId)))
-            .orderBy(asc(productStatusHistory.createdAt));
-
-        return rows.map((row) => ({ statusId: Number(row.statusId), createdAt: row.createdAt }));
+        const history = await this.findHistoryForProducts(userId, [productId]);
+        return history.get(productId) ?? [];
     }
 
     async create(input: TProductStatusCreateInput): Promise<TProductStatusRecord> {

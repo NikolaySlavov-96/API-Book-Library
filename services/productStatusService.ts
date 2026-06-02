@@ -21,23 +21,23 @@ export const getAllDate = async ({ statusId, userId, offset, limit, filterOperat
         searchContent,
     });
 
-    return attachStatusCounts(responseMapper(result, EMappedType.PRODUCT_STATE), userId);
+    return attachStatusHistory(responseMapper(result, EMappedType.PRODUCT_STATE), userId);
 };
 
-export const attachStatusCounts = async (mapped, userId) => {
+export const attachStatusHistory = async (mapped, userId) => {
     if (!userId) {
         return mapped;
     }
 
     const rows = mapped.rows as Array<{ productId: number }>;
-    const countsMap = await repositories.productStatus.findCountsForProducts(
+    const historyMap = await repositories.productStatus.findHistoryForProducts(
         userId,
         rows.map((row) => row.productId),
     );
 
     return {
         ...mapped,
-        rows: rows.map((row) => ({ ...row, statusCounts: countsMap.get(row.productId) ?? [] })),
+        rows: rows.map((row) => ({ ...row, statusHistory: historyMap.get(row.productId) ?? [] })),
     };
 };
 
@@ -46,13 +46,12 @@ export const getStatusCounts = async (userId) => {
 };
 
 export const getInfoFromProductStatus = async (productId, userId) => {
-    const [existing, statusCounts, statusHistory] = await Promise.all([
+    const [existing, statusHistory] = await Promise.all([
         repositories.productStatus.findOneActive(productId, userId),
-        repositories.productStatus.findCountsForProduct(userId, productId),
         repositories.productStatus.findHistoryForProduct(userId, productId),
     ]);
 
-    return { statusId: existing?.statusId ?? null, statusCounts, statusHistory };
+    return { statusId: existing?.statusId ?? null, statusHistory };
 };
 
 export const removeProductStatus = async (userId, productId) => {
