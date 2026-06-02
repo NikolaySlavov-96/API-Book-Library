@@ -46,12 +46,13 @@ export const getStatusCounts = async (userId) => {
 };
 
 export const getInfoFromProductStatus = async (productId, userId) => {
-    const [existing, statusCounts] = await Promise.all([
+    const [existing, statusCounts, statusHistory] = await Promise.all([
         repositories.productStatus.findOneActive(productId, userId),
         repositories.productStatus.findCountsForProduct(userId, productId),
+        repositories.productStatus.findHistoryForProduct(userId, productId),
     ]);
 
-    return { statusId: existing?.statusId ?? null, statusCounts };
+    return { statusId: existing?.statusId ?? null, statusCounts, statusHistory };
 };
 
 export const removeProductStatus = async (userId, productId) => {
@@ -65,11 +66,15 @@ export const removeProductStatus = async (userId, productId) => {
 export const addingNewProductStatus = async (userId, { productId, statusId }) => {
     const existing = await repositories.productStatus.findOneActive(productId, userId);
 
-    if (!existing) {
-        await repositories.productStatus.create({ userId, productId, statusId });
-    } else if (existing.statusId !== Number(statusId)) {
-        await repositories.productStatus.updateStatusId(existing.id, statusId);
+    if (existing && existing.statusId === Number(statusId)) {
+        return;
     }
 
-    await repositories.productStatus.incrementStatusCount(userId, productId, statusId);
+    if (existing) {
+        await repositories.productStatus.updateStatusId(existing.id, statusId);
+    } else {
+        await repositories.productStatus.create({ userId, productId, statusId });
+    }
+
+    await repositories.productStatus.addStatusHistory(userId, productId, statusId);
 };

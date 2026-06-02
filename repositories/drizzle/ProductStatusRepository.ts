@@ -1,7 +1,7 @@
-import { and, asc, count, eq, ilike, inArray, like, or, type SQL, sql } from 'drizzle-orm';
+import { and, asc, count, eq, ilike, inArray, like, or, type SQL } from 'drizzle-orm';
 
 import { type TDb } from '../../db';
-import { products, productStatusCounts, productStatuses, users } from '../../db/schema';
+import { products, productStatuses, productStatusHistory, users } from '../../db/schema';
 import {
     type TProductStatusByEmailQuery,
     type TProductStatusByEmailResult,
@@ -13,6 +13,7 @@ import {
     type TProductStatusRepository,
     type TProductStatusWithRelations,
     type TStatusCountRow,
+    type TStatusHistoryRow,
 } from '../types';
 
 const buildSearchPredicate = (filterOperator: string, searchContent: string): SQL => {
@@ -116,21 +117,16 @@ export class ProductStatusRepository implements TProductStatusRepository {
         return rows.map((row) => ({ statusId: Number(row.statusId), count: Number(row.count) }));
     }
 
-    async incrementStatusCount(userId: number, productId: number, statusId: number): Promise<void> {
-        await this.dbWrite
-            .insert(productStatusCounts)
-            .values({ userId, productId, statusId, count: 1 })
-            .onConflictDoUpdate({
-                target: [productStatusCounts.userId, productStatusCounts.productId, productStatusCounts.statusId],
-                set: { count: sql`${productStatusCounts.count} + 1`, updatedAt: new Date() },
-            });
+    async addStatusHistory(userId: number, productId: number, statusId: number): Promise<void> {
+        await this.dbWrite.insert(productStatusHistory).values({ userId, productId, statusId });
     }
 
     async findCountsForProduct(userId: number, productId: number): Promise<TStatusCountRow[]> {
         const rows = await this.dbRead
-            .select({ statusId: productStatusCounts.statusId, count: productStatusCounts.count })
-            .from(productStatusCounts)
-            .where(and(eq(productStatusCounts.userId, userId), eq(productStatusCounts.productId, productId)));
+            .select({ statusId: productStatusHistory.statusId, count: count() })
+            .from(productStatusHistory)
+            .where(and(eq(productStatusHistory.userId, userId), eq(productStatusHistory.productId, productId)))
+            .groupBy(productStatusHistory.statusId);
 
         return rows.map((row) => ({ statusId: Number(row.statusId), count: Number(row.count) }));
     }
@@ -143,12 +139,13 @@ export class ProductStatusRepository implements TProductStatusRepository {
 
         const rows = await this.dbRead
             .select({
-                productId: productStatusCounts.productId,
-                statusId: productStatusCounts.statusId,
-                count: productStatusCounts.count,
+                productId: productStatusHistory.productId,
+                statusId: productStatusHistory.statusId,
+                count: count(),
             })
-            .from(productStatusCounts)
-            .where(and(eq(productStatusCounts.userId, userId), inArray(productStatusCounts.productId, productIds)));
+            .from(productStatusHistory)
+            .where(and(eq(productStatusHistory.userId, userId), inArray(productStatusHistory.productId, productIds)))
+            .groupBy(productStatusHistory.productId, productStatusHistory.statusId);
 
         for (const row of rows) {
             const productId = Number(row.productId);
@@ -158,6 +155,16 @@ export class ProductStatusRepository implements TProductStatusRepository {
         }
 
         return map;
+    }
+
+    async findHistoryForProduct(userId: number, productId: number): Promise<TStatusHistoryRow[]> {
+        const rows = await this.dbRead
+            .select({ statusId: productStatusHistory.statusId, createdAt: productStatusHistory.createdAt })
+            .from(productStatusHistory)
+            .where(and(eq(productStatusHistory.userId, userId), eq(productStatusHistory.productId, productId)))
+            .orderBy(asc(productStatusHistory.createdAt));
+
+        return rows.map((row) => ({ statusId: Number(row.statusId), createdAt: row.createdAt }));
     }
 
     async create(input: TProductStatusCreateInput): Promise<TProductStatusRecord> {

@@ -1,13 +1,13 @@
 import { relations } from 'drizzle-orm';
-import { integer, pgTable, serial, timestamp, uniqueIndex } from 'drizzle-orm/pg-core';
+import { index, integer, pgTable, serial, timestamp } from 'drizzle-orm/pg-core';
 
 import { products } from './product';
 import { states } from './state';
 import { TABLE_NAMES } from './tableNames';
 import { users } from './user';
 
-export const productStatusCounts = pgTable(
-    TABLE_NAMES.PRODUCT_STATUS_COUNT,
+export const productStatusHistory = pgTable(
+    TABLE_NAMES.PRODUCT_STATUS_HISTORY,
     {
         id: serial('id').primaryKey(),
         userId: integer('userId')
@@ -19,33 +19,27 @@ export const productStatusCounts = pgTable(
         statusId: integer('statusId')
             .notNull()
             .references(() => states.id),
-        count: integer('count').default(0).notNull(),
         createdAt: timestamp('createdAt', { withTimezone: true }).defaultNow().notNull(),
-        updatedAt: timestamp('updatedAt', { withTimezone: true }).defaultNow().notNull(),
     },
     (table) => ({
-        userProductStatusUnique: uniqueIndex('productStatusCount_user_product_status_unique').on(
-            table.userId,
-            table.productId,
-            table.statusId,
-        ),
+        userProductIdx: index('productStatusHistory_user_product_idx').on(table.userId, table.productId),
     }),
 );
 
-export const productStatusCountsRelations = relations(productStatusCounts, ({ one }) => ({
+export const productStatusHistoryRelations = relations(productStatusHistory, ({ one }) => ({
     user: one(users, {
-        fields: [productStatusCounts.userId],
+        fields: [productStatusHistory.userId],
         references: [users.id],
     }),
     product: one(products, {
-        fields: [productStatusCounts.productId],
+        fields: [productStatusHistory.productId],
         references: [products.id],
     }),
     state: one(states, {
-        fields: [productStatusCounts.statusId],
+        fields: [productStatusHistory.statusId],
         references: [states.id],
     }),
 }));
 
-export type TProductStatusCountRow = typeof productStatusCounts.$inferSelect;
-export type TProductStatusCountInsert = typeof productStatusCounts.$inferInsert;
+export type TProductStatusHistoryRow = typeof productStatusHistory.$inferSelect;
+export type TProductStatusHistoryInsert = typeof productStatusHistory.$inferInsert;
