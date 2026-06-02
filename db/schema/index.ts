@@ -8,6 +8,7 @@ export * from './productAuthor';
 export * from './productFile';
 export * from './productRating';
 export * from './productStatus';
+export * from './productStatusCount';
 export * from './profile';
 export * from './session';
 export * from './state';

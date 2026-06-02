@@ -1,7 +1,7 @@
-import { and, asc, count, eq, ilike, like, or, type SQL } from 'drizzle-orm';
+import { and, asc, count, eq, ilike, inArray, like, or, type SQL, sql } from 'drizzle-orm';
 
 import { type TDb } from '../../db';
-import { products, productStatuses, users } from '../../db/schema';
+import { products, productStatusCounts, productStatuses, users } from '../../db/schema';
 import {
     type TProductStatusByEmailQuery,
     type TProductStatusByEmailResult,
@@ -114,6 +114,50 @@ export class ProductStatusRepository implements TProductStatusRepository {
             .groupBy(productStatuses.statusId);
 
         return rows.map((row) => ({ statusId: Number(row.statusId), count: Number(row.count) }));
+    }
+
+    async incrementStatusCount(userId: number, productId: number, statusId: number): Promise<void> {
+        await this.dbWrite
+            .insert(productStatusCounts)
+            .values({ userId, productId, statusId, count: 1 })
+            .onConflictDoUpdate({
+                target: [productStatusCounts.userId, productStatusCounts.productId, productStatusCounts.statusId],
+                set: { count: sql`${productStatusCounts.count} + 1`, updatedAt: new Date() },
+            });
+    }
+
+    async findCountsForProduct(userId: number, productId: number): Promise<TStatusCountRow[]> {
+        const rows = await this.dbRead
+            .select({ statusId: productStatusCounts.statusId, count: productStatusCounts.count })
+            .from(productStatusCounts)
+            .where(and(eq(productStatusCounts.userId, userId), eq(productStatusCounts.productId, productId)));
+
+        return rows.map((row) => ({ statusId: Number(row.statusId), count: Number(row.count) }));
+    }
+
+    async findCountsForProducts(userId: number, productIds: number[]): Promise<Map<number, TStatusCountRow[]>> {
+        const map = new Map<number, TStatusCountRow[]>();
+        if (productIds.length === 0) {
+            return map;
+        }
+
+        const rows = await this.dbRead
+            .select({
+                productId: productStatusCounts.productId,
+                statusId: productStatusCounts.statusId,
+                count: productStatusCounts.count,
+            })
+            .from(productStatusCounts)
+            .where(and(eq(productStatusCounts.userId, userId), inArray(productStatusCounts.productId, productIds)));
+
+        for (const row of rows) {
+            const productId = Number(row.productId);
+            const list = map.get(productId) ?? [];
+            list.push({ statusId: Number(row.statusId), count: Number(row.count) });
+            map.set(productId, list);
+        }
+
+        return map;
     }
 
     async create(input: TProductStatusCreateInput): Promise<TProductStatusRecord> {

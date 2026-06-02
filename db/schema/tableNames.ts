@@ -7,6 +7,7 @@ export const TABLE_NAMES = {
     PRODUCT_AUTHOR: 'productAuthor',
     PRODUCT_FILE: 'productFile',
     PRODUCT_STATUS: 'productStatus',
+    PRODUCT_STATUS_COUNT: 'productStatusCount',
     PRODUCT_RATING: 'productRating',
     PRODUCT: 'product',
     SESSION: 'session',

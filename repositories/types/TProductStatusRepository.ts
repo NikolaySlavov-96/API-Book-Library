@@ -71,6 +71,10 @@ export type TStatusCountRow = {
     count: number;
 };
 
+export type TProductStatusCountRow = TStatusCountRow & {
+    productId: number;
+};
+
 export type TProductStatusRepository = {
     findAndCount(query: TProductStatusListQuery): Promise<TProductStatusListResult>;
     findOneActive(productId: number, userId: number): Promise<TProductStatusRecord | null>;
@@ -79,4 +83,7 @@ export type TProductStatusRepository = {
     updateStatusId(id: number, statusId: number): Promise<TProductStatusRecord | null>;
     markDeleted(id: number): Promise<TProductStatusRecord | null>;
     findByUserEmail(query: TProductStatusByEmailQuery): Promise<TProductStatusByEmailResult>;
+    incrementStatusCount(userId: number, productId: number, statusId: number): Promise<void>;
+    findCountsForProduct(userId: number, productId: number): Promise<TStatusCountRow[]>;
+    findCountsForProducts(userId: number, productIds: number[]): Promise<Map<number, TStatusCountRow[]>>;
 };
