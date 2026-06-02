@@ -121,16 +121,6 @@ export class ProductStatusRepository implements TProductStatusRepository {
         await this.dbWrite.insert(productStatusHistory).values({ userId, productId, statusId });
     }
 
-    async findCountsForProduct(userId: number, productId: number): Promise<TStatusCountRow[]> {
-        const rows = await this.dbRead
-            .select({ statusId: productStatusHistory.statusId, count: count() })
-            .from(productStatusHistory)
-            .where(and(eq(productStatusHistory.userId, userId), eq(productStatusHistory.productId, productId)))
-            .groupBy(productStatusHistory.statusId);
-
-        return rows.map((row) => ({ statusId: Number(row.statusId), count: Number(row.count) }));
-    }
-
     async findCountsForProducts(userId: number, productIds: number[]): Promise<Map<number, TStatusCountRow[]>> {
         const map = new Map<number, TStatusCountRow[]>();
         if (productIds.length === 0) {
@@ -155,6 +145,11 @@ export class ProductStatusRepository implements TProductStatusRepository {
         }
 
         return map;
+    }
+
+    async findCountsForProduct(userId: number, productId: number): Promise<TStatusCountRow[]> {
+        const counts = await this.findCountsForProducts(userId, [productId]);
+        return counts.get(productId) ?? [];
     }
 
     async findHistoryForProduct(userId: number, productId: number): Promise<TStatusHistoryRow[]> {
