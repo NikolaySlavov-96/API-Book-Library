@@ -65,17 +65,11 @@ export const removeProductStatus = async (userId, productId) => {
 export const addingNewProductStatus = async (userId, { productId, statusId }) => {
     const existing = await repositories.productStatus.findOneActive(productId, userId);
 
-    let record;
-    if (existing) {
-        record =
-            existing.statusId === Number(statusId)
-                ? existing
-                : await repositories.productStatus.updateStatusId(existing.id, statusId);
-    } else {
-        record = await repositories.productStatus.create({ userId, productId, statusId });
+    if (!existing) {
+        await repositories.productStatus.create({ userId, productId, statusId });
+    } else if (existing.statusId !== Number(statusId)) {
+        await repositories.productStatus.updateStatusId(existing.id, statusId);
     }
 
     await repositories.productStatus.incrementStatusCount(userId, productId, statusId);
-
-    return record;
 };
