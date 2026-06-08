@@ -1,9 +1,10 @@
-import { auth, bulk, file, product, profile, search } from '../routes';
+import { auth, bulk, config, file, product, profile, search } from '../routes';
 
 const PREFIX = '';
 
 export default (app) => {
     app.use(`${PREFIX}/auth`, auth);
+    app.use(`${PREFIX}/config`, config);
     app.use(`${PREFIX}/profile`, profile);
     app.use(`${PREFIX}/product`, product);
     app.use(`${PREFIX}/file`, file);
