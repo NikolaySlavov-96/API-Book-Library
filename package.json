@@ -1,5 +1,8 @@
 {
   "name": "api-book",
+  "engines": {
+    "node": ">=22"
+  },
   "version": "0.5.18",
   "buildNumber": 38,
   "description": "",
