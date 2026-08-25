@@ -3,7 +3,7 @@
   "engines": {
     "node": ">=22"
   },
-  "version": "0.5.18",
+  "version": "0.5.19",
   "buildNumber": 38,
   "description": "",
   "type": "module",
